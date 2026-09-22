@@ -1,0 +1,41 @@
+
+services:
+  # ============================================================================
+  # 1. SERVIDOR DE SIMULACIÓN ROBOCUP 2D (RCSSSERVER)
+  # ============================================================================
+  rcssserver:
+    image: orangefoil/rcssserver:latest
+    container_name: robocup_server
+    command: rcssserver server::auto_mode=true server::synch_mode=false server::port=6000
+    ports:
+      - "6000:6000/udp"
+    restart: unless-stopped
+    networks:
+      - robocup_net
+
+  # ============================================================================
+  # 2. ENTORNO DE DESARROLLO PARA EL ALUMNO (PYTHON + PYTORCH + JUPYTER)
+  # ============================================================================
+  rl-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: robocup_rl_agent
+    environment:
+      - SERVER_HOST=rcssserver
+      - SERVER_PORT=6000
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./workspace:/workspace
+      - ./results:/workspace/results
+    ports:
+      - "8888:8888"   # Jupyter Lab
+    depends_on:
+      - rcssserver
+    networks:
+      - robocup_net
+    restart: unless-stopped
+
+networks:
+  robocup_net:
+    driver: bridge

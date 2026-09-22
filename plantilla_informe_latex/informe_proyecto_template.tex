@@ -1,0 +1,129 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-tabla,es-noquoting]{babel}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{microtype}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\setstretch{1.15}
+\setlength{\parskip}{0.5em}
+\setlength{\parindent}{0pt}
+
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{backcolour}{rgb}{0.96,0.96,0.96}
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegray},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    keepspaces=true,
+    numbers=none,
+    showstringspaces=false
+}
+\lstset{style=mystyle}
+
+\begin{document}
+
+% Encabezado
+\noindent
+\begin{tabular*}{\textwidth}{@{}l@{\extracolsep{\fill}}r@{}}
+    \begin{minipage}{0.25\textwidth}
+        \IfFileExists{logo.png}{\includegraphics[width=\linewidth, height=20mm, keepaspectratio]{logo.png}}{\textbf{UTEC}}
+    \end{minipage}
+    &
+    \begin{minipage}{0.72\textwidth}
+    \begin{flushright}
+         \textbf{DS5345 · Aprendizaje por Refuerzo (2026-II)} \\
+         \textbf{Informe Técnico del Proyecto} \\
+         \small Docente: Percy W. Lovon Ramos
+    \end{flushright}
+    \end{minipage}
+\end{tabular*}
+
+\vspace{-0.2cm}
+\noindent\rule{\textwidth}{0.8pt}
+
+\vspace{0.3cm}
+\begin{center}
+    {\Large \textbf{[Título del Proyecto]}} \\[0.2cm]
+    {\large \textbf{Fase 1 (P1) / Fase 2 (P2)}} \\[0.3cm]
+    \textbf{Grupo N° [XX]} \\[0.1cm]
+    Integrantes: \\
+    Estudiante 1 (código) --- Correo institucional \\
+    Estudiante 2 (código) --- Correo institucional \\
+    Estudiante 3 (código) --- Correo institucional \\[0.2cm]
+    \textit{Enlace al Repositorio de Código:} \url{https://github.com/usuario/repo-proyecto-rl}
+\end{center}
+
+\vspace{0.2cm}
+\noindent\rule{\textwidth}{0.4pt}
+
+\begin{abstract}
+Resumen conciso (máximo 150 palabras) describiendo la tarea abordada, la formulación matemática del problema, el algoritmo de Reinforcement Learning implementado, la política de exploración utilizada y los resultados cuantitativos principales obtenidos (tasa de éxito, pasos promedio por episodio y retorno acumulado final).
+\end{abstract}
+
+\section{Introducción y Descripción de la Tarea}
+Describir el problema y la tarea seleccionada dentro del entorno RoboCup 2D (Persecución, Conducción, Tiro al arco o Cooperación 2v1). Explicar la motivación, las dificultades asociadas a la simulación (ruido, dinámica física, control en tiempo real) y los objetivos específicos planteados para esta entrega.
+
+\section{Modelado Formal como MDP}
+Definir rigurosamente la tupla de Markov $\langle \mathcal{S}, \mathcal{A}, \mathcal{P}, \mathcal{R}, \gamma \rangle$:
+
+\begin{itemize}
+    \item \textbf{Espacio de Estados ($\mathcal{S}$):} Detallar las variables observadas (distancias y ángulos polares). En Fase 1 (tabular), explicar y justificar el esquema de discretización utilizado y la cardinalidad total $|\mathcal{S}|$.
+    \item \textbf{Espacio de Acciones ($\mathcal{A}$):} Detallar las macro-acciones definidas (potencias de \texttt{DASH}, ángulos de \texttt{TURN}, o \texttt{KICK}).
+    \item \textbf{Función de Recompensa ($\mathcal{R}$):} Expresión matemática formal de la recompensa por paso $R(s, a, s')$. Justificar los valores asignados a estados terminales de éxito, penalizaciones temporales y recompensas intermedias (reward shaping).
+    \item \textbf{Factor de Descuento ($\gamma$) y Horizonte:} Indicar el valor de $\gamma \in [0, 1)$ y el número máximo de pasos por episodio.
+\end{itemize}
+
+\section{Algoritmo de Aprendizaje por Refuerzo}
+Describir el algoritmo implementado (ej. Monte Carlo Control On-Policy First-Visit, Q-Learning, SARSA para P1; o DQN / PPO para P2):
+\begin{itemize}
+    \item Mecanismo de actualización de la función valor $Q(s, a)$ o gradiente de política.
+    \item Política de exploración: Comparación entre $\varepsilon$-greedy fijo y $\varepsilon$-greedy con decaimiento ($\varepsilon_t = \max(\varepsilon_{min}, \varepsilon_0 \cdot d^t)$).
+    \item Hiperparámetros de entrenamiento (tasa de aprendizaje $\alpha$, tasa de exploración $\varepsilon$, número de episodios).
+\end{itemize}
+
+\section{Resultados Experimentales y Análisis}
+Presentar el análisis cuantitativo y cualitativo del desempeño del agente:
+
+\begin{enumerate}
+    \item \textbf{Curvas de Aprendizaje:} Gráfica del Retorno acumulado $G_0$ suavizado a lo largo de los episodios.
+    \item \textbf{Tasa de Éxito Temporal:} Porcentaje de episodios exitosos calculados en ventanas móviles de 20 o 50 episodios.
+    \item \textbf{Eficiencia:} Número de pasos requeridos por episodio para cumplir la meta.
+    \item \textbf{Visualización de la Política y Trayectorias:} Mapa de calor de la función valor $V(s) = \max_a Q(s, a)$ o visualización de las trayectorias 2D del agente en la cancha.
+\end{enumerate}
+
+% Ejemplo de inserción de figura
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=0.75\textwidth]{curva_aprendizaje.png}
+%     \caption{Curva de aprendizaje del retorno acumulado $G_0$ y tasa de éxito durante el entrenamiento.}
+%     \label{fig:curva}
+% \end{figure}
+
+\section{Discusión y Análisis }
+Discutir los hallazgos experimentales: ¿Qué impacto tuvo la discretización del estado? ¿Cómo afectó el decaimiento de exploración? ¿Se observó sobreajuste o políticas subóptimas? Identificar las principales limitaciones del enfoque tabular frente al espacio continuo.
+
+\section{Conclusiones}
+Sintetizar los logros principales de la entrega y plantear las mejoras o extensiones que se abordarán en la siguiente fase (Fase 2: Deep RL y desafío de partido / transferencia).
+
+\begin{thebibliography}{9}
+\bibitem{sutton}
+R. S. Sutton and A. G. Barto, \textit{Reinforcement Learning: An Introduction}, 2nd ed., MIT Press, 2018.
+\bibitem{robocup}
+H. Kitano et al., ``The RoboCup Soccer Server,'' in \textit{RoboCup-97: Robot Soccer World Cup I}, Springer, 1998, pp. 62--79.
+\bibitem{ng1999}
+A. Y. Ng, D. Harada, and S. Russell, ``Policy invariance under reward transformations: Theory and application to reward shaping,'' in \textit{ICML}, 1999, pp. 278--287.
+\end{thebibliography}
+
+\end{document}
