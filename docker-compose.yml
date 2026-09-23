@@ -27,7 +27,6 @@ services:
       - PYTHONUNBUFFERED=1
     volumes:
       - ./workspace:/workspace
-      - ./results:/workspace/results
     ports:
       - "8888:8888"   # Jupyter Lab
     depends_on:
