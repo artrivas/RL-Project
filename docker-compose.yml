@@ -6,7 +6,7 @@ services:
   rcssserver:
     image: orangefoil/rcssserver:latest
     container_name: robocup_server
-    command: rcssserver server::auto_mode=true server::synch_mode=false server::port=6000
+    command: rcssserver server::auto_mode=false server::synch_mode=false server::port=6000 server::coach=true server::coach_w_referee=false server::coach_port=6001
     ports:
       - "6000:6000/udp"
     restart: unless-stopped

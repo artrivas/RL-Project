@@ -154,6 +154,7 @@ class RoboCup2DClient:
 
         # Buscar balón: ((b) dist dir ...)
         ball_match = re.search(r"\(\(b\)\s+([\-\d\.]+)\s+([\-\d\.]+)", msg)
+        self.last_observation["ball"] = None
         if ball_match:
             self.last_observation["ball"] = (float(ball_match.group(1)), float(ball_match.group(2)))
 
