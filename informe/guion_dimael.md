@@ -57,6 +57,11 @@ en vivo. La prueba de 500 episodios seguidos sin errores de socket descarta el p
 comunicación. Si preguntan por qué no entrenar siempre en el servidor: cada corrida en vivo toma horas y
 el kit corre en milisegundos.
 
+Para la demostración abrir `workspace/demo_qlearning_rcssserver.ipynb` por el puerto 8888. La tabla es
+Q-Learning con la física del servidor, semilla 4 de la evaluación en vivo del informe; no es la tabla Monte
+Carlo del cuaderno del kit. Elegir el balón lateral (8, 9), pulsar Iniciar demo y luego recorrer los pasos
+con Anterior y Siguiente. Una sola ejecución no sustituye el promedio de 200 episodios del informe.
+
 ## Slide 14 · Conclusiones (40 s)
 
 Cerrar con las tres cifras y una sola frase por cada una. Después las otras tres tareas del catálogo están
