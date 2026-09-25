@@ -53,7 +53,71 @@ class QLearningAgent(TabularAgent):
         self.Q[s, a] += self.alpha * (target - self.Q[s, a])
 
 
-AGENTS = {cls.name: cls for cls in (QLearningAgent,)}
+class SarsaAgent(TabularAgent):
+    """On-policy TD: bootstraps from the action actually selected in ``s_next``."""
+    name = "sarsa"
+    needs_next_action = True  # also drawn at truncation, to bootstrap from s_next
+
+    def observe(self, s, a, r, s_next, a_next, terminated, truncated):
+        target = r if terminated else r + self.gamma * self.Q[s_next, a_next]
+        self.Q[s, a] += self.alpha * (target - self.Q[s, a])
+
+
+class MonteCarloAgent(TabularAgent):
+    """On-policy first-visit MC control with sample-average returns (``alpha`` is unused).
+
+    Returns are computed backwards at the end of the episode. A truncated episode's
+    return is simply cut at the step cap: MC does not bootstrap (SPEC §6).
+    """
+    name = "mc_first_visit"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.counts = np.zeros_like(self.Q)
+        self._episode = []
+
+    def observe(self, s, a, r, s_next, a_next, terminated, truncated):
+        self._episode.append((s, a, r))
+
+    def end_episode(self) -> None:
+        first = {}
+        for t, (s, a, _) in enumerate(self._episode):
+            first.setdefault((s, a), t)
+        g = 0.0
+        for t in range(len(self._episode) - 1, -1, -1):
+            s, a, r = self._episode[t]
+            g = self.gamma * g + r
+            if first[(s, a)] == t:
+                self.counts[s, a] += 1
+                self.Q[s, a] += (g - self.Q[s, a]) / self.counts[s, a]
+        self._episode = []
+
+
+class MonteCarloConstantAlphaAgent(MonteCarloAgent):
+    """First-visit MC control with a constant step size ``alpha`` instead of sample averages.
+
+    With sample averages the step 1/N vanishes, so returns collected early under a
+    near-random policy (epsilon ~ 1) keep full weight forever and the greedy policy
+    freezes; a constant alpha weights recent returns more, as the TD agents do.
+    """
+    name = "mc_first_visit_alpha"
+
+    def end_episode(self) -> None:
+        first = {}
+        for t, (s, a, _) in enumerate(self._episode):
+            first.setdefault((s, a), t)
+        g = 0.0
+        for t in range(len(self._episode) - 1, -1, -1):
+            s, a, r = self._episode[t]
+            g = self.gamma * g + r
+            if first[(s, a)] == t:
+                self.counts[s, a] += 1
+                self.Q[s, a] += self.alpha * (g - self.Q[s, a])
+        self._episode = []
+
+
+AGENTS = {cls.name: cls for cls in (QLearningAgent, SarsaAgent, MonteCarloAgent,
+                                    MonteCarloConstantAlphaAgent)}
 
 
 class GreedyQPolicy:

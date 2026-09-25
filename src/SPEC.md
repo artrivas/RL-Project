@@ -105,6 +105,9 @@ Finer alignment needs turns while moving, which rotate much less (≈ 11.7° at 
   | **C** | **0.03** | **73.9%** | **71%** |
 
   α = 0.1 lets the greedy policy collapse periodically under state aliasing. α = 0.03 is adopted.
+- Known wrinkle: `DASH 50`'s post-decay cruise speed is exactly 0.2 m/cycle, the speed edge, so the speed bit
+  flickers under sustained `DASH 50`. The learned policy almost never uses `DASH 50`. An edge at 0.15 or
+  0.25 would avoid this, but it would invalidate the recorded runs, so it is documented rather than changed.
 - The analytical justification goes in `01_mdp_formulation.ipynb`.
 
 ## 6. Episode, capture, termination — DECIDED
@@ -132,6 +135,8 @@ policy invariance (the state is also only approximately Markov). γ is chosen an
 ## 8. Reset distribution — DECIDED (`sampler.py`)
 
 1. `d ~ U[5, 40]`, relative bearing `~ U[-180, 180)`, body heading `~ U[-180, 180)`.
+   **ASK:** the brief fixes the range `d_b ∈ [5, 40]` m but not the distribution; uniform is our choice,
+   and success rates depend on it (far starts are the hard ones).
 2. Ball offset fixed by those. Player position uniform on the feasible rectangle (pitch shrunk by a
    1 m margin, intersected with a copy shifted by the ball offset). This region is never empty, so there is
    no rejection sampling, and the relative marginals stay exactly uniform.
@@ -179,7 +184,12 @@ fallback before a snapshot exists.
 | 2026-09-25 | Q-learning (C, α = 0.03, ε 1.0 → 0.1), 200 starts: server vs. simulator | **73.5%** vs. 71.5% `<40` (SE 3.1 pp); 76.5% vs. 74.5% `≤40` | `python -m src.live_eval --policy notebooks/artifacts/runs/qlearning_eps_decay_1.0_to_0.1/seed_4 --episodes 200` |
 | 2026-09-25 | Q-learning live, by start distance | ≥ 95% for d₀ < 30 m; ≈ 33% for 30–35 m; 0% for 35–40 m | notebook 03 |
 
-None is an upper bound over admissible policies. Together they show the 40-step budget is tight,
+| 2026-09-25 | Internal algorithm selection (C, ε 1.0 → 0.1, 20k episodes, 5 seeds; last-5 greedy mean) | Q-learning 73.9% ± 0.7; SARSA 72.0% ± 1.3; MC sample-average 68.1% ± 7.3 (frozen after ≈ 4k episodes); MC constant α 48.2% ± 13.5 | `python -m src.train --preset algorithms`, notebook 04 |
+
+| 2026-09-25 | **Provable** noiseless ceiling: turn until the ball is ahead (≤ 35°/cycle), then straight full dash | 94.9% `<40`, 97.6% `≤40` (N = 200k) — above 90%, so it does **not** show the criterion is unreachable. With noise a cycle can cover up to ≈ 1.155 m, so there is no strict impossibility | `python -m src.feasibility --ceiling` |
+| 2026-09-25 | Far starts, measured | learned policy 0 / 26 captured at d₀ ≥ 35 m; heuristic 1 / 71 (35.24 m in 39 steps, live and simulated) | `live_eval_*.json` |
+
+Except for the provable ceiling, no row is an upper bound over admissible policies. Together they show the 40-step budget is tight,
 that the ±35 action set loses substantially to 35° turn quantization (relaxed 88.9% vs realizable
 74.0%), and that initial acquisition costs about 5 pp. Noise slightly *helps* the greedy
 controller (+2 pp), so favourable noise is a real effect, not only a theoretical caveat. The first five

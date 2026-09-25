@@ -67,12 +67,12 @@ en `notebooks/artifacts/server_params.json`, y el simulador los usa.
 │   ├── plots.py              # figuras de los notebooks
 │   └── tests/                # pruebas offline (incluye un servidor falso de punta a punta)
 └── notebooks/
-    ├── 02_train_baseline.ipynb   # selección del estado, ablación, curvas, π̂(s), V̂(s), trayectorias
-    ├── 03_live_validation.ipynb  # conexión, estabilidad, simulador vs. servidor, política en vivo
-    └── artifacts/                # corridas guardadas (Q-tables, historiales, configs), figuras, JSON
+    ├── 01_mdp_formulation.ipynb    # tupla ⟨S, A, P, R, γ⟩, discretización, P̂ empírica, γ, presupuesto temporal
+    ├── 02_train_baseline.ipynb     # selección del estado, ablación, curvas, π̂(s), V̂(s), trayectorias
+    ├── 03_live_validation.ipynb    # conexión, estabilidad, simulador vs. servidor, política en vivo
+    ├── 04_algorithm_selection.ipynb  # interno: Q-Learning vs. SARSA vs. MC (no es parte del informe P1)
+    └── artifacts/                  # corridas guardadas (Q-tables, historiales, configs), figuras, JSON
 ```
-
-`01_mdp_formulation.ipynb` (formulación ⟨S, A, P, R, γ⟩) está pendiente; su contenido base está en `src/SPEC.md`.
 
 ---
 
@@ -86,7 +86,8 @@ Todos los comandos corren dentro del contenedor (`docker compose exec rl-agent .
 | Comparación de representaciones de estado | `python -m src.train --preset discretization --out notebooks/artifacts/runs_discretization` | 3 min |
 | Ídem con α = 0.03 (candidatos B y C) | `python -m src.train --preset discretization --alpha 0.03 --only disc_B_front17.5 disc_C_front17.5_speed --out notebooks/artifacts/runs_discretization` | 2 min |
 | **Ablación de exploración** (5 semillas × 20k episodios) | `python -m src.train --preset ablation --out notebooks/artifacts/runs` | 2 min |
-| Estimaciones de factibilidad | `python -m src.feasibility --controller --params notebooks/artifacts/server_params.json` | 30 s |
+| Comparación interna de algoritmos | `python -m src.train --preset algorithms --out notebooks/artifacts/runs_algorithms` | 3 min |
+| Estimaciones de factibilidad (controlador / cota demostrable sin ruido) | `python -m src.feasibility --controller --params notebooks/artifacts/server_params.json` y `... --ceiling` | 30 s |
 | Estabilidad y controlador en vivo (500 episodios) | `python -m src.live_eval --policy greedy --episodes 500` | 30 min |
 | Política aprendida en vivo (200 episodios) | `python -m src.live_eval --policy notebooks/artifacts/runs/qlearning_eps_decay_1.0_to_0.1/seed_4 --episodes 200` | 12 min |
 | Secuencias fijas: simulador vs. servidor | `python -m src.sim_vs_live --repeats 5` | 1 min |
@@ -96,7 +97,10 @@ Cada corrida de entrenamiento guarda en `notebooks/artifacts/runs/<condición>/s
 - `q.npy`;
 - `history.npz`, con retorno, pasos, captura y ε por episodio;
 - `eval.json`, con las evaluaciones greedy periódicas;
-- `config.json`, con bins, acciones, hiperparámetros, semilla, parámetros físicos y commit de git.
+- `config.json`, con bins, acciones, hiperparámetros, semilla, parámetros físicos, huella SHA-256 del código
+  de `src/` (`source_sha256`) y commit de git si hay repositorio (dentro del contenedor es `null`, porque
+  `.git` no se monta). Las corridas incluidas en `notebooks/artifacts/` se generaron antes de registrar la
+  huella; con las mismas semillas se reproducen exactamente (verificado para Q-Learning).
 
 Los notebooks cargan esos artefactos; `RETRAIN = True` / `RUN_LIVE_EVAL = True` los regeneran.
 
@@ -126,10 +130,15 @@ Criterio de éxito: captura en < 40 pasos (1 paso = 1 ciclo de servidor de 100 m
 - La física del simulador coincide con la del servidor: sesgo de posición ≤ 0.16 m, menor que el ruido
   propio del servidor.
 
-**Sobre el criterio de > 90 %:** con la física real (≈ 1 m/ciclo de velocidad máxima) y giros de exactamente
-±35°, el presupuesto de 40 ciclos no alcanza para buena parte de los inicios lejanos. Hasta un modelo
-idealizado con giros de cualquier tamaño y observación perfecta queda en ≈ 89 %. Detalles y comandos en
-`src/SPEC.md` §11.
+**Sobre el criterio de > 90 %:** con nuestra interpretación de un paso = un ciclo del servidor (100 ms) y
+nuestra distribución de inicios, el presupuesto de < 40 pasos es muy restrictivo. La distribución es d₀ uniforme
+en [5, 40] m: el enunciado fija el rango, no la distribución. La política aprendida logra 73.5 % en el servidor,
+con los fallos concentrados en los inicios lejanos (≈ 98 % bajo 30 m, 0 % sobre 35 m).
+
+Una estimación relajada de girar y luego avanzar alcanza ≈ 89 %, lo que sugiere un problema de factibilidad,
+pero **no demuestra que superar 90 % sea imposible**. La cota demostrable sin ruido es ≈ 95 %, y con ruido no hay
+imposibilidad estricta. Está pendiente aclarar con el docente la duración de un paso y la distribución de
+inicios prevista. Detalles en `src/SPEC.md` §11 y `notebooks/01_mdp_formulation.ipynb` §7.
 
 ---
 

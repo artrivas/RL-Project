@@ -60,3 +60,11 @@ def test_turn_then_dash_counts_turns():
     assert turn_then_dash_cycles(10.0, 39.5, DEFAULT_PARAMS) == ahead + 1
     assert turn_then_dash_cycles(10.0, 40.0, DEFAULT_PARAMS) == ahead + 2
     assert turn_then_dash_cycles(10.0, -180.0, DEFAULT_PARAMS) == ahead + 6
+
+
+def test_provable_min_cycles():
+    from src.feasibility import provable_min_cycles
+    ahead = provable_min_cycles(10.0, 0.0, DEFAULT_PARAMS)
+    assert provable_min_cycles(10.0, 89.0, DEFAULT_PARAMS) == ahead      # no turn needed to progress
+    assert provable_min_cycles(10.0, 125.0, DEFAULT_PARAMS) == ahead + 1
+    assert provable_min_cycles(10.0, -180.0, DEFAULT_PARAMS) == ahead + 3

@@ -70,23 +70,24 @@ def moving_average(x: np.ndarray, window: int) -> np.ndarray:
 
 
 # ----------------------------------------------------------------- curves
-def _band(ax, x, ys: np.ndarray, color: str, label: str) -> None:
+def _band(ax, x, ys: np.ndarray, color: str, label: str, direct_label: bool = True) -> None:
     mean, std = ys.mean(axis=0), ys.std(axis=0)
     ax.fill_between(x, mean - std, mean + std, color=color, alpha=0.18, linewidth=0)
     ax.plot(x, mean, color=color, linewidth=2, label=label)
-    ax.annotate(label, (x[-1], mean[-1]), xytext=(6, 0), textcoords="offset points",
-                color=TEXT, fontsize=8, va="center")
+    if direct_label:
+        ax.annotate(label, (x[-1], mean[-1]), xytext=(6, 0), textcoords="offset points",
+                    color=TEXT, fontsize=8, va="center")
 
 
 def plot_eval_curves(runs: Dict[str, List[Dict]], metric: str = "capture_rate_lt40",
                      refs: Optional[Dict[str, float]] = None, ax=None, ylabel: str = "",
-                     title: str = ""):
+                     title: str = "", direct_labels: bool = True):
     ax = ax or plt.subplots(figsize=(8, 4))[1]
     x0 = 0
     for i, (cond, rs) in enumerate(runs.items()):
         x = np.array([e["episode"] for e in rs[0]["evals"]])
         ys = np.array([[e[metric] for e in r["evals"]] for r in rs])
-        _band(ax, x, ys, SERIES[i], cond)
+        _band(ax, x, ys, SERIES[i], cond, direct_labels)
         x0 = x[0]
     for label, y in (refs or {}).items():
         ax.axhline(y, color=REF, linewidth=1, linestyle="--")

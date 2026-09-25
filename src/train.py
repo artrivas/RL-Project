@@ -69,7 +69,10 @@ def run_episode(env: BallPursuitEnvBase, agent: TabularAgent, disc: Discretizer,
     while not (terminated or truncated):
         obs, r, terminated, truncated, _ = env.step(a)
         s2 = disc(obs)
-        a2 = None if terminated or truncated else agent.act(s2, epsilon)
+        # Next action: needed to act, and by SARSA at truncation to bootstrap from s2.
+        # Other agents skip the draw at the end so their random streams are unchanged.
+        done = terminated or (truncated and not agent.needs_next_action)
+        a2 = None if done else agent.act(s2, epsilon)
         if learn:
             agent.observe(s, a, r, s2, a2, terminated, truncated)
         ret += r
@@ -95,6 +98,19 @@ def evaluate(env: SimBallPursuitEnv, agent: TabularAgent, disc: Discretizer,
             "mean_return": float(np.mean([r["return"] for r in results])),
             "mean_discounted_return": float(np.mean([r["discounted_return"] for r in results])),
             "mean_steps": float(np.mean([r["steps"] for r in results]))}
+
+
+def source_fingerprint() -> str:
+    """SHA-256 over the contents of ``src/*.py`` (sorted): identifies the code that produced
+    a run even inside the container, where ``.git`` is not mounted."""
+    import hashlib
+    src = os.path.dirname(os.path.abspath(__file__))
+    h = hashlib.sha256()
+    for name in sorted(f for f in os.listdir(src) if f.endswith(".py")):
+        h.update(name.encode())
+        with open(os.path.join(src, name), "rb") as f:
+            h.update(f.read())
+    return h.hexdigest()
 
 
 def git_commit() -> Optional[str]:
@@ -137,7 +153,8 @@ def train_one(cfg: ExperimentConfig, seed: int, out_dir: Optional[str] = None) -
         with open(os.path.join(run_dir, "eval.json"), "w") as f:
             json.dump(result, f, indent=2)
         config = {**cfg.to_dict(), "seed": seed, "actions": ACTION_NAMES,
-                  "n_states": disc.n_states, "params": params, "git_commit": git_commit()}
+                  "n_states": disc.n_states, "params": params, "git_commit": git_commit(),
+                  "source_sha256": source_fingerprint()}
         with open(os.path.join(run_dir, "config.json"), "w") as f:
             json.dump(config, f, indent=2)
     return result
@@ -190,7 +207,19 @@ def discretization_configs(n_episodes: int = 20_000, **overrides) -> List[Experi
     ]
 
 
-PRESETS = {"ablation": ablation_configs, "discretization": discretization_configs}
+def algorithm_configs(n_episodes: int = 20_000, **overrides) -> List[ExperimentConfig]:
+    """Internal algorithm selection (not a report deliverable): same state representation,
+    decaying schedule, budget and seeds; only the update rule differs. MC is run with
+    sample averages (``alpha`` unused) and with the same constant alpha as the TD agents."""
+    decay = {"kind": "decay", "eps_start": 1.0, "eps_min": 0.1,
+             "decay": decay_reaching(1.0, 0.1, int(0.6 * n_episodes))}
+    base = ExperimentConfig(name="", n_episodes=n_episodes, schedule=decay, **overrides)
+    return [replace(base, name=f"algo_{algo}", algorithm=algo)
+            for algo in ("qlearning", "sarsa", "mc_first_visit", "mc_first_visit_alpha")]
+
+
+PRESETS = {"ablation": ablation_configs, "discretization": discretization_configs,
+           "algorithms": algorithm_configs}
 
 
 def main() -> None:

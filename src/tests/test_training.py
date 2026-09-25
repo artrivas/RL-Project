@@ -54,3 +54,54 @@ def test_train_one_smoke_and_determinism():
     assert len(a["evals"]) == 2
     assert a["evals"] == b["evals"]
     assert 0.0 <= a["final_eval"]["capture_rate_lt40"] <= 1.0
+
+
+def test_sarsa_update_rules():
+    from src.agents import SarsaAgent
+    agent = SarsaAgent(3, 2, alpha=0.5, gamma=0.9, seed=0)
+    agent.Q[1] = [2.0, 4.0]
+    agent.observe(0, 0, 1.0, 1, 0, terminated=False, truncated=False)   # uses Q[1, 0], not max
+    assert np.isclose(agent.Q[0, 0], 0.5 * (1.0 + 0.9 * 2.0))
+    agent.observe(0, 1, 1.0, 1, None, terminated=True, truncated=False)
+    assert np.isclose(agent.Q[0, 1], 0.5)
+    agent.observe(2, 0, 1.0, 1, 1, terminated=False, truncated=True)    # bootstraps at truncation
+    assert np.isclose(agent.Q[2, 0], 0.5 * (1.0 + 0.9 * 4.0))
+
+
+def test_mc_first_visit_returns():
+    from src.agents import MonteCarloAgent
+    agent = MonteCarloAgent(3, 2, gamma=0.5, seed=0)
+    # Episode: (s0,a0,r=1) (s1,a1,r=2) (s0,a0,r=4); first visit of (s0,a0) is t=0.
+    for s, a, r in [(0, 0, 1.0), (1, 1, 2.0), (0, 0, 4.0)]:
+        agent.observe(s, a, r, None, None, False, False)
+    agent.end_episode()
+    assert np.isclose(agent.Q[0, 0], 1.0 + 0.5 * 2.0 + 0.25 * 4.0)      # G_0 only, not G_2
+    assert np.isclose(agent.Q[1, 1], 2.0 + 0.5 * 4.0)
+    assert agent.counts[0, 0] == 1
+    for s, a, r in [(0, 0, 0.0)]:
+        agent.observe(s, a, r, None, None, True, False)
+    agent.end_episode()
+    assert np.isclose(agent.Q[0, 0], (3.0 + 0.0) / 2)                  # sample average
+
+
+def test_all_agents_train():
+    for algo in ("qlearning", "sarsa", "mc_first_visit"):
+        cfg = ExperimentConfig(name="t", algorithm=algo, n_episodes=200, eval_every=100,
+                               eval_episodes=10, seeds=[0], params_path=None)
+        res = train_one(cfg, 0)
+        assert len(res["evals"]) == 2
+
+
+def test_mc_constant_alpha_update():
+    from src.agents import MonteCarloConstantAlphaAgent
+    agent = MonteCarloConstantAlphaAgent(2, 2, alpha=0.5, gamma=1.0, seed=0)
+    for s, a, r in [(0, 0, 1.0), (1, 1, 2.0)]:
+        agent.observe(s, a, r, None, None, False, False)
+    agent.end_episode()
+    assert np.isclose(agent.Q[0, 0], 0.5 * 3.0) and np.isclose(agent.Q[1, 1], 0.5 * 2.0)
+
+
+def test_source_fingerprint_is_stable():
+    from src.train import source_fingerprint
+    a, b = source_fingerprint(), source_fingerprint()
+    assert a == b and len(a) == 64

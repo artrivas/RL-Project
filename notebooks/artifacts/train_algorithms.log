@@ -1,0 +1,4 @@
+algo_qlearning: greedy capture <40 final = 0.738 ± 0.006, mean of last 5 evals = 0.739 ± 0.007, worst of last 5 = 0.708 (seeds [0, 1, 2, 3, 4], 55s)
+algo_sarsa: greedy capture <40 final = 0.734 ± 0.007, mean of last 5 evals = 0.720 ± 0.013, worst of last 5 = 0.570 (seeds [0, 1, 2, 3, 4], 41s)
+algo_mc_first_visit: greedy capture <40 final = 0.681 ± 0.073, mean of last 5 evals = 0.681 ± 0.073, worst of last 5 = 0.540 (seeds [0, 1, 2, 3, 4], 41s)
+algo_mc_first_visit_alpha: greedy capture <40 final = 0.424 ± 0.284, mean of last 5 evals = 0.482 ± 0.135, worst of last 5 = 0.032 (seeds [0, 1, 2, 3, 4], 43s)  [run separately with --only algo_mc_first_visit_alpha]

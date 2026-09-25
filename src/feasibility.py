@@ -85,6 +85,31 @@ def estimate(n: int = 200_000, seed: int = 0, params: Optional[Dict[str, Any]] =
     }
 
 
+def provable_min_cycles(distance: float, bearing: float, params: Dict[str, Any]) -> int:
+    """Lower bound on capture cycles for ANY policy, in the noiseless model only.
+
+    While the ball is behind (|bearing| > 90 deg) no dash reduces the distance, so the
+    player must first turn; turns rotate at most 35 deg per cycle (at rest, and less
+    when moving). Afterwards, no motion is faster than full dashing along the line.
+    Motion noise is added after the speed cap, so with noise a cycle can cover up to
+    ~1.155 m and this bound does not hold strictly.
+    """
+    turns = math.ceil(max(0.0, abs(bearing) - 90.0) / TURN_MOMENT)
+    return turns + dash_cycles(distance - CAPTURE_RADIUS, params)
+
+
+def provable_ceiling(n: int = 200_000, seed: int = 0,
+                     params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """Share of starts whose ``provable_min_cycles`` fits the budget (noiseless ceiling)."""
+    params = params or DEFAULT_PARAMS
+    rng = np.random.default_rng(seed)
+    lb = np.array([provable_min_cycles(s.distance, s.bearing, params)
+                   for s in (sample_start(rng) for _ in range(n))])
+    return {"method": "provable noiseless lower bound on capture cycles; random starts",
+            "n": n, "seed": seed,
+            "ceiling": {label: float(np.mean(lb <= b)) for label, b in {"<40": 39, "<=40": 40}.items()}}
+
+
 def controller_estimate(n: int = 20_000, seed: int = 0,
                         params: Optional[Dict[str, Any]] = None, use_truth: bool = False,
                         noise: bool = True) -> Dict[str, Any]:
@@ -121,9 +146,13 @@ def main() -> None:
                     help="run the greedy +/-35 controller in the simulator instead")
     ap.add_argument("--use-truth", action="store_true", help="controller sees true (d, theta)")
     ap.add_argument("--no-noise", action="store_true", help="disable motion and sensor noise")
+    ap.add_argument("--ceiling", action="store_true",
+                    help="provable noiseless ceiling (lower bound on capture cycles, any policy)")
     args = ap.parse_args()
     params = load_params(args.params) if args.params else None
-    if args.controller:
+    if args.ceiling:
+        result = provable_ceiling(args.n, args.seed, params)
+    elif args.controller:
         result = controller_estimate(args.n, args.seed, params, args.use_truth, not args.no_noise)
     else:
         result = estimate(args.n, args.seed, params)
