@@ -81,6 +81,7 @@ en `notebooks/artifacts/server_params.json`, y el simulador los usa.
     ├── 05_sensitivity_analysis.ipynb # misma política bajo otros supuestos de evaluación (d₀, ciclos, información)
     ├── 06_alternative_interpretations.ipynb # lecturas alternativas del criterio, medidas en el servidor
     ├── 07_starter_kit_baseline.ipynb # RESULTADO PRINCIPAL: entorno del kit, ablación y transferencia
+    ├── 08_formulacion_otras_tareas.ipynb # MDP propuesto de conducción, tiro a puerta y 2v1 (no implementado)
     └── artifacts/                  # corridas guardadas (Q-tables, historiales, configs), figuras, JSON
 ```
 

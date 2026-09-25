@@ -311,6 +311,74 @@ en todas las semillas, a medio paso del óptimo. Los resultados peores tienen tr
     episodios consecutivos en vivo no registró errores de socket.
 \end{itemize}
 
+\section{Formulación MDP de las otras tareas del catálogo}
+\label{sec:otras}
+
+El catálogo incluye otras tres tareas acotadas. Dejamos formulado su MDP con los mismos supuestos simples del kit:
+\begin{itemize}
+    \item paso de tiempo discreto; \texttt{DASH} mueve al jugador una distancia exacta y \texttt{TURN} gira
+    exactamente $\pm 35^\circ$;
+    \item \texttt{KICK} desplaza el balón una distancia fija en la dirección del jugador, solo si está en posesión
+    ($d_b \le 0.8$\,m);
+    \item sin inercia ni ruido de movimiento, con observación completa y en la cancha de $105 \times 68$\,m.
+\end{itemize}
+Las discretizaciones siguen la misma lógica que la persecución: $17.5^\circ$ es la mitad del giro, las zonas de
+distancia reflejan pasos restantes y $0.8$\,m es el radio de posesión. Es una formulación propuesta; en esta
+entrega no la implementamos ni la entrenamos.
+
+\begin{table}[htbp]
+\centering\scriptsize
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{@{}p{1.25cm} X X X@{}}
+\toprule
+& \textbf{Conducción y drible} & \textbf{Tiro a puerta} & \textbf{Cooperación 2v1} \\
+\midrule
+$\mathcal{S}$ &
+$d_b$: $\le 0.8$ (posesión), $(0.8, 2]$, $(2, 4]$\,m; $\theta_b$: frente $\pm 17.5^\circ$, izq., der.;
+$\theta_g$ (rumbo al arco): frente, izq., der., atrás; $d_g$: $<20$, $20$--$40$, $\ge 40$\,m. \newline
+$|\mathcal{S}| = 3 \cdot 3 \cdot 4 \cdot 3 = 108$ &
+$d_g$: $11$--$15$, $15$--$20$, $20$--$25$\,m; posición lateral: izq., centro, der. (equivale a
+$\theta_{post\_l}, \theta_{post\_r}$); arquero: sin arquero, izq., centro, der. \newline
+$|\mathcal{S}| = 3 \cdot 3 \cdot 4 = 36$ &
+$d_{comp}$ y $d_{def}$: $<5$, $5$--$10$, $\ge 10$\,m y $<2$, $2$--$5$, $\ge 5$\,m; $\theta_{comp}$ y
+$\theta_{def}$: frente, lado, atrás; línea de pase bloqueada: sí/no; zona del balón: centro/banda. \newline
+$|\mathcal{S}| = 3^4 \cdot 2 \cdot 2 = 324$ \\
+$\mathcal{A}$ &
+\texttt{KICK 25} (balón $+2$\,m), \texttt{DASH 80} ($+0.8$\,m), \texttt{TURN} $\pm 35^\circ$. $|\mathcal{A}| = 4$ &
+Tiro a 5 zonas del arco (poste izq., izq., centro, der., poste der.) y \texttt{CONDUCIR} ($+2$\,m hacia el arco).
+$|\mathcal{A}| = 6$ &
+\texttt{PASE}, \texttt{DRIBLE} ($+1$\,m), \texttt{GIRAR} ($35^\circ$ alejándose del defensor), \texttt{DESPEJE}.
+$|\mathcal{A}| = 4$ \\
+$\mathcal{P}$ &
+Determinista (cinemática del kit). Se pierde el control si $d_b > 4$\,m &
+Error lateral del tiro en la línea de gol $\epsilon \sim \mathcal{N}(0, (0.05\,d_g)^2)$\,m; arquero fijo en
+$y_k \sim U[-3, 3]$\,m, que ataja si $|y - y_k| < 1$\,m &
+El defensor avanza $0.6$\,m/paso hacia el poseedor; el pase se intercepta con prob.\ 0.8 si la línea está bloqueada
+(defensor a $<1.5$\,m); quite con prob.\ 0.5 si $d_{def} < 1$\,m. Tras un pase, el agente controla al nuevo
+poseedor \\
+$\mathcal{R}$ &
+$\Delta x$ del balón hacia el arco $- 0.1$; $-30$ si pierde el balón o sale de la cancha; $+50$ al avanzar 30\,m &
+$+100$ gol, $-30$ tiro afuera, $-50$ tiro atajado; $-0.2$ por \texttt{CONDUCIR} &
+$+30$ pase completado, $-30$ intercepción, $-10$ balón fuera; \texttt{DESPEJE} termina con 0 \\
+$\gamma$, $T_{max}$ & 0.99; 100 pasos & 0.99; 10 pasos (termina al tirar) & 0.99; 60 pasos \\
+$|\mathcal{S}| \times |\mathcal{A}|$ & 432 & 216 & 1\,296 \\
+Criterio & Avance $> 30$\,m con control en $> 80$\,\% & Gol $> 75$\,\% sin arquero y $> 50$\,\% con arquero &
+Posesión $> 50$ pasos y $\ge 3$ pases \\
+\bottomrule
+\end{tabularx}
+\caption{Formulación MDP propuesta para las otras tres tareas del catálogo, con cinemática simple como la del kit.
+Estados terminales: pérdida, salida o éxito (conducción); tiro (tiro a puerta); intercepción, salida o despeje
+(2v1).}
+\label{tab:otras}
+\end{table}
+
+\textbf{Justificación.} En la conducción, $0.8$\,m separa tener el balón al pie de tenerlo cerca (hay que
+alcanzarlo antes de patear), y $4$\,m marca la pérdida de control. En el tiro, la distancia y la posición lateral
+determinan los ángulos a los postes, así que representarlas equivale a representar
+$(\theta_{post\_l}, \theta_{post\_r})$ con menos estados. En el 2v1, en vez de la geometría completa, un bit
+indica si la línea de pase está bloqueada, que es lo que decide el riesgo de intercepción. Las tres tablas
+($\le 1\,296$ valores) son manejables con los mismos algoritmos tabulares de este informe.
+
 \section{Conclusiones}
 
 \begin{itemize}
@@ -323,6 +391,8 @@ en todas las semillas, a medio paso del óptimo. Los resultados peores tienen tr
     87.9\,\%), y la nuestra llega al 85.7\,\%, el 97.5\,\% de ese óptimo.
     \item \textbf{Transferencia:} la ejecución se verificó en \texttt{rcssserver}; con física real el rendimiento
     de la política del kit baja, y una política entrenada con esa física alcanza el 73.5\,\%.
+    \item \textbf{Otras tareas:} dejamos formulado el MDP de conducción, tiro a puerta y cooperación 2v1
+    (Sección~\ref{sec:otras}), con tablas de 216 a 1\,296 valores, pendientes de implementar.
 \end{itemize}
 
 Para P2 proponemos:
