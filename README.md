@@ -59,6 +59,7 @@ en `notebooks/artifacts/server_params.json`, y el simulador los usa.
 │   ├── exploration.py        # ε constante y ε decreciente geométrico
 │   ├── env_base.py           # lógica de episodio común: recompensa, captura, truncamiento
 │   ├── kit_env.py            # entorno cinemático del starter kit (entorno principal de P1)
+│   ├── kit_optimal.py        # óptimo exacto en el kit (búsqueda A*): máximo alcanzable
 │   ├── sim_env.py            # simulador rápido con la física de rcssserver
 │   ├── live_env.py           # mismo entorno sobre el servidor real
 │   ├── sampler.py            # distribución de inicios compartida
@@ -102,8 +103,12 @@ Todos los comandos corren dentro del contenedor (`docker compose exec rl-agent .
 | Lectura alternativa: 1 paso = k ciclos (entrenamiento) | `python -m src.train --preset macro --out notebooks/artifacts/runs_macro` | 3 min |
 | Lecturas alternativas en vivo | `python -m src.live_eval --policy <corrida> --episodes 200 [--distance-dist near]` | 12–20 min c/u |
 | Compilar el informe | `cd informe && tectonic informe_p1.tex` (o pdfLaTeX/Overleaf) | 1 min |
-| **Kit: discretización, algoritmos y ablación** | `python -m src.train --preset kit_discretization --out notebooks/artifacts/runs_kit_discretization`; `--preset kit_algorithms --out notebooks/artifacts/runs_kit_algorithms`; `--preset kit_ablation --snapshots 0 500 1000 2000 5000 10000 20000 --out notebooks/artifacts/runs_kit` | 1 min c/u |
-| Kit: transferencia a rcssserver | `python -m src.live_eval --policy notebooks/artifacts/runs_kit/kit_qlearning_eps_decay_1.0_to_0.1/seed_2 --episodes 200 [--distance-dist kit]` | 12 min c/u |
+| Kit: comparación inicial de discretizaciones (20 estados) | `python -m src.train --preset kit_discretization --out notebooks/artifacts/runs_kit_discretization` | 1 min |
+| Kit: representaciones más finas | `python -m src.train --preset kit_refinement --out notebooks/artifacts/runs_kit_refinement`, luego `--preset kit_refinement2 --episodes 80000` (misma carpeta) | 5 min |
+| Kit: óptimo exacto (A*) | `python -m src.kit_optimal --n 1000` | 1 min |
+| **Kit: ablación final (R3)** | `python -m src.train --preset kit_ablation --episodes 80000 --snapshots 0 1000 2000 5000 10000 20000 40000 80000 --out notebooks/artifacts/runs_kit_final` | 1 min |
+| Kit: selección de algoritmo (R3) | `python -m src.train --preset kit_algorithms --episodes 80000 --out notebooks/artifacts/runs_kit_final_algorithms` | 4 min |
+| Kit: transferencia a rcssserver | `python -m src.live_eval --policy notebooks/artifacts/runs_kit_final/kit_qlearning_eps_decay_1.0_to_0.1/seed_1 --episodes 200 [--distance-dist kit]` | 12 min c/u |
 | Comparación interna de algoritmos | `python -m src.train --preset algorithms --out notebooks/artifacts/runs_algorithms` | 3 min |
 | Estimaciones de factibilidad (controlador / cota demostrable sin ruido) | `python -m src.feasibility --controller --params notebooks/artifacts/server_params.json` y `... --ceiling` | 30 s |
 | Estabilidad y controlador en vivo (500 episodios) | `python -m src.live_eval --policy greedy --episodes 500` | 30 min |
@@ -128,21 +133,24 @@ Los notebooks cargan esos artefactos; `RETRAIN = True` / `RUN_LIVE_EVAL = True` 
 
 Criterio de éxito: captura (d ≤ 0.8 m) en menos de 40 pasos. Todo con 5 semillas.
 
-**Entorno del starter kit** (notebook 07). Q-Learning con ε decreciente, evaluación greedy:
+**Entorno del starter kit** (notebook 07). Q-Learning, discretización R3 (99 estados), α = 0.1, 80 000 episodios,
+ε decreciente, evaluación greedy:
 
-| inicios | captura < 40 pasos | pasos |
-|---|---|---|
-| reset del kit (d₀ ≈ 11–19 m) | **99.6 % ± 0.0** (5/5 semillas > 90 %) | 24.2 |
-| d₀ ∈ [5, 40] m (rango del enunciado) | 61.0 % ± 0.8 | 30.7 |
+| inicios | captura < 40 pasos | pasos | máximo alcanzable (óptimo exacto) |
+|---|---|---|---|
+| reset del kit (d₀ ≈ 11–19 m) | **100 %** (5/5 semillas) | 19.1 | 100 % (18.6 pasos) |
+| d₀ ∈ [5, 40] m (rango del enunciado) | **85.7 % ± 0.3** | 26.3 | **87.9 %** |
 
-- **Ablación:** con ε decreciente se alcanza el 55 % en [5, 40] m en 2 000–3 000 episodios, frente a
-  8 000–9 000 con ε = 0.1 constante, y el resultado final es más estable (peor evaluación 57.6 % frente a
-  46.6 %). Con el reset del kit ambas exploraciones llegan a 99.6 %.
-- **Fidelidad al kit:** con la configuración del notebook del kit (MC, 3 500 episodios) el éxito varía mucho
-  entre semillas: 89.2 % ± 17.2, entre 44.8 % y 100 %.
-- **Transferencia a rcssserver** (200 episodios): la política del kit captura 26.0 % con el reset del kit y
-  22.0 % en [5, 40] m, igual que en el simulador con física del servidor. La cinemática idealizada del kit no
-  se transfiere a la física real.
+- **Óptimo exacto** (`python -m src.kit_optimal`): como el kit es determinista, la búsqueda A* da el mínimo de pasos
+  para cada inicio. Con d₀ uniforme en [5, 40] m, **ninguna política supera el 87.9 %**; nuestra política alcanza
+  el 97.5 % de ese máximo.
+- **Ablación:** con ε decreciente se llega al 80 % en 12 000–16 000 episodios, frente a 16 000–32 000 con
+  ε = 0.1 constante, y el resultado final es algo más alto y estable (85.7 % ± 0.3 frente a 84.3 % ± 1.3).
+- **Discretización:** la del kit da 56.6 %, nuestra versión de 20 estados 61.0 % y R3 85.7 %. No aislamos qué
+  componente de R3 explica la mejora; su política avanza en una ventana asimétrica [−35°, +17.5°] que las rejillas
+  más gruesas no pueden representar.
+- **Fidelidad al kit:** con la configuración del notebook del kit (MC, 3 500 episodios) el éxito varía mucho entre
+  semillas: 89.2 % ± 17.2.
 
 **Extensión: física del servidor** (notebooks 01–05). Una política entrenada con la física de `rcssserver`,
 solo con la percepción del jugador:

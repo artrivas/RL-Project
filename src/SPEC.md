@@ -205,7 +205,10 @@ fallback before a snapshot exists.
 
 | 2026-09-25 | **Starter-kit environment** (`src/kit_env.py`, main P1 task), Q-learning, our representation without speed bit, α 0.03, 5 seeds | kit reset: 99.6% (5/5 seeds), 24.2 steps; d₀ ∈ [5, 40]: 61.0% ± 0.8. Const ε: 58.1% ± 3.8 on [5, 40]. Kit discretization: bimodal on its reset (≈46% or ≈98%). Fidelity (kit's MC config, 8 seeds): 89.2% ± 17.2. Transfer to rcssserver: 26.0% (kit reset), 22.0% ([5, 40]) | notebook 07 |
 
-Except for the provable ceiling, no row is an upper bound over admissible policies. Together they show the 40-step budget is tight,
+| 2026-09-25 | **Kit, exact optimum** (A* over all action sequences, deterministic env; 1000 starts, 0 undetermined) | d₀ uniform [5, 40]: 87.9% ± 1.0 (18.6 → 23.0 mean steps); kit reset: 100% (18.6 steps). 90% on [5, 40] is unattainable in the kit | `python -m src.kit_optimal` |
+| 2026-09-25 | **Kit, final configuration** R3 (9 × 11 = 99 states), α 0.1, 80k episodes, 5 seeds | decaying ε: 85.7% ± 0.3 on [5, 40] (97.5% of optimum), kit reset 100% (19.1 steps); constant ε: 84.3% ± 1.3, 100%. 80% reached at 12–16k vs 16–32k episodes. Q-learning ≈ SARSA ≈ MC (≈ 85%); R4 (150 states) 81.0% | notebook 07 |
+
+Except for the provable ceiling and the kit's exact optimum, no row is an upper bound over admissible policies. Together they show the 40-step budget is tight,
 that the ±35 action set loses substantially to 35° turn quantization (relaxed 88.9% vs realizable
 74.0%), and that initial acquisition costs about 5 pp. Noise slightly *helps* the greedy
 controller (+2 pp), so favourable noise is a real effect, not only a theoretical caveat. The first five

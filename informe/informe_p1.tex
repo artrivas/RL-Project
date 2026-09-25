@@ -38,9 +38,9 @@
 % Cifras que se completan con los notebooks 07 (fidelidad) y 07 §6 (transferencia en vivo)
 \newcommand{\fidelidad}{89.2\,\% $\pm$ 17.2 (entre 44.8\,\% y 100\,\%)}
 \newcommand{\transkit}{26.0\,\% $\pm$ 3.1}
-\newcommand{\transkitsim}{25.5\,\%}
-\newcommand{\transunif}{22.0\,\% $\pm$ 2.9}
-\newcommand{\transunifsim}{22.5\,\%}
+\newcommand{\transkitsim}{26.0\,\%}
+\newcommand{\transunif}{20.5\,\% $\pm$ 2.9}
+\newcommand{\transunifsim}{21.0\,\%}
 
 \begin{document}
 
@@ -81,15 +81,15 @@
 
 
 \begin{abstract}
-Formulamos la tarea de persecución de balón como un MDP tabular de 20 estados (distancia y rumbo del balón)
-y 4 macro-acciones, sobre el entorno cinemático del \textit{starter kit} del curso. Entrenamos Q-Learning con
-distancias iniciales en todo el rango del enunciado, $d_0 \in [5, 40]$\,m. La exploración $\varepsilon$
-decreciente ($1.0 \to 0.1$) aprende unas tres veces más rápido y es más estable que $\varepsilon = 0.1$
-constante (61.0\,\% $\pm$ 0.8 frente a 58.1\,\% $\pm$ 3.8 en el rango completo). Con el reset del kit
-($d_0 \approx$ 11--19\,m), la política captura el \textbf{99.6\,\%} en menos de 40 pasos en las 5 semillas,
-con 24.2 pasos en promedio y retorno $G_0 \approx 110$. Validamos la transferencia conectando el cliente a
-\texttt{rcssserver}: con física real la misma política captura el \transkit{} con el reset del kit. Como
-extensión, una política entrenada con la física del servidor alcanza el 73.5\,\% en el rango completo.
+Formulamos la tarea de persecución de balón como un MDP tabular sobre el entorno cinemático del
+\textit{starter kit} del curso: 99 estados (distancia y rumbo del balón) y 4 macro-acciones. Entrenamos Q-Learning
+con distancias iniciales en todo el rango del enunciado, $d_0 \in [5, 40]$\,m. Con el reset del kit
+($d_0 \approx$ 11--19\,m) la política captura el \textbf{100\,\%} de los balones en menos de 40 pasos en las 5
+semillas, en 19.1 pasos (el óptimo exacto es 18.6). En el rango completo captura el 85.7\,\% $\pm$ 0.3. Calculamos
+por búsqueda exacta que \textbf{ninguna política puede superar el 87.9\,\%} en ese rango, así que el 90\,\% no es
+alcanzable allí y nuestra política llega al 97.5\,\% del óptimo. La exploración $\varepsilon$ decreciente aprende
+antes que la constante (80\,\% en 12\,000--16\,000 episodios frente a 16\,000--32\,000). Validamos la ejecución
+conectando el cliente a \texttt{rcssserver}.
 \end{abstract}
 
 \section{Introducción y Descripción de la Tarea}
@@ -123,10 +123,9 @@ entrenador (coach offline), que resetea los episodios y mide la verdad de terren
 \section{Modelado Formal como MDP}
 
 \textbf{Espacio de estados ($\mathcal{S}$).} El agente observa $(d, \theta)$: la distancia al balón y su rumbo
-relativo al cuerpo. El estado es $s = (b_d(d),\, b_\theta(\theta))$, más un estado terminal de captura sin
-entradas en $Q$. Hay $|\mathcal{S}| = 4 \times 5 = 20$ estados no terminales y la tabla $Q$ tiene
-$20 \times 4 = 80$ valores. La implementación reserva además un estado de balón no adquirido, que en el kit
-nunca se visita porque la observación es completa. La Tabla~\ref{tab:bins} justifica cada borde a partir de la cinemática.
+relativo al cuerpo. El estado es $s = (b_d(d),\, b_\theta(\theta))$, más un estado terminal de captura. Usamos
+9 zonas de distancia y 11 sectores de rumbo: $|\mathcal{S}| = 9 \times 11 = 99$ estados y $99 \times 4 = 396$
+valores $Q$ (Tabla~\ref{tab:bins}).
 
 \begin{table}[htbp]
 \centering\small
@@ -134,11 +133,11 @@ nunca se visita porque la observación es completa. La Tabla~\ref{tab:bins} just
 \toprule
 Componente & Bordes & Justificación \\
 \midrule
-Distancia $b_d$ & 3, 10, 20\,m & Con 1\,m por paso, la distancia es aproximadamente el número de pasos restantes: 10 y 20\,m separan regímenes de tiempo frente al presupuesto de 40. Bajo 3\,m la geometría de la aproximación final domina. \\
-Rumbo $b_\theta$ & $\pm 17.5^\circ$, $\pm 90^\circ$ & Los giros son exactamente de $35^\circ$, así que el rumbo alcanzable está en una red de paso $35^\circ$ y siempre puede dejarse el balón dentro de $\pm 17.5^\circ$. Con $\pm 90^\circ$ se separa delante/detrás: detrás, avanzar aleja. Detrás se distingue el lado para saber hacia dónde girar. \\
+Rumbo $b_\theta$ & $\pm 2.5^\circ$, $\pm 7.5^\circ$, $\pm 17.5^\circ$, $\pm 35^\circ$, $\pm 90^\circ$ & La tolerancia angular de captura es $\arcsin(0.8/d)$: $4.6^\circ$ a 10\,m, $2.3^\circ$ a 20\,m y $1.5^\circ$ a 30\,m. Por eso se diseñaron sectores finos cerca del frente (aunque la política aprendida no cambia de acción entre ellos; §5). $17.5^\circ$ es la mitad del giro de $35^\circ$ (el error máximo tras girar), $35^\circ$ es un giro y $90^\circ$ separa delante/detrás. \\
+Distancia $b_d$ & 3, 6, 10, 15, 20, 25, 30, 35\,m & Con 1\,m por paso, cada zona equivale a 3--5 pasos de tiempo restante frente al presupuesto de 40. Las zonas son más finas cerca, donde se decide la maniobra final. \\
 \bottomrule
 \end{tabularx}
-\caption{Discretización del estado. Intervalos semiabiertos en distancia; en ángulo cada borde pertenece al bin
+\caption{Discretización del estado (R3). Intervalos semiabiertos en distancia; en ángulo cada borde pertenece al bin
 más frontal.}
 \label{tab:bins}
 \end{table}
@@ -174,26 +173,30 @@ terminales, con acciones $\varepsilon$-greedy y desempate al azar. Comparamos do
 nivel final:
 \begin{itemize}
     \item $\varepsilon = 0.1$ constante;
-    \item $\varepsilon_k = \max(0.1,\ 1.0 \cdot d^k)$ con $d = 0.999808$, que llega al mínimo al 60\,\% del
+    \item $\varepsilon_k = \max(0.1,\ 1.0 \cdot d^k)$ con $d = 0.999952$, que llega al mínimo al 60\,\% del
     presupuesto.
 \end{itemize}
 
-\textbf{Hiperparámetros.} $\alpha = 0.03$, $\gamma = 0.99$, 20\,000 episodios por corrida y 5 semillas por
-condición. Cada 1\,000 episodios evaluamos la política greedy ($\varepsilon = 0$, sin aprendizaje) sobre 500
+\textbf{Hiperparámetros.} $\alpha = 0.1$, $\gamma = 0.99$, 80\,000 episodios por corrida y 5 semillas por
+condición. Cada 4\,000 episodios evaluamos la política greedy ($\varepsilon = 0$, sin aprendizaje) sobre 500
 inicios fijos en [5, 40]\,m. Al final, evaluamos la Q-table también sobre 500 inicios del reset del kit.
 Guardamos la Q-table, el historial y la configuración de cada corrida.
 
-\textbf{Selección.} Con la misma representación y las mismas condiciones probamos también SARSA y Monte Carlo
-first-visit (el algoritmo del kit). MC obtuvo la mejor media en [5, 40]\,m (65.5\,\% frente a 61.0\,\%), pero
-con más varianza. Q-Learning fue el único que superó el 90\,\% con el reset del kit en las 5 semillas; SARSA
-lo hizo en 4 de 5 y MC en 2 de 5. Por eso reportamos Q-Learning.
+\textbf{Selección.} Con R3 y las mismas condiciones, Q-Learning, SARSA y Monte Carlo first-visit (el algoritmo del
+kit) terminan empatados dentro del ruido entre semillas: $\approx 85$\,\% en [5, 40]\,m y 100\,\% con el reset
+del kit. SARSA y MC alcanzan el 70\,\% antes. Reportamos Q-Learning.
 
 \section{Resultados Experimentales y Análisis}
 
 \textbf{Fidelidad al kit.} Con la configuración del notebook del kit (MC first-visit, 3\,500 episodios,
 $\varepsilon = \max(0.05, 0.998^k)$, su discretización y su reset), nuestro entorno da \fidelidad{} de éxito
-greedy en 8 semillas. Un resultado de una sola semilla, como el 100\,\% de la semilla 42 del código original,
-no es representativo; por eso reportamos siempre 5 semillas.
+greedy en 8 semillas. Un resultado de una sola semilla, como el 100\,\% de la semilla 42 del código original, no
+es representativo; por eso reportamos siempre 5 semillas.
+
+\textbf{Máximo alcanzable.} El kit es determinista, así que para cada inicio calculamos el mínimo exacto de pasos
+hasta capturar sobre todas las secuencias de acciones: una búsqueda A* con heurística admisible sobre posición y
+rumbo, 1\,000 inicios por distribución y ningún caso indeterminado. Con el reset del kit el óptimo captura el
+100\,\% en 18.6 pasos de media. En [5, 40]\,m \textbf{ninguna política puede superar el 87.9\,\% $\pm$ 1.0}.
 
 \textbf{Ablación de la exploración.} La Tabla~\ref{tab:abl} y la Figura~\ref{fig:eval} resumen la ablación.
 
@@ -203,15 +206,16 @@ no es representativo; por eso reportamos siempre 5 semillas.
 \toprule
 & \multicolumn{3}{c}{$d_0 \in [5, 40]$\,m} & \multicolumn{2}{c}{Reset del kit} \\
 \cmidrule(lr){2-4}\cmidrule(lr){5-6}
-Exploración & Últimas 5 & Peor & Episodios hasta 55\,\% & Captura $<40$ & Pasos \\
+Exploración & Final $<40$ & Episodios a 70\,\% / 80\,\% & $\le 40$ & Captura $<40$ & Pasos \\
 \midrule
-$\varepsilon$ decreciente & \textbf{0.610 $\pm$ 0.008} & \textbf{0.576} & \textbf{2k--3k (5/5)} & \textbf{0.996 $\pm$ 0.000} & 24.2 \\
-$\varepsilon = 0.1$ constante & 0.581 $\pm$ 0.038 & 0.466 & 8k--9k (4/5) & 0.996 $\pm$ 0.000 & 24.3 \\
+$\varepsilon$ decreciente & \textbf{0.857 $\pm$ 0.003} & \textbf{12k / 12k--16k} & 0.876 & \textbf{1.000 $\pm$ 0.000} & \textbf{19.1} \\
+$\varepsilon = 0.1$ constante & 0.843 $\pm$ 0.013 & 16k / 16k--32k & 0.863 & 1.000 $\pm$ 0.000 & 19.3 \\
+\midrule
+\textit{Óptimo exacto} & \textit{0.879} & & & \textit{1.000} & \textit{18.6} \\
 \bottomrule
 \end{tabular}
-\caption{Ablación en el entorno del kit (Q-Learning, greedy, 5 semillas). ``Últimas 5'': media de las 5 últimas
-evaluaciones; ``Peor'': la peor de ellas en cualquier semilla. En [5, 40]\,m, $G_0 = 76.6$ con 30.7 pasos
-(decreciente) y $G_0 = 72.6$ con 30.9 pasos (constante); con el reset del kit, $G_0 \approx 110$.}
+\caption{Ablación en el entorno del kit (Q-Learning, R3, greedy, 5 semillas). En [5, 40]\,m, $G_0 = 104.1$ con
+26.3 pasos (decreciente) y $G_0 = 102.2$ con 26.6 pasos (constante).}
 \label{tab:abl}
 \end{table}
 
@@ -219,7 +223,7 @@ evaluaciones; ``Peor'': la peor de ellas en cualquier semilla. En [5, 40]\,m, $G
     \centering
     \includegraphics[width=0.84\textwidth]{fig_kit_eval.png}
     \caption{Evaluación greedy durante el entrenamiento sobre 500 inicios fijos en [5, 40]\,m (media $\pm$
-    desv.\ est.\ en 5 semillas).}
+    desv.\ est.\ en 5 semillas). Referencias: criterio de 90\,\% y óptimo exacto (87.9\,\%).}
     \label{fig:eval}
 \end{figure}
 
@@ -227,19 +231,23 @@ evaluaciones; ``Peor'': la peor de ellas en cualquier semilla. En [5, 40]\,m, $G
     \centering
     \includegraphics[width=\textwidth]{fig_kit_training.png}
     \caption{Retorno $G_0$ y tasa de éxito de los episodios de entrenamiento (con exploración), media móvil de
-    500 episodios. La condición decreciente parte más baja porque explora casi al azar al inicio.}
+    500 episodios.}
     \label{fig:train}
 \end{figure}
 
 \textbf{Política, valor y trayectorias.} La Figura~\ref{fig:pv} muestra $\hat\pi(s)$ y
-$\hat V(s) = \max_a Q(s,a)$; son estimaciones aprendidas, no óptimos demostrados. La política gira hacia el
-balón y avanza cuando lo tiene de frente. La Figura~\ref{fig:traj} muestra la política greedy guardada a lo
-largo del entrenamiento: las trayectorias pasan de erráticas a casi rectas.
+$\hat V(s) = \max_a Q(s,a)$; son estimaciones aprendidas, no óptimos demostrados. La política avanza (\texttt{DASH 100})
+cuando el balón está entre $-35^\circ$ y $+17.5^\circ$ y gira hacia él fuera de esa ventana, igual en casi todas
+las distancias. La ventana es más ancha que un giro de $35^\circ$, así que tras girar el balón queda dentro y el
+agente no oscila. La corrección fina ocurre por la geometría de la aproximación: al acercarse con un pequeño error,
+el rumbo del balón crece hasta cruzar un umbral y el agente gira. La
+Figura~\ref{fig:traj} muestra la política greedy guardada a lo largo del entrenamiento: las trayectorias pasan de
+erráticas a casi rectas.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{fig_kit_policy_value.png}
-    \caption{Política greedy $\hat\pi(s)$ (izq.) y valor $\hat V(s)$ (der.) aprendidos en el entorno del kit.
+    \caption{Política greedy $\hat\pi(s)$ (izq.) y valor $\hat V(s)$ (der.) aprendidos en el entorno del kit (R3).
     Filas: distancia; columnas: rumbo relativo.}
     \label{fig:pv}
 \end{figure}
@@ -252,59 +260,67 @@ largo del entrenamiento: las trayectorias pasan de erráticas a casi rectas.
     \label{fig:traj}
 \end{figure}
 
-\textbf{Transferencia a \texttt{rcssserver}.} Ejecutamos la política del kit en el servidor real, 200
-episodios por distribución, con 0 comandos perdidos y 0 errores de reset. Con el reset del kit captura el
-\transkit{} (\transkitsim{} en nuestro simulador con física del servidor). En [5, 40]\,m captura el
-\transunif{} (\transunifsim{} en el simulador).
+\textbf{Transferencia a \texttt{rcssserver}.} Ejecutamos la política final en el servidor real, 200 episodios por
+distribución, con 0 comandos perdidos y 0 errores de reset. Con el reset del kit captura el \transkit{}
+(\transkitsim{} en nuestro simulador con física del servidor); en [5, 40]\,m, el \transunif{}
+(\transunifsim{} en el simulador).
 
 \section{Discusión y Análisis de Ablación}
 
-\textbf{Impacto de la discretización.} Comparamos la discretización del kit (cortes en 0.8/3/8\,m y
-$15^\circ/60^\circ$) con la nuestra, bajo las mismas condiciones. Con la del kit, el resultado con su propio
-reset es bimodal según la semilla: unas dan $\approx 98$\,\% y otras $\approx 46$\,\%. Con $\alpha = 0.03$
-solo 3 de 5 semillas superan el 90\,\%, y 4 de 5 con $\alpha = 0.1$. Con la nuestra, las 5 semillas llegan a 99.6\,\% y el rango completo mejora (61.0\,\% frente a
-56.6\,\%). Nuestra interpretación es que alinear los bordes de rumbo con el cuanto de giro de $35^\circ$ evita
-agrupar en un mismo estado situaciones que exigen acciones distintas.
+\textbf{Impacto de la discretización.} Es el factor que más pesó. En [5, 40]\,m, con 5 semillas:
+\begin{itemize}
+    \item \textbf{Discretización del kit} (20 estados, cortes en 0.8/3/8\,m y $15^\circ/60^\circ$): 56.6\,\%, y
+    bimodal con su propio reset (según la semilla, $\approx 98$\,\% o $\approx 46$\,\%).
+    \item \textbf{Nuestra primera versión} (20 estados, alineada con el giro de $35^\circ$): 61.0\,\%.
+    \item \textbf{R3} (99 estados): 84.7\,\% con 80\,000 episodios.
+    \item \textbf{R4}, aún más fina (150 estados): cae a 81.0\,\%, porque tiene demasiados estados para el
+    presupuesto de entrenamiento.
+\end{itemize}
+No aislamos qué componente de R3 explica la mejora. Agregar solo un sector de $\pm 5^\circ$ (R1, 28 estados) no
+ayudó. R3 añade además un borde en $35^\circ$ y más zonas de distancia, y su política usa una ventana de avance
+asimétrica, $[-35^\circ, +17.5^\circ]$, que una rejilla sin borde en $35^\circ$ no puede representar. Es una
+explicación compatible con los datos, no una demostración.
 
-\textbf{Efecto del decaimiento de la exploración.} Con el reset del kit ambas exploraciones llegan al mismo
-nivel. En el rango completo, el $\varepsilon$ decreciente llega al 55\,\% en 2\,000--3\,000 episodios, frente a
-8\,000--9\,000 del constante (una semilla nunca llega), y termina más alto y estable (peor evaluación 57.6\,\%
-frente a 46.6\,\%). Explorar mucho al inicio y poco al final aprende antes y de forma más fiable.
+\textbf{Efecto del decaimiento de la exploración.} Con el reset del kit ambas exploraciones llegan a 100\,\%. En el
+rango completo, el $\varepsilon$ decreciente alcanza el 70\,\% en 12\,000 episodios en todas las semillas, frente a
+16\,000 del constante, y el 80\,\% en 12\,000--16\,000 frente a 16\,000--32\,000. También termina algo más alto y
+con menos varianza (85.7\,\% $\pm$ 0.3 frente a 84.3\,\% $\pm$ 1.3). Explorar mucho al inicio y poco al final
+aprende antes y de forma más fiable.
 
-\textbf{El criterio de 90\,\%.} Con el reset del kit el criterio se cumple con holgura: 99.6\,\% en todas las
-semillas. En el rango completo [5, 40]\,m no se cumple (61.0\,\%). Una explicación plausible es la
-granularidad de los giros: en el kit siempre miden exactamente $35^\circ$, así que el error de rumbo tras girar
-puede llegar a $17.5^\circ$ y no hay giros más finos para corregirlo. A 30\,m eso supone pasar hasta a unos
-9\,m del balón y obliga a rodeos que consumen el presupuesto de pasos.
-El enunciado fija el rango de $d_0$ pero no su distribución; con inicios concentrados en distancias cortas,
-como el reset del kit, el criterio se cumple.
+\textbf{El criterio de 90\,\%.} Con el reset del kit el criterio se cumple con holgura: 100\,\% en todas las
+semillas, a medio paso del óptimo exacto. En el rango completo [5, 40]\,m con $d_0$ uniforme, el 90\,\% \textbf{no
+es alcanzable en este entorno}: el óptimo exacto es 87.9\,\%. Por distancia, sobre los mismos 1\,000 inicios, la política
+captura el 100\,\% hasta 30\,m, igual que el óptimo. Toda la diferencia está más lejos: 85.7\,\% frente a
+90.5\,\% entre 30 y 35\,m, y 8.2\,\% frente a 18.7\,\% entre 35 y 40\,m, donde ni la mejor política posible
+llega a tiempo en la mayoría de los casos. En total, nuestra política llega al 85.7\,\%, el 97.5\,\% del máximo. El enunciado fija el rango de $d_0$ pero no su distribución; con inicios concentrados en
+distancias cortas, como el reset del kit, el criterio se cumple.
 
-\textbf{Transferencia y limitaciones.} El entorno del kit es una idealización. En el servidor hay inercia (el
-avance crece de 0.6 a 1\,m por ciclo), el giro se reduce con la velocidad, hay ruido y la visión es parcial, y
-la política del kit pierde rendimiento (\transkit{} con el reset del kit). Como extensión, entrenamos Q-Learning
-con la física del servidor, observando solo lo que percibe el jugador y con un bit de velocidad en el estado.
-Esa política alcanza el 73.5\,\% $\pm$ 3.1 en vivo en [5, 40]\,m, frente al 71.5\,\% en su simulador, y una
-prueba de estabilidad de 500 episodios consecutivos en vivo no registró errores de socket. Esto muestra que el diseño se sostiene con física real. El
-límite del enfoque tabular es el aliasing: la precisión de rumbo a larga distancia requiere distinguir estados
-que la tabla agrupa, y eso motiva aproximadores continuos en P2.
+\textbf{Transferencia y limitaciones.} El kit es una idealización. En el servidor hay inercia (el avance crece de
+0.6 a 1\,m por ciclo), el giro se reduce con la velocidad, hay ruido y la visión es parcial, y la política del kit
+pierde rendimiento (\transkit{} con el reset del kit). Como extensión, entrenamos Q-Learning con la física del
+servidor, observando solo lo que percibe el jugador y con un bit de velocidad en el estado. Esa política alcanza el
+73.5\,\% $\pm$ 3.1 en vivo en [5, 40]\,m, frente al 71.5\,\% en su simulador, y una prueba de estabilidad de 500
+episodios consecutivos en vivo no registró errores de socket. El límite del enfoque tabular es el aliasing: más
+estados mejoran la puntería, pero exigen más datos (R4 rindió menos que R3). Eso motiva aproximadores continuos en
+P2.
 
 \section{Conclusiones}
 
 \begin{itemize}
-    \item \textbf{Formulación:} un MDP tabular de 20 estados, con una discretización justificada a partir de la
-    cinemática. Supera a la del kit en estabilidad y en tasa de captura.
-    \item \textbf{Exploración:} Q-Learning con $\varepsilon$ decreciente aprende unas tres veces más rápido y
-    es más estable que con $\varepsilon$ constante.
-    \item \textbf{Criterio:} con el reset del kit se supera el 90\,\% (99.6\,\% en todas las semillas, 24.2
-    pasos). En el rango completo [5, 40]\,m no se alcanza (61.0\,\%); los fallos se concentran en inicios
-lejanos.
-    \item \textbf{Transferencia:} la ejecución se verificó en \texttt{rcssserver}; con física real el
-    rendimiento baja, y una política entrenada con esa física recupera el 73.5\,\% en el rango completo.
+    \item \textbf{Formulación:} un MDP tabular de 99 estados, con una discretización justificada a partir de la
+    tolerancia angular de captura y del giro de $35^\circ$.
+    \item \textbf{Exploración:} Q-Learning con $\varepsilon$ decreciente aprende antes y es algo más estable que
+    con $\varepsilon$ constante.
+    \item \textbf{Criterio:} con el reset del kit se supera el 90\,\% (100\,\% en todas las semillas, 19.1
+    pasos). En el rango completo [5, 40]\,m el 90\,\% no es alcanzable para ninguna política (óptimo exacto
+    87.9\,\%), y la nuestra llega al 85.7\,\%, el 97.5\,\% de ese óptimo.
+    \item \textbf{Transferencia:} la ejecución se verificó en \texttt{rcssserver}; con física real el rendimiento
+    de la política del kit baja, y una política entrenada con esa física alcanza el 73.5\,\%.
 \end{itemize}
 
 Para P2 proponemos:
 \begin{itemize}
-    \item aproximadores continuos (DQN/PPO) sobre $(d, \theta, v)$, que permitan correcciones finas de rumbo;
+    \item aproximadores continuos (DQN/PPO) sobre $(d, \theta, v)$, sin el costo en datos de una tabla fina;
     \item entrenar directamente con la física del servidor;
     \item un moldeado de recompensa consistente con el descuento.
 \end{itemize}

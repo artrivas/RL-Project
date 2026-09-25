@@ -302,6 +302,9 @@ def macro_configs(n_episodes: int = 20_000, **overrides) -> List[ExperimentConfi
 
 # ---------------------------------------------------------------- starter kit
 KIT_DISCRETIZATIONS = {
+    # Chosen for the report after kit_refinement/kit_refinement2: 9 distance x 11 heading bins.
+    "R3": DiscretizerConfig((3.0, 6.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0),
+                            (2.5, 7.5, 17.5, 35.0, 90.0, 180.0), ()),
     # The starter kit's own scheme (agente_cero notebook): 0.8 / 3 / 8 m, 15 / 60 deg.
     "kitdisc": DiscretizerConfig((0.8, 3.0, 8.0), (15.0, 60.0, 180.0), ()),
     # Ours without the speed bit (the kit has no inertia): 3 / 10 / 20 m, +/-17.5 / 90 deg.
@@ -324,17 +327,19 @@ def kit_discretization_configs(n_episodes: int = 20_000, **overrides) -> List[Ex
             for dname, dcfg in KIT_DISCRETIZATIONS.items() for alpha in (0.03, 0.1)]
 
 
-def kit_algorithm_configs(n_episodes: int = 20_000, discretizer: str = "ourdisc", alpha: float = 0.03,
+def kit_algorithm_configs(n_episodes: int = 80_000, discretizer: str = "R3", alpha: float = 0.1,
                           **overrides) -> List[ExperimentConfig]:
     """Starter-kit environment: internal algorithm selection with the chosen representation."""
+    overrides.setdefault("eval_every", 4000)
     base = _kit_base(n_episodes, discretizer=KIT_DISCRETIZATIONS[discretizer], alpha=alpha, **overrides)
     return [replace(base, name=f"kit_algo_{algo}", algorithm=algo)
             for algo in ("qlearning", "sarsa", "mc_first_visit", "mc_first_visit_alpha")]
 
 
-def kit_ablation_configs(n_episodes: int = 20_000, discretizer: str = "ourdisc", alpha: float = 0.03,
+def kit_ablation_configs(n_episodes: int = 80_000, discretizer: str = "R3", alpha: float = 0.1,
                          algorithm: str = "qlearning", **overrides) -> List[ExperimentConfig]:
     """Starter-kit environment: the required exploration ablation (constant vs decaying epsilon)."""
+    overrides.setdefault("eval_every", 4000)
     base = _kit_base(n_episodes, discretizer=KIT_DISCRETIZATIONS[discretizer], alpha=alpha,
                      algorithm=algorithm, **overrides)
     return [
@@ -343,7 +348,35 @@ def kit_ablation_configs(n_episodes: int = 20_000, discretizer: str = "ourdisc",
     ]
 
 
-PRESETS = {"ablation": ablation_configs, "discretization": discretization_configs,
+def kit_refinement_configs(n_episodes: int = 40_000, **overrides) -> List[ExperimentConfig]:
+    """Starter kit, full [5, 40] m range: finer representations to close the gap to the exact
+    optimum (src/kit_optimal.py). Heading precision matters at long range: with exact 35-deg
+    turns the capture tolerance asin(0.8/d) is only 1.5-2.3 deg at 20-30 m."""
+    reps = {
+        "R1": DiscretizerConfig((3.0, 10.0, 20.0), (5.0, 17.5, 90.0, 180.0), ()),
+        "R2": DiscretizerConfig((3.0, 6.0, 10.0, 15.0, 20.0, 30.0), (5.0, 17.5, 90.0, 180.0), ()),
+        "R3": DiscretizerConfig((3.0, 6.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0),
+                                (2.5, 7.5, 17.5, 35.0, 90.0, 180.0), ()),
+    }
+    base = _kit_base(n_episodes, eval_every=2000, **overrides)
+    return [replace(base, name=f"kit_ref_{r}_alpha{alpha:g}", discretizer=d, alpha=alpha)
+            for r, d in reps.items() for alpha in (0.03, 0.1)]
+
+
+KIT_R3 = DiscretizerConfig((3.0, 6.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0),
+                           (2.5, 7.5, 17.5, 35.0, 90.0, 180.0), ())
+KIT_R4 = DiscretizerConfig((2.0, 4.0, 6.0, 8.0, 10.0, 12.5, 15.0, 17.5, 20.0, 22.5, 25.0, 27.5, 30.0, 32.5, 35.0),
+                           (1.25, 2.5, 5.0, 7.5, 12.5, 17.5, 35.0, 90.0, 180.0), ())
+
+
+def kit_refinement2_configs(n_episodes: int = 80_000, **overrides) -> List[ExperimentConfig]:
+    """R3 with a longer budget and a finer R4, alpha 0.1."""
+    base = _kit_base(n_episodes, eval_every=4000, alpha=0.1, **overrides)
+    return [replace(base, name=f"kit_ref_R3_alpha0.1_{n_episodes // 1000}k", discretizer=KIT_R3),
+            replace(base, name=f"kit_ref_R4_alpha0.1_{n_episodes // 1000}k", discretizer=KIT_R4)]
+
+
+PRESETS = {"kit_refinement": kit_refinement_configs, "kit_refinement2": kit_refinement2_configs, "ablation": ablation_configs, "discretization": discretization_configs,
            "algorithms": algorithm_configs, "refinement": refinement_configs,
            "macro": macro_configs, "kit_discretization": kit_discretization_configs,
            "kit_algorithms": kit_algorithm_configs, "kit_ablation": kit_ablation_configs}

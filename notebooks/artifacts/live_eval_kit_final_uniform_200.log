@@ -1,0 +1,47 @@
+[25/200] 102s live <40: 0.280 sim <40: 0.280 stats={'missed_commands': 0, 'late_see': 313, 'stale_see': 0, 'cycles': 958, 'resets': 25}
+[50/200] 199s live <40: 0.240 sim <40: 0.260 stats={'missed_commands': 0, 'late_see': 605, 'stale_see': 0, 'cycles': 1865, 'resets': 50}
+[75/200] 300s live <40: 0.213 sim <40: 0.227 stats={'missed_commands': 0, 'late_see': 910, 'stale_see': 0, 'cycles': 2814, 'resets': 75}
+[100/200] 397s live <40: 0.210 sim <40: 0.230 stats={'missed_commands': 0, 'late_see': 1197, 'stale_see': 0, 'cycles': 3724, 'resets': 100}
+[125/200] 497s live <40: 0.224 sim <40: 0.232 stats={'missed_commands': 0, 'late_see': 1496, 'stale_see': 0, 'cycles': 4652, 'resets': 125}
+[150/200] 596s live <40: 0.220 sim <40: 0.220 stats={'missed_commands': 0, 'late_see': 1793, 'stale_see': 0, 'cycles': 5583, 'resets': 150}
+[175/200] 701s live <40: 0.206 sim <40: 0.211 stats={'missed_commands': 0, 'late_see': 2122, 'stale_see': 0, 'cycles': 6572, 'resets': 175}
+[200/200] 804s live <40: 0.205 sim <40: 0.210 stats={'missed_commands': 0, 'late_see': 2441, 'stale_see': 0, 'cycles': 7538, 'resets': 200}
+{
+  "live": {
+    "n": 200,
+    "mean_return": 0.6870998412216685,
+    "mean_steps": 36.69,
+    "mean_cycles": 36.69,
+    "capture_rate_<40": {
+      "rate": 0.205,
+      "stderr": 0.028546015483776367
+    },
+    "capture_rate_<=40": {
+      "rate": 0.22,
+      "stderr": 0.02929163703175362
+    }
+  },
+  "sim": {
+    "n": 200,
+    "mean_return": 0.12686542502475162,
+    "mean_steps": 36.595,
+    "mean_cycles": 36.595,
+    "capture_rate_<40": {
+      "rate": 0.21,
+      "stderr": 0.028801041647829335
+    },
+    "capture_rate_<=40": {
+      "rate": 0.215,
+      "stderr": 0.029049526674285075
+    }
+  },
+  "stats": {
+    "missed_commands": 0,
+    "late_see": 2441,
+    "stale_see": 0,
+    "cycles": 7538,
+    "resets": 200
+  },
+  "server_errors": []
+}
+results -> notebooks/artifacts/live_eval_kit_final_uniform_200.json
