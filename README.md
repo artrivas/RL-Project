@@ -46,7 +46,7 @@ en `notebooks/artifacts/server_params.json`, y el simulador los usa.
 
 ```text
 ├── docker/                   # Dockerfile, docker-compose.yml, requirements.txt
-├── docker-compose.yml        # punto de entrada en la raíz (incluye docker/docker-compose.yml)
+├── docker-compose.yml        # setup simple en la raíz (rcssserver + rl-agent con workspace/ y results/)
 ├── informe/informe_p1.tex    # fuente LaTeX del informe (formato de plantilla_informe_latex/)
 ├── informe_p1.pdf            # informe compilado
 ├── src/
@@ -194,3 +194,16 @@ inicios prevista. Detalles en `src/SPEC.md` §11 y `notebooks/01_mdp_formulation
 - **`no trainer reply ... coach=true`.** El servidor no se levantó con la configuración de `docker/`.
   Revisa `docker compose ps` y vuelve a ejecutar `docker compose up -d`.
 - **No ejecutes dos evaluaciones en vivo a la vez.** Ambas moverían jugadores en la misma cancha.
+
+## 6. Cuaderno P1 del starter kit (Monte Carlo)
+
+Además de los notebooks 01–07, se conserva el cuaderno base del starter:
+
+- `workspace/agente_cero_mc_control_persecucion.ipynb`: Monte Carlo Control First-Visit con
+  comparación ε constante (0.1) vs. ε decreciente geométrico, 3 500 episodios por rama, γ = 0.99,
+  recompensa oficial y 40 pasos. Con semilla 42 la rama decreciente logra G0 ≈ 84.8, éxito 100 %
+  y 27.5 pasos; la constante queda en 0 %.
+- `results/`: curvas G0, tasa de éxito, pasos, política/valor, trayectoria y `metrics.csv`
+  generados por ese cuaderno. Resumen en `docs/results.md`.
+- `docker-compose.yml` en la raíz levanta el setup simple (`workspace/` y `results/` montados);
+  `docker/` contiene la variante con servidor controlado por entrenador para los notebooks 01–07.
