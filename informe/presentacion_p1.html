@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<!-- Presentacion P1: Ball Pursuit con Q-Learning tabular. Preset Swiss Modern. -->
+<!-- Abrir en el navegador, flechas o rueda para navegar. -->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P1 Ball Pursuit — Grupo 1</title>
+<style>
+/* Base obligatoria: cada slide ocupa exactamente un viewport, sin scroll interno. */
+:root{
+  --paper:#faf9f6; --ink:#111111; --red:#e30613; --gray:#6b6b6b;
+  --line:#e2e0da; --card:#ffffff;
+  --title-size:clamp(1.6rem,5vw,3.6rem);
+  --h2-size:clamp(1.1rem,3vw,2rem);
+  --body-size:clamp(0.8rem,1.5vw,1.05rem);
+  --big-size:clamp(2.2rem,7vw,5rem);
+  --slide-padding:clamp(1rem,4vw,3.5rem);
+  --gap:clamp(0.5rem,2vw,1.5rem);
+  --font:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+html,body{height:100%;overflow-x:hidden;margin:0;background:var(--paper);color:var(--ink);font-family:var(--font);}
+html{scroll-snap-type:y mandatory;scroll-behavior:smooth;}
+.slide{width:100vw;height:100vh;height:100dvh;overflow:hidden;scroll-snap-align:start;
+  display:flex;flex-direction:column;position:relative;box-sizing:border-box;}
+.slide-content{flex:1;display:flex;flex-direction:column;justify-content:center;
+  max-height:100%;overflow:hidden;padding:var(--slide-padding);box-sizing:border-box;
+  max-width:min(1100px,94vw);margin:0 auto;width:100%;}
+h1{font-size:var(--title-size);line-height:1.02;margin:0 0 var(--gap);letter-spacing:-0.02em;font-weight:800;}
+h2{font-size:var(--h2-size);margin:0 0 var(--gap);font-weight:800;display:flex;align-items:center;gap:0.6em;}
+h2 .n{color:var(--red);}
+p,li{font-size:var(--body-size);line-height:1.45;}
+.kicker{font-size:var(--body-size);font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--red);margin:0 0 0.4em;}
+.insight{border-left:6px solid var(--red);padding:0.4em 0 0.4em 0.9em;margin:var(--gap) 0 0;font-weight:700;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);align-items:center;}
+.bignum{font-size:var(--big-size);font-weight:800;line-height:1;margin:0;letter-spacing:-0.03em;}
+.bignum small{font-size:calc(var(--big-size)*0.35);}
+.cap{color:var(--gray);font-size:calc(var(--body-size)*0.85);margin:0.4em 0 0;}
+img,.image-container{max-width:100%;max-height:min(52vh,440px);object-fit:contain;display:block;margin:0 auto;}
+table{border-collapse:collapse;font-size:var(--body-size);width:100%;}
+th,td{text-align:left;padding:0.35em 0.6em;border-bottom:1px solid var(--line);}
+th{font-size:calc(var(--body-size)*0.8);text-transform:uppercase;letter-spacing:0.08em;color:var(--gray);}
+.bar{height:0.9em;background:var(--line);position:relative;margin:0.25em 0;}
+.bar i{position:absolute;left:0;top:0;bottom:0;background:var(--ink);}
+.bar i.r{background:var(--red);}
+/* Barra de progreso y contador. */
+#progress{position:fixed;top:0;left:0;height:4px;background:var(--red);width:0;z-index:50;}
+#counter{position:fixed;bottom:12px;right:16px;font-size:0.8rem;color:var(--gray);z-index:50;}
+.hint{position:fixed;bottom:12px;left:16px;font-size:0.8rem;color:var(--gray);z-index:50;}
+/* Entrada de elementos al mostrar el slide. */
+.reveal{opacity:0;transform:translateY(14px);transition:opacity 0.45s ease,transform 0.45s ease;}
+.slide.active .reveal{opacity:1;transform:none;}
+.slide.active .reveal.d1{transition-delay:0.1s;}
+.slide.active .reveal.d2{transition-delay:0.2s;}
+.slide.active .reveal.d3{transition-delay:0.3s;}
+.cover{background:var(--ink);color:var(--paper);}
+.cover .kicker{color:var(--red);}
+.cover .cap{color:#b9b6ae;}
+.rule{height:6px;background:var(--red);width:clamp(60px,10vw,140px);margin:0 0 var(--gap);}
+@media (max-height:700px){:root{--slide-padding:clamp(0.75rem,3vw,2rem);}}
+@media (max-height:600px){:root{--slide-padding:clamp(0.5rem,2.5vw,1.5rem);} .hint{display:none;}}
+@media (max-width:600px){.grid2{grid-template-columns:1fr;}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms !important;transition-duration:0.2s !important;} html{scroll-behavior:auto;}}
+</style>
+</head>
+<body>
+<main id="deck">
+<!-- 1 Portada -->
+<section class="slide cover" aria-label="Portada">
+<div class="slide-content">
+<p class="kicker reveal">DS5345 · P1 · Grupo 1</p>
+<h1 class="reveal d1">Persecución de balón en RoboCup 2D con Q-Learning tabular</h1>
+<p class="reveal d2">Leonardo Candio · Dimael Rivas — UTEC 2026-II, Prof. Percy W. Lovón Ramos</p>
+<p class="cap reveal d3">Una sola idea por slide: cada gráfico trae su lectura. Flechas o rueda para avanzar.</p>
+</div>
+</section>
+<!-- 2 Tarea -->
+<section class="slide" aria-label="La tarea">
+<div class="slide-content">
+<h2 class="reveal"><span class="n">01</span> La tarea: cazar un balón quieto</h2>
+<div class="grid2">
+<div class="reveal d1">
+<p>Balón a <b>5–40 m</b>, capturar a <b>≤ 0.8 m</b> en <b>&lt; 40 pasos</b> con DASH 100 / 50 y TURN ±35.</p>
+<p class="insight">El agente pasa de vagar a ir casi recto al balón.</p>
+</div>
+<div class="reveal d2"><img src="assets/fig_kit_learning_traj.png" alt="Trayectorias que se vuelven rectas con el entrenamiento"></div>
+</div>
+</div>
+</section>
+<!-- 3 Hallazgo -->
+<section class="slide" aria-label="Hallazgo central">
+<div class="slide-content">
+<h2 class="reveal"><span class="n">02</span> El hallazgo: el 90 % es imposible en rango completo</h2>
+<div class="grid2">
+<div class="reveal d1"><p class="bignum">87.9<small> %</small></p><p class="cap">Máximo exacto (A*) en [5, 40] m: ninguna política lo supera.</p></div>
+<div class="reveal d2"><p class="bignum">100<small> %</small></p><p class="cap">Nuestra política con reset del kit (19.1 pasos; óptimo 18.6).</p></div>
+</div>
+<p class="insight reveal d3">Con inicios lejanos el presupuesto de 40 pasos no alcanza: es límite de la tarea, no del aprendizaje.</p>
+</div>
+</section>
+<!-- 4 Ablación -->
+<section class="slide" aria-label="Exploración">
+<div class="slide-content">
+<h2 class="reveal"><span class="n">03</span> Explorar mucho al inicio gana</h2>
+<div class="reveal d1"><img src="assets/fig_kit_eval.png" alt="Curva de evaluación greedy: épsilon decreciente sobre constante"></div>
+<p class="insight reveal d2">ε decreciente llega al 80 % en 12–16k episodios; el constante necesita 16–32k y termina más bajo (85.7 vs 84.3 %).</p>
+</div>
+</section>
+<!-- 5 Entrenamiento -->
+<section class="slide" aria-label="Entrenamiento">
+<div class="slide-content">
+<h2 class="reveal"><span class="n">04</span> El retorno cuenta la misma historia</h2>
+<div class="reveal d1"><img src="assets/fig_kit_training.png" alt="Retorno G0 y éxito durante el entrenamiento"></div>
+<p class="insight reveal d2">G0 104.1 con 26.3 pasos (decreciente) frente a 102.2 con 26.6 (constante).</p>
+</div>
+</section>
+<!-- 6 Política -->
+<section class="slide" aria-label="Política">
+<div class="slide-content">
+<h2 class="reveal"><span class="n">05</span> La política cabe en una frase</h2>
+<div class="reveal d1"><img src="assets/fig_kit_policy_value.png" alt="Política greedy y función de valor aprendidas"></div>
+<p class="insight reveal d2">Avanza entre −35° y +17.5°; fuera de ahí, gira hacia el balón. Sin oscilaciones.</p>
+</div>
+</section>
+<!-- 7 Discretización -->
+<section class="slide" aria-label="Discretización">
+<div class="slide-content">
+<h2 class="reveal"><span class="n">06</span> La rejilla fina decide el resultado</h2>
+<div class="reveal d1">
+<p>Kit 20 estados → 56.6 %</p><div class="bar"><i style="width:56.6%"></i></div>
+<p>Nuestra 20 estados → 61.0 %</p><div class="bar"><i style="width:61%"></i></div>
+<p><b>R3, 99 estados → 85.7 %</b></p><div class="bar"><i class="r" style="width:85.7%"></i></div>
+</div>
+<p class="insight reveal d2">R3 representa la ventana asimétrica de avance; refinar más (R4) empeora por falta de datos.</p>
+</div>
+</section>
+<!-- 8 Servidor -->
+<section class="slide" aria-label="Servidor real">
+<div class="slide-content">
+<h2 class="reveal"><span class="n">07</span> En el servidor real manda la física</h2>
+<div class="grid2">
+<div class="reveal d1"><img src="assets/fig_live_capture_by_distance.png" alt="Captura en vivo según distancia inicial"></div>
+<div class="reveal d2">
+<p>Política del kit en vivo: <b>26 %</b>. Reentrenada con física real: <b>73.5 %</b>.</p>
+<p class="insight">Los fallos se concentran pasando los 30 m: ≈ 98 % debajo, 0 % sobre 35 m.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- 9 Cierre -->
+<section class="slide" aria-label="Cierre">
+<div class="slide-content">
+<h2 class="reveal"><span class="n">08</span> Cierre</h2>
+<div class="reveal d1">
+<p><b>100 %</b> con reset del kit · <b>85.7 %</b> en rango (óptimo 87.9 %) · verificado en <b>rcssserver</b>.</p>
+<p>P2: DQN/PPO continuos, entrenar con física del servidor, recompensa consistente con el descuento.</p>
+</div>
+<p class="cap reveal d2">Código, notebooks y artefactos en github.com/artrivas/RL-Project</p>
+</div>
+</section>
+</main>
+<div id="progress"></div>
+<div id="counter">1 / 9</div>
+<div class="hint">← → o rueda para navegar</div>
+<script>
+// Controlador: teclado, rueda, tactil, progreso y animaciones de entrada.
+(function(){
+  var slides=Array.prototype.slice.call(document.querySelectorAll(".slide"));
+  var i=0, bar=document.getElementById("progress"), counter=document.getElementById("counter");
+  function go(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides[i].scrollIntoView({behavior:"document" in document&&window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
+    paint();
+  }
+  function paint(){
+    slides.forEach(function(s,k){s.classList.toggle("active",k===i);});
+    bar.style.width=((i+1)/slides.length*100)+"%";
+    counter.textContent=(i+1)+" / "+slides.length;
+  }
+  document.addEventListener("keydown",function(e){
+    if(e.key==="ArrowRight"||e.key===" "||e.key==="PageDown")go(i+1);
+    if(e.key==="ArrowLeft"||e.key==="PageUp")go(i-1);
+    if(e.key==="Home")go(0);
+    if(e.key==="End")go(slides.length-1);
+  });
+  var lock=false;
+  window.addEventListener("wheel",function(e){
+    if(lock)return; lock=true; setTimeout(function(){lock=false;},700);
+    go(i+(e.deltaY>0?1:-1));
+  },{passive:true});
+  var x0=null;
+  document.addEventListener("touchstart",function(e){x0=e.touches[0].clientY;},{passive:true});
+  document.addEventListener("touchend",function(e){
+    if(x0===null)return; var d=x0-e.changedTouches[0].clientY; x0=null;
+    if(Math.abs(d)>40)go(i+(d>0?1:-1));
+  },{passive:true});
+  var obs=new IntersectionObserver(function(es){
+    es.forEach(function(en){if(en.isIntersecting){i=slides.indexOf(en.target);paint();}});
+  },{threshold:0.55});
+  slides.forEach(function(s){obs.observe(s);});
+  paint();
+})();
+</script>
+</body>
+</html>
