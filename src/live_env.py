@@ -33,7 +33,8 @@ class ResetError(RuntimeError):
 class LiveBallPursuitEnv(BallPursuitEnvBase):
     def __init__(self, player: RoboCupPlayer, trainer: RoboCupTrainer, t_max: int = T_MAX,
                  seed: Optional[int] = None, see_wait: float = 0.06,
-                 truth_wait: float = 0.1, pos_tol: float = 0.05, dir_tol: float = 0.5):
+                 truth_wait: float = 0.1, pos_tol: float = 0.05, dir_tol: float = 0.5,
+                 cycles_per_step: int = 1):
         self.player, self.trainer = player, trainer
         self.params = player.params
         self.see_wait, self.truth_wait = see_wait, truth_wait
@@ -41,7 +42,7 @@ class LiveBallPursuitEnv(BallPursuitEnvBase):
         self.stats = {"missed_commands": 0, "late_see": 0, "stale_see": 0, "cycles": 0,
                       "resets": 0}
         self._counts: Dict[str, int] = {}
-        super().__init__(t_max=t_max, seed=seed)
+        super().__init__(t_max=t_max, seed=seed, cycles_per_step=cycles_per_step)
 
     @classmethod
     def connect(cls, team_name: str = "UTEC_RL", **kwargs) -> "LiveBallPursuitEnv":

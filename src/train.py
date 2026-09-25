@@ -50,6 +50,8 @@ class ExperimentConfig:
     # Episodes (completed so far) at which to save a Q-table copy and record that training
     # episode's trajectory, to show the policy while it learns. Does not affect results.
     snapshot_episodes: List[int] = field(default_factory=list)
+    # Server cycles per decision step (alternative reading of "paso"; 1 = implemented baseline).
+    cycles_per_step: int = 1
 
     def to_dict(self) -> Dict[str, Any]:
         d = asdict(self)
@@ -93,6 +95,7 @@ def run_episode(env: BallPursuitEnvBase, agent: TabularAgent, disc: Discretizer,
     if learn:
         agent.end_episode()
     out = {"return": ret, "discounted_return": disc_ret, "steps": env.step_count,
+           "cycles": env.cycle_count,
            "captured": terminated, "capture_step": env.step_count if terminated else None}
     if record:
         out["trajectory"], out["actions"] = trajectory, actions
@@ -111,7 +114,10 @@ def evaluate(env: SimBallPursuitEnv, agent: TabularAgent, disc: Discretizer,
             "capture_rate_le40": float(np.mean(steps <= 40)),
             "mean_return": float(np.mean([r["return"] for r in results])),
             "mean_discounted_return": float(np.mean([r["discounted_return"] for r in results])),
-            "mean_steps": float(np.mean([r["steps"] for r in results]))}
+            "mean_steps": float(np.mean([r["steps"] for r in results])),
+            "mean_cycles": float(np.mean([r["cycles"] for r in results])),
+            "mean_capture_cycles": (float(np.mean([r["cycles"] for r in results if r["captured"]]))
+                                    if any(r["captured"] for r in results) else None)}
 
 
 def source_fingerprint() -> str:
@@ -138,8 +144,9 @@ def git_commit() -> Optional[str]:
 def train_one(cfg: ExperimentConfig, seed: int, out_dir: Optional[str] = None) -> Dict[str, Any]:
     params = load_run_params(cfg.params_path)
     disc = Discretizer(cfg.discretizer)
-    env = SimBallPursuitEnv(params, t_max=cfg.t_max, seed=seed)
-    eval_env = SimBallPursuitEnv(params, t_max=cfg.t_max, seed=cfg.eval_seed)
+    env = SimBallPursuitEnv(params, t_max=cfg.t_max, seed=seed, cycles_per_step=cfg.cycles_per_step)
+    eval_env = SimBallPursuitEnv(params, t_max=cfg.t_max, seed=cfg.eval_seed,
+                                 cycles_per_step=cfg.cycles_per_step)
     starts = evaluation_starts(cfg.eval_episodes, seed=cfg.eval_seed)
     agent = AGENTS[cfg.algorithm](disc.n_states, len(ACTIONS), cfg.alpha, cfg.gamma, seed=seed)
     schedule = make_schedule(cfg.schedule)
@@ -265,8 +272,21 @@ def refinement_configs(n_episodes: int = 40_000, **overrides) -> List[Experiment
     ]
 
 
+def macro_configs(n_episodes: int = 20_000, **overrides) -> List[ExperimentConfig]:
+    """Alternative reading of "paso": one decision = k server cycles (command repeated).
+
+    Same algorithm, representation, hyperparameters, schedule, seeds and evaluation
+    starts as the reported baseline; only k changes. The budget stays at 40 decision
+    steps (= 40k cycles). k = 1 reproduces the reported decaying-epsilon runs."""
+    decay = {"kind": "decay", "eps_start": 1.0, "eps_min": 0.1,
+             "decay": decay_reaching(1.0, 0.1, int(0.6 * n_episodes))}
+    base = ExperimentConfig(name="", n_episodes=n_episodes, schedule=decay, **overrides)
+    return [replace(base, name=f"macro_k{k}", cycles_per_step=k) for k in (1, 2, 3)]
+
+
 PRESETS = {"ablation": ablation_configs, "discretization": discretization_configs,
-           "algorithms": algorithm_configs, "refinement": refinement_configs}
+           "algorithms": algorithm_configs, "refinement": refinement_configs,
+           "macro": macro_configs}
 
 
 def main() -> None:

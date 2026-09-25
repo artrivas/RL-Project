@@ -10,6 +10,15 @@ Backends implement three hooks:
 is the previous cycle's see that missed its deadline (both may be None).
 ``truth`` is ``{"px", "py", "body", "bx", "by", "cycle"}`` (global frame, privileged):
 it is used for rewards, metrics and trajectories only, never for the policy.
+
+Macro-actions (alternative reading of "paso", ``cycles_per_step`` = k > 1): one
+decision repeats its command for k consecutive server cycles (the server executes
+one body command per cycle, so a held TURN keeps turning). The estimator updates
+and capture is checked on every cycle, so an episode ends on the exact capture
+cycle. The reward follows the brief per decision step: distance gained over the
+macro-step, minus 0.2, plus 100 on capture. ``t_max`` counts decision steps;
+``cycle_count`` counts server cycles. k = 1 is the implemented baseline and runs
+exactly the same code path as before.
 """
 
 import math
@@ -39,8 +48,12 @@ def true_polar(truth: Dict[str, float]) -> Tuple[float, float]:
 class BallPursuitEnvBase:
     params: Dict[str, Any]
 
-    def __init__(self, t_max: int = T_MAX, seed: Optional[int] = None):
+    def __init__(self, t_max: int = T_MAX, seed: Optional[int] = None, cycles_per_step: int = 1):
+        if cycles_per_step < 1:
+            raise ValueError("cycles_per_step must be >= 1")
         self.t_max = t_max
+        self.cycles_per_step = cycles_per_step
+        self.cycle_count = 0
         self.rng = np.random.default_rng(seed)
         self.estimator = BallEstimator(self.params)
         self.step_count = 0
@@ -60,6 +73,7 @@ class BallPursuitEnvBase:
         start = start or sample_start(self.rng)
         self.estimator.reset()
         self.step_count = 0
+        self.cycle_count = 0
         self._last_command = None
         body, see, _late, truth = self._backend_reset(start)  # pre-reset sightings are dropped
         self.estimator.update(body, see, None)
@@ -71,13 +85,17 @@ class BallPursuitEnvBase:
         if self._done:
             raise RuntimeError("step() called on a finished episode; call reset()")
         command = ACTIONS[action]
-        body, see, late_see, truth = self._backend_step(command)
+        for _ in range(self.cycles_per_step):
+            body, see, late_see, truth = self._backend_step(command)
+            self.cycle_count += 1
+            self.estimator.update(body, see, command, late_see)
+            d_new, theta = true_polar(truth)
+            captured = d_new <= CAPTURE_RADIUS
+            if captured:
+                break
         self.step_count += 1
-        self.estimator.update(body, see, command, late_see)
         self._last_command = command
 
-        d_new, theta = true_polar(truth)
-        captured = d_new <= CAPTURE_RADIUS
         reward = (self._d - d_new) - STEP_PENALTY + (CAPTURE_BONUS if captured else 0.0)
         self._d = d_new
         terminated = captured
@@ -94,7 +112,7 @@ class BallPursuitEnvBase:
         info = {"true_d": self._d, "true_theta": theta, "step": self.step_count,
                 "cycle": truth.get("cycle"), "player": (truth["px"], truth["py"]),
                 "body_dir": truth["body"], "ball": (truth["bx"], truth["by"]),
-                "ball_status": self.estimator.status,
+                "ball_status": self.estimator.status, "cycles": self.cycle_count,
                 "cycles_since_seen": self.estimator.cycles_since_seen}
         info.update(extra)
         return info

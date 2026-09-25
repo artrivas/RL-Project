@@ -166,3 +166,35 @@ def test_sensitivity_information_modes():
     truth = run_episode(env, policy, start, "truth")
     assert once is not None and truth is not None and sensing is not None
     assert once <= sensing and truth <= sensing
+
+
+def test_macro_step_repeats_command_for_k_cycles():
+    env = noiseless(cycles_per_step=2)
+    env.reset(start_at(0.0, 30.0))
+    _, r, term, trunc, info = env.step(DASH_100)
+    assert env.step_count == 1 and env.cycle_count == 2 and info["cycles"] == 2
+    assert math.isclose(env.px - (-10.0), 0.6 + 0.84, abs_tol=1e-9)
+    assert math.isclose(r, 0.6 + 0.84 - STEP_PENALTY, abs_tol=1e-9)   # one penalty per decision
+
+
+def test_macro_step_capture_ends_on_exact_cycle():
+    env = noiseless(cycles_per_step=3)
+    env.reset(start_at(0.0, 1.5))
+    _, r, term, trunc, info = env.step(DASH_100)          # d: 1.5 -> 0.9 -> 0.06 (captured)
+    assert term and not trunc and env.cycle_count == 2 and env.step_count == 1
+    assert math.isclose(r, 1.44 - STEP_PENALTY + CAPTURE_BONUS, abs_tol=1e-9)
+
+
+def test_macro_step_budget_counts_decisions():
+    env = noiseless(cycles_per_step=2, t_max=5)
+    env.reset(start_at(180.0, 30.0))
+    for _ in range(5):
+        _, _, term, trunc, _ = env.step(TURN_POS)
+    assert trunc and env.step_count == 5 and env.cycle_count == 10
+
+
+def test_k1_matches_default_env():
+    a, b = SimBallPursuitEnv(seed=5), SimBallPursuitEnv(seed=5, cycles_per_step=1)
+    ra = rollout(a, GreedyPursuit(DEFAULT_PARAMS))
+    rb = rollout(b, GreedyPursuit(DEFAULT_PARAMS))
+    assert ra["actions"] == rb["actions"] and ra["return"] == rb["return"]

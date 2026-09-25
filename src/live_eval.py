@@ -20,8 +20,15 @@ from src.agents import GreedyQPolicy
 from src.controllers import GreedyPursuit, rollout
 from src.discretizer import Discretizer, DiscretizerConfig
 from src.live_env import LiveBallPursuitEnv, ResetError
-from src.sampler import evaluation_starts
+from src.sampler import DISTANCE_DISTRIBUTIONS, evaluation_starts
 from src.sim_env import SimBallPursuitEnv
+
+
+def policy_cycles_per_step(spec: str) -> int:
+    if spec == "greedy":
+        return 1
+    with open(os.path.join(spec, "config.json")) as f:
+        return int(json.load(f).get("cycles_per_step", 1))
 
 
 def load_policy(spec: str, params: Dict[str, Any]):
@@ -40,7 +47,8 @@ def summarize(episodes: List[Dict[str, Any]]) -> Dict[str, Any]:
     steps = np.array([e["capture_step"] or 10**6 for e in done])
     n = len(done)
     out = {"n": n, "mean_return": float(np.mean([e["return"] for e in done])),
-           "mean_steps": float(np.mean([e["steps"] for e in done]))}
+           "mean_steps": float(np.mean([e["steps"] for e in done])),
+           "mean_cycles": float(np.mean([e["cycles"] for e in done]))}
     for label, budget in {"<40": 39, "<=40": 40}.items():
         p = float(np.mean(steps <= budget))
         out[f"capture_rate_{label}"] = {"rate": p, "stderr": float(np.sqrt(p * (1 - p) / n))}
@@ -48,8 +56,10 @@ def summarize(episodes: List[Dict[str, Any]]) -> Dict[str, Any]:
 
 
 def episode_record(i: int, res: Dict[str, Any], keep_trajectory: bool) -> Dict[str, Any]:
+    cycles = res["trajectory"][-1].get("cycles")
     rec = {"index": i, "captured": res["captured"], "capture_step": res["capture_step"],
-           "steps": res["steps"], "return": res["return"], "start": res["start"].as_dict(),
+           "steps": res["steps"], "cycles": cycles, "return": res["return"],
+           "start": res["start"].as_dict(),
            "actions": res["actions"]}
     if keep_trajectory:
         rec["trajectory"] = [{k: t[k] for k in ("step", "cycle", "player", "body_dir", "ball",
@@ -64,18 +74,22 @@ def main() -> int:
     ap.add_argument("--episodes", type=int, default=500)
     ap.add_argument("--start-seed", type=int, default=2026, help="seed of the fixed start list")
     ap.add_argument("--keep-trajectories", type=int, default=20)
+    ap.add_argument("--distance-dist", default="uniform", choices=sorted(DISTANCE_DISTRIBUTIONS),
+                    help="law of d0 over [5, 40] m (uniform = implemented baseline)")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
 
     name = "greedy" if args.policy == "greedy" else os.path.basename(os.path.normpath(args.policy))
     out = args.out or f"notebooks/artifacts/live_eval_{name}_{args.episodes}.json"
     os.makedirs(os.path.dirname(out), exist_ok=True)
-    starts = evaluation_starts(args.episodes, seed=args.start_seed)
+    starts = evaluation_starts(args.episodes, seed=args.start_seed, distance_dist=args.distance_dist)
+    k = policy_cycles_per_step(args.policy)
 
-    env = LiveBallPursuitEnv.connect()
+    env = LiveBallPursuitEnv.connect(cycles_per_step=k)
     policy = load_policy(args.policy, env.params)
-    sim = SimBallPursuitEnv(env.params, seed=args.start_seed)
+    sim = SimBallPursuitEnv(env.params, seed=args.start_seed, cycles_per_step=k)
     result: Dict[str, Any] = {"policy": args.policy, "start_seed": args.start_seed,
+                              "distance_dist": args.distance_dist, "cycles_per_step": k,
                               "episodes_requested": args.episodes, "live": [], "sim": [],
                               "mode_changes": [], "started": time.strftime("%Y-%m-%d %H:%M:%S")}
 

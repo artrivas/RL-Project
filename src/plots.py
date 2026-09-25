@@ -81,39 +81,49 @@ def _band(ax, x, ys: np.ndarray, color: str, label: str, direct_label: bool = Tr
 
 def plot_eval_curves(runs: Dict[str, List[Dict]], metric: str = "capture_rate_lt40",
                      refs: Optional[Dict[str, float]] = None, ax=None, ylabel: str = "",
-                     title: str = "", direct_labels: bool = True):
+                     title: str = "", direct_labels: bool = True,
+                     labels: Optional[Dict[str, str]] = None):
     ax = ax or plt.subplots(figsize=(8, 4))[1]
     x0 = 0
     for i, (cond, rs) in enumerate(runs.items()):
         x = np.array([e["episode"] for e in rs[0]["evals"]])
         ys = np.array([[e[metric] for e in r["evals"]] for r in rs])
-        _band(ax, x, ys, SERIES[i], cond, direct_labels)
+        _band(ax, x, ys, SERIES[i], (labels or {}).get(cond, cond), direct_labels)
         x0 = x[0]
     for label, y in (refs or {}).items():
         ax.axhline(y, color=REF, linewidth=1, linestyle="--")
         ax.annotate(label, (x0, y), xytext=(0, 4), textcoords="offset points", color=TEXT_2,
                     fontsize=8)
-    style(ax, title or f"Greedy evaluation ({metric}), mean ± std over seeds",
-          "training episodes", ylabel or metric)
+    style(ax, title or f"Evaluación greedy ({metric}), media ± desv. est. entre semillas",
+          "episodios de entrenamiento", ylabel or metric)
     ax.legend(frameon=False, fontsize=8, loc="lower right")
     return ax
 
 
 def plot_training_curve(runs: Dict[str, List[Dict]], key: str, window: int = 500, ax=None,
-                        title: str = "", ylabel: str = ""):
+                        title: str = "", ylabel: str = "", labels: Optional[Dict[str, str]] = None,
+                        direct_labels: bool = True):
     ax = ax or plt.subplots(figsize=(8, 3.5))[1]
     for i, (cond, rs) in enumerate(runs.items()):
         ys = np.array([moving_average(np.nan_to_num(r["history"][key].astype(float)), window)
                        for r in rs])
         x = np.arange(window, window + ys.shape[1])
-        _band(ax, x, ys, SERIES[i], cond)
-    style(ax, title or f"Training {key} (moving average, {window} episodes)",
-          "training episodes", ylabel or key)
+        _band(ax, x, ys, SERIES[i], (labels or {}).get(cond, cond), direct_labels)
+    style(ax, title or f"Entrenamiento: {key} (media móvil de {window} episodios)",
+          "episodios de entrenamiento", ylabel or key)
     ax.legend(frameon=False, fontsize=8, loc="lower right")
     return ax
 
 
 # ------------------------------------------------------------ policy maps
+SPEED_NAMES = {0: "en reposo (v < 0.2)", 1: "en movimiento (v ≥ 0.2)"}
+
+
+def _angle_label_es(label: str) -> str:
+    return (label.replace("front |θ|≤", "frente |θ|≤").replace("right ", "der. ")
+            .replace("left ", "izq. "))
+
+
 def _grid(disc: Discretizer, values_by_state: np.ndarray, speed_bin: int) -> np.ndarray:
     grid = np.zeros((disc.n_dist, disc.n_angle))
     for d in range(disc.n_dist):
@@ -131,7 +141,7 @@ def _angle_order(disc: Discretizer) -> List[int]:
 
 
 def plot_policy(Q: np.ndarray, disc: Discretizer, visits: Optional[np.ndarray] = None,
-                speed_bin: int = 0, ax=None, title: str = "Learned greedy policy π̂(s)"):
+                speed_bin: int = 0, ax=None, title: str = "Política greedy aprendida π̂(s)"):
     ax = ax or plt.subplots(figsize=(8, 3.6))[1]
     greedy = Q.argmax(axis=1).astype(float)
     if visits is not None:
@@ -144,18 +154,18 @@ def plot_policy(Q: np.ndarray, disc: Discretizer, visits: Optional[np.ndarray] =
         ax.text(c, r, "—" if np.isnan(v) else ACTION_SHORT[int(v)], ha="center", va="center",
                 fontsize=9, color=TEXT)
     labels = disc.angle_labels()
-    ax.set_xticks(range(len(order)), [labels[i] for i in order], rotation=25, ha="right")
+    ax.set_xticks(range(len(order)), [_angle_label_es(labels[i]) for i in order], rotation=25, ha="right")
     ax.set_yticks(range(disc.n_dist), disc.distance_labels())
-    style(ax, title + (f" — speed bin {speed_bin}" if disc.n_speed > 1 else ""),
-          "ball bearing bin (left ← front → right)", "distance bin")
+    style(ax, title + (f" — {SPEED_NAMES.get(speed_bin, speed_bin)}" if disc.n_speed > 1 else ""),
+          "rumbo del balón (izq. ← frente → der.)", "distancia")
     ax.grid(False)
-    ax.text(1.0, 1.02, f"UNKNOWN → {ACTION_SHORT[int(Q[disc.unknown_state].argmax())]}",
+    ax.text(1.0, 1.02, f"DESCONOCIDO → {ACTION_SHORT[int(Q[disc.unknown_state].argmax())]}",
             transform=ax.transAxes, ha="right", fontsize=8, color=TEXT_2)
     return ax
 
 
 def plot_value(Q: np.ndarray, disc: Discretizer, speed_bin: int = 0, ax=None,
-               title: str = "Learned state value V̂(s) = max_a Q(s, a)"):
+               title: str = "Valor aprendido V̂(s) = max_a Q(s, a)"):
     ax = ax or plt.subplots(figsize=(8, 3.6))[1]
     order = _angle_order(disc)
     grid = _grid(disc, Q.max(axis=1), speed_bin)[:, order]
@@ -164,10 +174,10 @@ def plot_value(Q: np.ndarray, disc: Discretizer, speed_bin: int = 0, ax=None,
         ax.text(c, r, f"{v:.0f}", ha="center", va="center", fontsize=9,
                 color="white" if v > grid.min() + 0.6 * np.ptp(grid) else TEXT)
     labels = disc.angle_labels()
-    ax.set_xticks(range(len(order)), [labels[i] for i in order], rotation=25, ha="right")
+    ax.set_xticks(range(len(order)), [_angle_label_es(labels[i]) for i in order], rotation=25, ha="right")
     ax.set_yticks(range(disc.n_dist), disc.distance_labels())
-    style(ax, title + (f" — speed bin {speed_bin}" if disc.n_speed > 1 else ""),
-          "ball bearing bin (left ← front → right)", "distance bin")
+    style(ax, title + (f" — {SPEED_NAMES.get(speed_bin, speed_bin)}" if disc.n_speed > 1 else ""),
+          "rumbo del balón (izq. ← frente → der.)", "distancia")
     ax.grid(False)
     ax.figure.colorbar(im, ax=ax, fraction=0.03)
     return ax
@@ -255,7 +265,7 @@ def plot_trajectory_pair(live: Dict, sim: Dict, ax=None, half: float = 23.0):
 
 
 def plot_snapshot_trajectories(snapshots: Dict[str, Dict], idx: int, env: str = "sim", ax=None,
-                               half: float = 16.0):
+                               half: float = 16.0, legend: bool = True):
     """One start, the greedy policy of every training snapshot (light = early, dark = late).
 
     ``snapshots``: ``{"ep_<k>": {"sim": [records], "live": [records]}}`` as saved by
@@ -291,6 +301,7 @@ def plot_snapshot_trajectories(snapshots: Dict[str, Dict], idx: int, env: str = 
     ax.set_ylim(cy + half, cy - half)
     s = first["start"]
     ax.set_title(f"d₀={s['distance']:.1f} m, θ₀={s['bearing']:.0f}°", fontsize=9, loc="left", color=TEXT)
-    ax.legend(fontsize=7, loc="lower left", framealpha=0.9)
+    if legend:
+        ax.legend(fontsize=7, loc="lower left", framealpha=0.9)
     ax.figure.set_facecolor(SURFACE)
     return ax

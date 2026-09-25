@@ -46,6 +46,8 @@ en `notebooks/artifacts/server_params.json`, y el simulador los usa.
 ```text
 ├── docker/                   # Dockerfile, docker-compose.yml, requirements.txt
 ├── docker-compose.yml        # punto de entrada en la raíz (incluye docker/docker-compose.yml)
+├── informe/informe_p1.tex    # fuente LaTeX del informe (formato de plantilla_informe_latex/)
+├── informe_p1.pdf            # informe compilado
 ├── src/
 │   ├── SPEC.md               # contrato observación/acción, MDP, decisiones y registro de evidencia
 │   ├── client.py             # cliente UDP del jugador (cliente)
@@ -74,6 +76,7 @@ en `notebooks/artifacts/server_params.json`, y el simulador los usa.
     ├── 03_live_validation.ipynb    # conexión, estabilidad, simulador vs. servidor, política en vivo, aprendizaje en vivo
     ├── 04_algorithm_selection.ipynb  # interno: Q-Learning vs. SARSA vs. MC y representaciones más finas
     ├── 05_sensitivity_analysis.ipynb # misma política bajo otros supuestos de evaluación (d₀, ciclos, información)
+    ├── 06_alternative_interpretations.ipynb # lecturas alternativas del criterio, medidas en el servidor
     └── artifacts/                  # corridas guardadas (Q-tables, historiales, configs), figuras, JSON
 ```
 
@@ -93,6 +96,9 @@ Todos los comandos corren dentro del contenedor (`docker compose exec rl-agent .
 | Instantáneas ejecutadas en el servidor | `python -m src.live_snapshots --run notebooks/artifacts/runs/qlearning_eps_decay_1.0_to_0.1/seed_4` | 2 min |
 | Representaciones más finas (comparación interna) | `python -m src.train --preset refinement --out notebooks/artifacts/runs_refinement` | 6 min |
 | Análisis de sensibilidad (misma política, otros supuestos) | `python -m src.sensitivity --n 5000` | 1 min |
+| Lectura alternativa: 1 paso = k ciclos (entrenamiento) | `python -m src.train --preset macro --out notebooks/artifacts/runs_macro` | 3 min |
+| Lecturas alternativas en vivo | `python -m src.live_eval --policy <corrida> --episodes 200 [--distance-dist near]` | 12–20 min c/u |
+| Compilar el informe | `cd informe && tectonic informe_p1.tex` (o pdfLaTeX/Overleaf) | 1 min |
 | Comparación interna de algoritmos | `python -m src.train --preset algorithms --out notebooks/artifacts/runs_algorithms` | 3 min |
 | Estimaciones de factibilidad (controlador / cota demostrable sin ruido) | `python -m src.feasibility --controller --params notebooks/artifacts/server_params.json` y `... --ceiling` | 30 s |
 | Estabilidad y controlador en vivo (500 episodios) | `python -m src.live_eval --policy greedy --episodes 500` | 30 min |
@@ -143,6 +149,16 @@ Criterio de éxito: captura en < 40 pasos (1 paso = 1 ciclo de servidor de 100 m
   universal.
 - La física del simulador coincide con la del servidor: sesgo de posición ≤ 0.16 m, menor que el ruido
   propio del servidor.
+
+**Lecturas alternativas del enunciado** (servidor, 200 episodios; notebook 06). El enunciado no fija la
+duración del paso ni la forma de la distribución de d₀. Estas cifras dependen de esa lectura; no son el
+resultado principal:
+
+| lectura | captura < 40 pasos en el servidor |
+|---|---|
+| d₀ concentrado en distancias cortas (triangular), misma política | 92.5 % (± 1.9) |
+| 1 paso = 2 ciclos (política reentrenada) | 99.5 % (± 0.5) |
+| 1 paso = 3 ciclos (política reentrenada) | 96.0 % (± 1.4) |
 
 **Sobre el criterio de > 90 %:** con nuestra interpretación de un paso = un ciclo del servidor (100 ms) y
 nuestra distribución de inicios, el presupuesto de < 40 pasos es muy restrictivo. La distribución es d₀ uniforme

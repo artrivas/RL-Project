@@ -43,6 +43,12 @@ Finer alignment needs turns while moving, which rotate much less (≈ 11.7° at 
   command per cycle. `turn_neck` / `change_view` may be sent in the same cycle as the body command.
   Multi-cycle macro-actions are not used; if ever adopted, they must not be used to satisfy the step
   budget, and results must report decision steps and server cycles.
+- **ALTERNATIVE (implemented, not the baseline) — macro-actions:** `cycles_per_step = k` makes one decision
+  repeat its command for k consecutive cycles (a held TURN keeps turning). The estimator updates and capture is
+  checked every cycle, so the episode ends on the exact capture cycle. The reward per decision step is the
+  distance gained over the macro-step − 0.2 + 100 on capture. The budget stays at 40 decision steps = 40·k
+  cycles, and results report both steps and cycles. k = 1 runs the baseline code path unchanged. Evaluated in
+  `notebooks/06_alternative_interpretations.ipynb`; which reading applies is **ASK**.
 - **DECIDED — clock:** the cycle counter is the `sense_body` time. A decision for cycle `t` is
   taken after `sense_body(t)` arrives, using every `see` with time `≤ t`. The body command is
   sent immediately. Commands arriving late are detected via the `sense_body` command counters
@@ -194,6 +200,8 @@ fallback before a snapshot exists.
 | 2026-09-25 | Learning snapshots (Q after 0 … 20k episodes), 4 fixed starts | greedy captures 1, 0, 1, 3, 4, 4, 4 of 4 live; 0, 0, 1, 3, 4, 4, 4 in the simulator | `python -m src.live_snapshots`, notebooks 02 §5 and 03 §6 |
 
 | 2026-09-25 | Sensitivity of the live-evaluated policy (seed 4, `q.npy` SHA-256 a76555e3…), simulator, N = 5000 per variant, seed 11, noise seeded per episode | baseline 73.6%; d₀ shape over [5, 40]: area-uniform 59.2%, triangular-near 92.5%; subset [5, 30] (not the stated range) 96.8%; budget < 45 / < 50 / < 60 cycles: 86.8 / 97.1 / 99.9%; ball given once at reset 79.8%, continuous truth 79.7%. No retraining; not a compliance claim | `python -m src.sensitivity`, notebook 05 |
+
+| 2026-09-25 | Alternative readings, live server, 200 episodes each (notebook 06) | d₀ triangular ∝ (40 − d) over [5, 40] m, same policy: 92.5% ± 1.9 (sim 92.5%). 1 step = 2 cycles, retrained: 99.5% ± 0.5 (sim 100%; 26/26 starts ≥ 35 m). 1 step = 3 cycles: 96.0% ± 1.4 (sim 98.0%). 0 missed commands, 0 errors. Conditional on the reading; not the reported main result | `python -m src.live_eval ... [--distance-dist near]`, `python -m src.train --preset macro` |
 
 Except for the provable ceiling, no row is an upper bound over admissible policies. Together they show the 40-step budget is tight,
 that the ±35 action set loses substantially to 35° turn quantization (relaxed 88.9% vs realizable

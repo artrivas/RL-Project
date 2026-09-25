@@ -46,13 +46,13 @@ class SimBallPursuitEnv(BallPursuitEnvBase):
     def __init__(self, params: Optional[Dict[str, Any]] = None, t_max: int = T_MAX,
                  seed: Optional[int] = None, motion_noise: bool = True,
                  sensor_noise: bool = True, see_deadline_ms: float = 60.0,
-                 see_phase_ms: Optional[float] = None):
+                 see_phase_ms: Optional[float] = None, cycles_per_step: int = 1):
         self.params = dict(params or DEFAULT_PARAMS)
         self.see_deadline_ms = see_deadline_ms
         self.see_phase_ms = see_phase_ms  # None: random phase per episode
         self.motion_noise = motion_noise
         self.sensor_noise = sensor_noise
-        super().__init__(t_max=t_max, seed=seed)
+        super().__init__(t_max=t_max, seed=seed, cycles_per_step=cycles_per_step)
 
     # ------------------------------------------------------------ physics
     def _backend_reset(self, start: StartConfig):
