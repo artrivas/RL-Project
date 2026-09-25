@@ -63,6 +63,7 @@ en `notebooks/artifacts/server_params.json`, y el simulador los usa.
 │   ├── live_eval.py          # evaluación en vivo y estabilidad de largo plazo
 │   ├── sim_vs_live.py        # secuencias fijas: simulador vs. servidor
 │   ├── live_snapshots.py     # políticas guardadas durante el entrenamiento, ejecutadas en vivo
+│   ├── sensitivity.py        # sensibilidad de una política fija a los supuestos de evaluación
 │   ├── feasibility.py        # estimaciones de factibilidad del presupuesto de 40 pasos
 │   ├── live_check.py         # verificación rápida de la conexión
 │   ├── plots.py              # figuras de los notebooks
@@ -72,6 +73,7 @@ en `notebooks/artifacts/server_params.json`, y el simulador los usa.
     ├── 02_train_baseline.ipynb     # selección del estado, ablación, curvas, π̂(s), V̂(s), trayectorias durante el aprendizaje
     ├── 03_live_validation.ipynb    # conexión, estabilidad, simulador vs. servidor, política en vivo, aprendizaje en vivo
     ├── 04_algorithm_selection.ipynb  # interno: Q-Learning vs. SARSA vs. MC y representaciones más finas
+    ├── 05_sensitivity_analysis.ipynb # misma política bajo otros supuestos de evaluación (d₀, ciclos, información)
     └── artifacts/                  # corridas guardadas (Q-tables, historiales, configs), figuras, JSON
 ```
 
@@ -90,6 +92,7 @@ Todos los comandos corren dentro del contenedor (`docker compose exec rl-agent .
 | Instantáneas de aprendizaje (corrida en vivo, semilla 4) | `python -m src.train --preset ablation --only qlearning_eps_decay_1.0_to_0.1 --seeds 4 --snapshots 0 500 1000 2000 5000 10000 20000 --out notebooks/artifacts/runs` | 1 min |
 | Instantáneas ejecutadas en el servidor | `python -m src.live_snapshots --run notebooks/artifacts/runs/qlearning_eps_decay_1.0_to_0.1/seed_4` | 2 min |
 | Representaciones más finas (comparación interna) | `python -m src.train --preset refinement --out notebooks/artifacts/runs_refinement` | 6 min |
+| Análisis de sensibilidad (misma política, otros supuestos) | `python -m src.sensitivity --n 5000` | 1 min |
 | Comparación interna de algoritmos | `python -m src.train --preset algorithms --out notebooks/artifacts/runs_algorithms` | 3 min |
 | Estimaciones de factibilidad (controlador / cota demostrable sin ruido) | `python -m src.feasibility --controller --params notebooks/artifacts/server_params.json` y `... --ceiling` | 30 s |
 | Estabilidad y controlador en vivo (500 episodios) | `python -m src.live_eval --policy greedy --episodes 500` | 30 min |

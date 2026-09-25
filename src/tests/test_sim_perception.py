@@ -153,3 +153,16 @@ def test_estimator_uses_late_sighting_exactly():
         if obs.status != UNKNOWN:
             assert math.isclose(obs.d, info["true_d"], abs_tol=1e-6)
             assert math.isclose(obs.theta, info["true_theta"], abs_tol=1e-6)
+
+
+def test_sensitivity_information_modes():
+    from src.sensitivity import run_episode
+    env = noiseless(see_phase_ms=0.0)
+    policy = GreedyPursuit(DEFAULT_PARAMS)
+    # Ball behind at 10 m: with sensing the player must search first; told once, it can turn at once.
+    start = start_at(180.0, 10.0)
+    sensing = run_episode(env, policy, start, "sensing")
+    once = run_episode(env, policy, start, "once")
+    truth = run_episode(env, policy, start, "truth")
+    assert once is not None and truth is not None and sensing is not None
+    assert once <= sensing and truth <= sensing

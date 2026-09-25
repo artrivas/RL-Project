@@ -49,9 +49,28 @@ class StartConfig:
         return asdict(self)
 
 
+DISTANCE_DISTRIBUTIONS = {
+    "uniform": "uniform in distance on [d_min, d_max] (default)",
+    "area": "uniform over the annulus area: density proportional to d (more far starts)",
+    "near": "triangular with mode at d_min: density proportional to (d_max - d) (more near starts)",
+}
+
+
+def _draw_distance(rng: np.random.Generator, d_min: float, d_max: float, kind: str) -> float:
+    if kind == "uniform":
+        return float(rng.uniform(d_min, d_max))
+    if kind == "area":
+        return float(math.sqrt(rng.uniform(d_min ** 2, d_max ** 2)))
+    if kind == "near":
+        return float(rng.triangular(d_min, d_min, d_max))
+    raise ValueError(f"unknown distance distribution {kind!r}; options: {sorted(DISTANCE_DISTRIBUTIONS)}")
+
+
 def sample_start(rng: np.random.Generator, d_min: float = 5.0, d_max: float = 40.0,
-                 margin: float = 1.0) -> StartConfig:
-    distance = float(rng.uniform(d_min, d_max))
+                 margin: float = 1.0, distance_dist: str = "uniform") -> StartConfig:
+    """Draw one start. ``distance_dist`` changes only the distance law (see
+    ``DISTANCE_DISTRIBUTIONS``); the default consumes the same random draws as always."""
+    distance = _draw_distance(rng, d_min, d_max, distance_dist)
     bearing = wrap_deg(float(rng.uniform(-180.0, 180.0)))
     heading = wrap_deg(float(rng.uniform(-180.0, 180.0)))
     direction = math.radians(heading + bearing)

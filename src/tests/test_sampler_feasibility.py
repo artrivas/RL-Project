@@ -68,3 +68,20 @@ def test_provable_min_cycles():
     assert provable_min_cycles(10.0, 89.0, DEFAULT_PARAMS) == ahead      # no turn needed to progress
     assert provable_min_cycles(10.0, 125.0, DEFAULT_PARAMS) == ahead + 1
     assert provable_min_cycles(10.0, -180.0, DEFAULT_PARAMS) == ahead + 3
+
+
+def test_distance_distributions():
+    from src.sampler import DISTANCE_DISTRIBUTIONS
+    # Default path unchanged: same draws as an explicit "uniform".
+    a = [sample_start(np.random.default_rng(3)) for _ in range(5)]
+    b = [sample_start(np.random.default_rng(3), distance_dist="uniform") for _ in range(5)]
+    assert a == b
+    means = {}
+    for kind in DISTANCE_DISTRIBUTIONS:
+        rng = np.random.default_rng(4)
+        d = np.array([sample_start(rng, distance_dist=kind).distance for _ in range(20000)])
+        assert d.min() >= 5.0 and d.max() <= 40.0
+        means[kind] = d.mean()
+    assert abs(means["uniform"] - 22.5) < 0.3
+    assert abs(means["area"] - (2 / 3) * (40**3 - 5**3) / (40**2 - 5**2)) < 0.3    # 26.9
+    assert abs(means["near"] - (5 + 5 + 40) / 3) < 0.3                             # 16.7

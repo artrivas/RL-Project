@@ -1,0 +1,171 @@
+{
+  "method": "Sensitivity of one fixed learned policy to evaluation assumptions (simulator only, no retraining).",
+  "policy_run": "notebooks/artifacts/runs/qlearning_eps_decay_1.0_to_0.1/seed_4",
+  "q_sha256": "a76555e35466f294b166c48c21abf916c41f6727e04cbcf50663d06a2936a2bd",
+  "policy_config": {
+    "algorithm": "qlearning",
+    "alpha": 0.03,
+    "gamma": 0.99,
+    "n_episodes": 20000,
+    "schedule": {
+      "kind": "decay",
+      "eps_start": 1.0,
+      "eps_min": 0.1,
+      "decay": 0.9998081363171082
+    },
+    "discretizer": {
+      "distance_edges": [
+        3.0,
+        10.0,
+        20.0
+      ],
+      "angle_edges": [
+        17.5,
+        90.0,
+        180.0
+      ],
+      "speed_edges": [
+        0.2
+      ]
+    },
+    "seed": 4
+  },
+  "params_file": "notebooks/artifacts/server_params.json",
+  "n": 5000,
+  "seed": 11,
+  "source_sha256": "55fb92825704fe9da9e199514c88eb1068e7f53ebeec097f9a090493ceb23075",
+  "budget_run_matches_40_cycle_run": true,
+  "results": [
+    {
+      "group": "baseline",
+      "variant": "as implemented",
+      "definition": "d0 uniform on [5, 40] m, player sensing, fewer than 40 cycles",
+      "n": 5000,
+      "share_d0_ge_30": 0.2796,
+      "rates": {
+        "<40": {
+          "rate": 0.7358,
+          "stderr": 0.006235356605680223
+        },
+        "<=40": {
+          "rate": 0.7636,
+          "stderr": 0.006008577868347884
+        }
+      }
+    },
+    {
+      "group": "distribution",
+      "variant": "area",
+      "definition": "uniform over the annulus area: density proportional to d (more far starts) on [5, 40] m",
+      "n": 5000,
+      "share_d0_ge_30": 0.4456,
+      "rates": {
+        "<40": {
+          "rate": 0.5916,
+          "stderr": 0.006951394680206268
+        },
+        "<=40": {
+          "rate": 0.6264,
+          "stderr": 0.006841389332584428
+        }
+      }
+    },
+    {
+      "group": "distribution",
+      "variant": "near",
+      "definition": "triangular with mode at d_min: density proportional to (d_max - d) (more near starts) on [5, 40] m",
+      "n": 5000,
+      "share_d0_ge_30": 0.0784,
+      "rates": {
+        "<40": {
+          "rate": 0.9254,
+          "stderr": 0.003715772867116611
+        },
+        "<=40": {
+          "rate": 0.9402,
+          "stderr": 0.0033533255135760375
+        }
+      }
+    },
+    {
+      "group": "subset",
+      "variant": "d0 in [5, 30] m",
+      "definition": "uniform on [5, 30] m: an easier subset, NOT the stated range",
+      "n": 5000,
+      "share_d0_ge_30": 0.0,
+      "rates": {
+        "<40": {
+          "rate": 0.9678,
+          "stderr": 0.0024965239834618055
+        },
+        "<=40": {
+          "rate": 0.981,
+          "stderr": 0.0019307511491644912
+        }
+      }
+    },
+    {
+      "group": "budget",
+      "variant": "cycle budgets",
+      "definition": "same starts, 60-cycle cap; capture within the listed number of cycles",
+      "n": 5000,
+      "share_d0_ge_30": 0.2796,
+      "rates": {
+        "<40": {
+          "rate": 0.7358,
+          "stderr": 0.006235356605680223
+        },
+        "<=40": {
+          "rate": 0.7636,
+          "stderr": 0.006008577868347884
+        },
+        "<45": {
+          "rate": 0.8676,
+          "stderr": 0.004793125076607119
+        },
+        "<50": {
+          "rate": 0.9714,
+          "stderr": 0.002357203427793196
+        },
+        "<60": {
+          "rate": 0.9988,
+          "stderr": 0.0004896039215529179
+        }
+      }
+    },
+    {
+      "group": "information",
+      "variant": "once",
+      "definition": "true ball position given to the estimator once, at reset; afterwards normal sensing",
+      "n": 5000,
+      "share_d0_ge_30": 0.2796,
+      "rates": {
+        "<40": {
+          "rate": 0.7976,
+          "stderr": 0.005682151705120165
+        },
+        "<=40": {
+          "rate": 0.8262,
+          "stderr": 0.005358984232109663
+        }
+      }
+    },
+    {
+      "group": "information",
+      "variant": "truth",
+      "definition": "true (d, theta) replaces the observation at every step (continuous privileged access)",
+      "n": 5000,
+      "share_d0_ge_30": 0.2796,
+      "rates": {
+        "<40": {
+          "rate": 0.7966,
+          "stderr": 0.005692599406246676
+        },
+        "<=40": {
+          "rate": 0.825,
+          "stderr": 0.00537354631505117
+        }
+      }
+    }
+  ]
+}

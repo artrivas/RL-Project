@@ -193,6 +193,8 @@ fallback before a snapshot exists.
 | 2026-09-25 | Learned policy by start distance (live, 200 starts) | < 30 m: 135/138 (97.8%); 30–35 m: 12/36 (33.3%); 35–40 m: 0/26 → observed 147/200 = 73.5%. Reweighted to uniform d₀: 74.6% ± 1.4 (an estimate, not the observed total; the sample had 31% starts ≥ 30 m vs 28.6% expected). Under uniform d₀, exceeding 90% needs > 65% capture at 30–40 m; the data do not determine why far starts fail | notebook 04 |
 | 2026-09-25 | Learning snapshots (Q after 0 … 20k episodes), 4 fixed starts | greedy captures 1, 0, 1, 3, 4, 4, 4 of 4 live; 0, 0, 1, 3, 4, 4, 4 in the simulator | `python -m src.live_snapshots`, notebooks 02 §5 and 03 §6 |
 
+| 2026-09-25 | Sensitivity of the live-evaluated policy (seed 4, `q.npy` SHA-256 a76555e3…), simulator, N = 5000 per variant, seed 11, noise seeded per episode | baseline 73.6%; d₀ shape over [5, 40]: area-uniform 59.2%, triangular-near 92.5%; subset [5, 30] (not the stated range) 96.8%; budget < 45 / < 50 / < 60 cycles: 86.8 / 97.1 / 99.9%; ball given once at reset 79.8%, continuous truth 79.7%. No retraining; not a compliance claim | `python -m src.sensitivity`, notebook 05 |
+
 Except for the provable ceiling, no row is an upper bound over admissible policies. Together they show the 40-step budget is tight,
 that the ±35 action set loses substantially to 35° turn quantization (relaxed 88.9% vs realizable
 74.0%), and that initial acquisition costs about 5 pp. Noise slightly *helps* the greedy
