@@ -1,203 +1,656 @@
 <!DOCTYPE html>
-<!-- Presentacion P1: Ball Pursuit con Q-Learning tabular. Preset Swiss Modern. -->
-<!-- Abrir en el navegador, flechas o rueda para navegar. -->
+<!-- Presentacion del informe P1: preset Notebook Tabs (papel crema sobre carbon, pestanas pastel). -->
 <html lang="es">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>P1 Ball Pursuit — Grupo 1</title>
+<title>Informe P1 — Persecución de balón en RoboCup 2D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,700;0,6..96,900;1,6..96,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/katex/katex.min.css">
 <style>
-/* Base obligatoria: cada slide ocupa exactamente un viewport, sin scroll interno. */
+/* Base del preset: cada seccion ocupa exactamente un viewport, sin scroll interno. */
 :root{
-  --paper:#faf9f6; --ink:#111111; --red:#e30613; --gray:#6b6b6b;
-  --line:#e2e0da; --card:#ffffff;
-  --title-size:clamp(1.6rem,5vw,3.6rem);
-  --h2-size:clamp(1.1rem,3vw,2rem);
-  --body-size:clamp(0.8rem,1.5vw,1.05rem);
-  --big-size:clamp(2.2rem,7vw,5rem);
-  --slide-padding:clamp(1rem,4vw,3.5rem);
-  --gap:clamp(0.5rem,2vw,1.5rem);
-  --font:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --charcoal:#2b2723;
+  --deep:#1e1b18;
+  --paper:#f7f2e6;
+  --paper2:#efe7d6;
+  --ink:#1d1a16;
+  --ink-soft:#6a6257;
+  --line:rgba(29,26,22,.16);
+  --hot:#c25e3c;
+
+  --clay:#e6c2a9;
+  --mint:#bfe3d0;
+  --peach:#f7cdae;
+  --lavender:#d3c9ec;
+  --butter:#f4e5a3;
+  --sky:#bcd8ee;
+  --rose:#f2c4c9;
+  --sage:#cdd9b3;
+
+  --acc:var(--peach);
+  --edge:clamp(5px,0.8vh,12px);
+  --tab-w:clamp(24px,2.1vw,38px);
+  --pad-l:clamp(2.5rem,3.4vw,3.7rem);
+  --pad-r:clamp(1rem,2.6vw,2.6rem);
+  --pad-y:clamp(0.7rem,1.5vh,1.3rem);
+
+  --title-size:clamp(1.7rem,4.4vw,4.1rem);
+  --h2-size:clamp(1.35rem,3vw,2.6rem);
+  --body-size:clamp(0.85rem,1.45vw,1.18rem);
+  --small-size:clamp(0.66rem,1vw,0.9rem);
+  --bignum:clamp(2rem,5.4vw,4.2rem);
+  --gap:clamp(0.5rem,1.6vh,1.3rem);
+
+  --serif:"Bodoni Moda",Georgia,serif;
+  --sans:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
-html,body{height:100%;overflow-x:hidden;margin:0;background:var(--paper);color:var(--ink);font-family:var(--font);}
+html,body{height:100%;overflow-x:hidden;margin:0;background:var(--charcoal);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;}
 html{scroll-snap-type:y mandatory;scroll-behavior:smooth;}
-.slide{width:100vw;height:100vh;height:100dvh;overflow:hidden;scroll-snap-align:start;
-  display:flex;flex-direction:column;position:relative;box-sizing:border-box;}
-.slide-content{flex:1;display:flex;flex-direction:column;justify-content:center;
-  max-height:100%;overflow:hidden;padding:var(--slide-padding);box-sizing:border-box;
-  max-width:min(1100px,94vw);margin:0 auto;width:100%;}
-h1{font-size:var(--title-size);line-height:1.02;margin:0 0 var(--gap);letter-spacing:-0.02em;font-weight:800;}
-h2{font-size:var(--h2-size);margin:0 0 var(--gap);font-weight:800;display:flex;align-items:center;gap:0.6em;}
-h2 .n{color:var(--red);}
-p,li{font-size:var(--body-size);line-height:1.45;}
-.kicker{font-size:var(--body-size);font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--red);margin:0 0 0.4em;}
-.insight{border-left:6px solid var(--red);padding:0.4em 0 0.4em 0.9em;margin:var(--gap) 0 0;font-weight:700;}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);align-items:center;}
-.bignum{font-size:var(--big-size);font-weight:800;line-height:1;margin:0;letter-spacing:-0.03em;}
-.bignum small{font-size:calc(var(--big-size)*0.35);}
-.cap{color:var(--gray);font-size:calc(var(--body-size)*0.85);margin:0.4em 0 0;}
-img,.image-container{max-width:100%;max-height:min(52vh,440px);object-fit:contain;display:block;margin:0 auto;}
-table{border-collapse:collapse;font-size:var(--body-size);width:100%;}
-th,td{text-align:left;padding:0.35em 0.6em;border-bottom:1px solid var(--line);}
-th{font-size:calc(var(--body-size)*0.8);text-transform:uppercase;letter-spacing:0.08em;color:var(--gray);}
-.bar{height:0.9em;background:var(--line);position:relative;margin:0.25em 0;}
-.bar i{position:absolute;left:0;top:0;bottom:0;background:var(--ink);}
-.bar i.r{background:var(--red);}
-/* Barra de progreso y contador. */
-#progress{position:fixed;top:0;left:0;height:4px;background:var(--red);width:0;z-index:50;}
-#counter{position:fixed;bottom:12px;right:16px;font-size:0.8rem;color:var(--gray);z-index:50;}
-.hint{position:fixed;bottom:12px;left:16px;font-size:0.8rem;color:var(--gray);z-index:50;}
-/* Entrada de elementos al mostrar el slide. */
-.reveal{opacity:0;transform:translateY(14px);transition:opacity 0.45s ease,transform 0.45s ease;}
+.slide{width:100vw;height:100vh;height:100dvh;overflow:hidden;scroll-snap-align:start;display:flex;flex-direction:column;position:relative;}
+
+/* Hoja de cuaderno: casi toda la pantalla, pestanas a la derecha, taladros a la izquierda. */
+.sheet{position:absolute;top:var(--edge);left:var(--edge);right:calc(var(--edge) + var(--tab-w));bottom:var(--edge);
+  background:var(--paper);box-shadow:0 16px 44px rgba(0,0,0,.5);display:flex;flex-direction:column;overflow:hidden;}
+.sheet::after{content:"";position:absolute;left:calc(var(--pad-l) - 1.05rem);top:0;bottom:0;width:2px;background:rgba(194,94,60,.3);pointer-events:none;}
+.binder{position:absolute;left:9px;top:0;bottom:0;width:14px;display:flex;flex-direction:column;justify-content:space-evenly;align-items:center;pointer-events:none;}
+.binder i{width:12px;height:12px;border-radius:50%;background:var(--charcoal);box-shadow:inset 0 1px 2px rgba(0,0,0,.7);}
+.cover .sheet{background:var(--deep);color:var(--paper);}
+.cover .binder i{background:#0c0a08;}
+.cover .sheet::after{background:rgba(247,242,230,.2);}
+
+.sheet-head,.sheet-foot{display:flex;justify-content:space-between;align-items:center;gap:1rem;
+  padding:clamp(.45rem,1vh,.8rem) var(--pad-r) clamp(.45rem,1vh,.8rem) var(--pad-l);
+  font-size:var(--small-size);color:var(--ink-soft);flex:none;}
+.sheet-head{border-bottom:1px dashed var(--line);}
+.sheet-foot{border-top:1px dashed var(--line);}
+.sheet-head .sec{background:var(--acc);color:var(--ink);font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  padding:.15em .6em;border-radius:3px;font-size:calc(var(--small-size)*.85);}
+.cover .sheet-head,.cover .sheet-foot{color:rgba(247,242,230,.7);border-color:rgba(247,242,230,.2);}
+
+.slide-content{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;justify-content:center;gap:var(--gap);
+  padding:var(--pad-y) var(--pad-r) var(--pad-y) var(--pad-l);}
+
+h1{font-family:var(--serif);font-weight:700;font-size:var(--title-size);line-height:1.04;margin:0;letter-spacing:-.01em;}
+h2{font-family:var(--serif);font-weight:700;font-size:var(--h2-size);line-height:1.08;margin:0;display:flex;align-items:baseline;gap:.5em;flex-wrap:wrap;}
+h2 .num{font-family:var(--serif);background:var(--acc);color:var(--ink);padding:.02em .32em;border-radius:4px;font-size:.85em;}
+p,li{font-size:var(--body-size);line-height:1.45;margin:.25em 0;}
+ul{margin:.1em 0;padding-left:1.15em;}
+li{margin:.3em 0;}
+b,strong{font-weight:700;}
+code{font-family:"DM Mono",ui-monospace,Menlo,Consolas,monospace;font-size:.92em;background:var(--paper2);padding:.05em .3em;border-radius:3px;}
+.cover code{background:rgba(247,242,230,.14);}
+.kicker{font-size:var(--small-size);font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--hot);margin:0;}
+.cover .kicker{color:var(--clay);}
+.rule{height:5px;background:var(--acc);width:clamp(70px,9vw,150px);margin:.4em 0;}
+.cap{color:var(--ink-soft);font-size:calc(var(--body-size)*.82);margin:.2em 0 0;}
+
+/* Bloques de ecuacion estilo LaTeX */
+.eq{background:var(--paper2);border-left:5px solid var(--acc);padding:.55em .9em;overflow-x:auto;}
+.eq .katex-display{margin:0;}
+.eq .katex-display{text-align:left;}
+.eq+.eq{margin-top:.5em;}
+.eq-lg{font-size:clamp(.95rem,1.6vw,1.35rem);}
+
+/* Tarjetas y estadisticas */
+.grid2{display:grid;grid-template-columns:1.04fr .96fr;gap:calc(var(--gap)*1.4);align-items:start;}
+.grid2.wide-right{grid-template-columns:.86fr 1.14fr;}
+.grid2.wide-left{grid-template-columns:1.16fr .84fr;}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);}
+.card{background:var(--paper2);border-top:5px solid var(--acc);padding:.6em .85em;}
+.card .k{display:block;font-size:var(--small-size);text-transform:uppercase;letter-spacing:.1em;color:var(--ink-soft);}
+.card .v{font-family:var(--serif);font-weight:700;font-size:clamp(1.3rem,2.6vw,2.2rem);line-height:1.15;}
+.card .s{display:block;font-size:calc(var(--body-size)*.85);color:var(--ink-soft);line-height:1.35;margin-top:.15em;}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap);}
+.stat{background:var(--paper2);border-bottom:5px solid var(--acc);padding:.6em .85em;text-align:left;}
+.stat .v{font-family:var(--serif);font-weight:700;font-size:var(--bignum);line-height:1;letter-spacing:-.02em;}
+.stat .k{display:block;font-size:calc(var(--body-size)*.85);color:var(--ink-soft);margin-top:.3em;line-height:1.3;}
+
+/*Tabla*/
+table{border-collapse:collapse;width:100%;font-size:var(--body-size);}
+th,td{text-align:left;padding:.42em .55em;border-bottom:1px solid var(--line);vertical-align:top;}
+th{font-size:calc(var(--body-size)*.78);text-transform:uppercase;letter-spacing:.07em;color:var(--ink-soft);border-bottom:2px solid var(--ink);}
+tr.win td{background:rgba(194,94,60,.1);font-weight:700;}
+tr.opt td{font-style:italic;color:var(--ink-soft);}
+
+/* Barra de progreso */
+#progress{position:fixed;top:0;left:0;height:4px;background:var(--butter);width:0;z-index:60;}
+
+/* Pestanas laterales de seccion */
+.tabs{position:fixed;top:0;right:0;bottom:0;width:var(--tab-w);display:flex;flex-direction:column;gap:4px;padding:var(--edge) 0;z-index:50;}
+.tab{flex:1;border:none;cursor:pointer;writing-mode:vertical-rl;text-orientation:mixed;
+  font-family:var(--sans);font-size:clamp(.5rem,.72vw,.72rem);font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink);opacity:.32;border-radius:0 7px 7px 0;display:flex;align-items:center;justify-content:center;
+  transition:opacity .25s ease,margin .25s ease,transform .25s ease;overflow:hidden;padding:0;}
+.tab:hover{opacity:.7;}
+.tab.on{opacity:1;margin-left:-10px;box-shadow:-4px 0 10px rgba(0,0,0,.35);}
+.tab[data-c="clay"]{background:var(--clay);}
+.tab[data-c="mint"]{background:var(--mint);}
+.tab[data-c="peach"]{background:var(--peach);}
+.tab[data-c="lavender"]{background:var(--lavender);}
+.tab[data-c="butter"]{background:var(--butter);}
+.tab[data-c="sky"]{background:var(--sky);}
+.tab[data-c="rose"]{background:var(--rose);}
+.tab[data-c="sage"]{background:var(--sage);}
+
+/* Figuras: llenan el ancho disponible */
+.figure{flex:1;min-height:0;display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:.35rem;}
+.figure img{width:100%;flex:1;min-height:0;object-fit:contain;}
+.figure figcaption{font-size:calc(var(--body-size)*.8);color:var(--ink-soft);text-align:center;}
+.figure.fixed{flex:none;}
+.figure.fixed img{height:auto;max-height:min(46vh,420px);}
+
+/* Insight full-width sobre pastel */
+.insight{background:var(--acc);color:var(--ink);padding:.6em 1em;font-weight:700;font-size:calc(var(--body-size)*1.05);line-height:1.4;flex:none;}
+.insight b{color:var(--hot);}
+
+/* Pasos del experimento */
+.steps{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .7rem;}
+.step{display:flex;align-items:center;gap:.5rem;background:var(--paper2);padding:.4em .7em;font-size:var(--body-size);line-height:1.3;}
+.step .chip{font-family:var(--serif);font-weight:700;background:var(--acc);width:1.5em;height:1.5em;display:flex;align-items:center;justify-content:center;border-radius:50%;flex:none;}
+.arrow{color:var(--hot);font-weight:700;}
+
+/* Barras de la ablacion de rejillas */
+.bars{display:flex;flex-direction:column;gap:.55rem;background:var(--paper2);padding:.8em .95em;}
+.bars .title{font-size:var(--small-size);text-transform:uppercase;letter-spacing:.1em;color:var(--ink-soft);}
+.bar-head{display:flex;justify-content:space-between;font-size:calc(var(--body-size)*.9);margin-bottom:.2em;}
+.track{height:.75em;background:rgba(29,26,22,.12);}
+.track i{display:block;height:100%;background:var(--ink);}
+.track i.best{background:var(--hot);}
+
+/* Entrada de elementos */
+.reveal{opacity:0;transform:translateY(14px);transition:opacity .45s ease,transform .45s ease;}
 .slide.active .reveal{opacity:1;transform:none;}
-.slide.active .reveal.d1{transition-delay:0.1s;}
-.slide.active .reveal.d2{transition-delay:0.2s;}
-.slide.active .reveal.d3{transition-delay:0.3s;}
-.cover{background:var(--ink);color:var(--paper);}
-.cover .kicker{color:var(--red);}
-.cover .cap{color:#b9b6ae;}
-.rule{height:6px;background:var(--red);width:clamp(60px,10vw,140px);margin:0 0 var(--gap);}
-@media (max-height:700px){:root{--slide-padding:clamp(0.75rem,3vw,2rem);}}
-@media (max-height:600px){:root{--slide-padding:clamp(0.5rem,2.5vw,1.5rem);} .hint{display:none;}}
-@media (max-width:600px){.grid2{grid-template-columns:1fr;}}
-@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms !important;transition-duration:0.2s !important;} html{scroll-behavior:auto;}}
+.slide.active .reveal.d1{transition-delay:.1s;}
+.slide.active .reveal.d2{transition-delay:.2s;}
+.slide.active .reveal.d3{transition-delay:.3s;}
+.cover h1{color:var(--paper);}
+
+@media (max-height:700px){
+  :root{--pad-y:clamp(.5rem,1.2vh,.9rem);--h2-size:clamp(1.15rem,2.8vw,2rem);--gap:clamp(.4rem,1.3vh,.9rem);}
+}
+@media (max-height:600px){
+  :root{--pad-y:.4rem;--title-size:clamp(1.3rem,4vw,2.4rem);--body-size:clamp(.75rem,1.3vw,.95rem);}
+  .tab{font-size:.5rem;letter-spacing:.06em;}
+}
+@media (max-width:640px){
+  :root{--pad-l:2rem;--title-size:clamp(1.3rem,7vw,2.2rem);}
+  .grid2,.grid2.wide-right,.grid2.wide-left,.cards{grid-template-columns:1fr;}
+  .stats{grid-template-columns:1fr;}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.2s !important;}
+  html{scroll-behavior:auto;}
+}
 </style>
 </head>
 <body>
-<main id="deck">
-<!-- 1 Portada -->
-<section class="slide cover" aria-label="Portada">
-<div class="slide-content">
-<p class="kicker reveal">DS5345 · P1 · Grupo 1</p>
-<h1 class="reveal d1">Persecución de balón en RoboCup 2D con Q-Learning tabular</h1>
-<p class="reveal d2">Leonardo Candio · Dimael Rivas — UTEC 2026-II, Prof. Percy W. Lovón Ramos</p>
-<p class="cap reveal d3">Una sola idea por slide: cada gráfico trae su lectura. Flechas o rueda para avanzar.</p>
-</div>
-</section>
-<!-- 2 Tarea -->
-<section class="slide" aria-label="La tarea">
-<div class="slide-content">
-<h2 class="reveal"><span class="n">01</span> La tarea: cazar un balón quieto</h2>
-<div class="grid2">
-<div class="reveal d1">
-<p>Balón a <b>5–40 m</b>, capturar a <b>≤ 0.8 m</b> en <b>&lt; 40 pasos</b> con DASH 100 / 50 y TURN ±35.</p>
-<p class="insight">El agente pasa de vagar a ir casi recto al balón.</p>
-</div>
-<div class="reveal d2"><img src="assets/fig_kit_learning_traj.png" alt="Trayectorias que se vuelven rectas con el entrenamiento"></div>
-</div>
-</div>
-</section>
-<!-- 3 Hallazgo -->
-<section class="slide" aria-label="Hallazgo central">
-<div class="slide-content">
-<h2 class="reveal"><span class="n">02</span> El hallazgo: el 90 % es imposible en rango completo</h2>
-<div class="grid2">
-<div class="reveal d1"><p class="bignum">87.9<small> %</small></p><p class="cap">Máximo exacto (A*) en [5, 40] m: ninguna política lo supera.</p></div>
-<div class="reveal d2"><p class="bignum">100<small> %</small></p><p class="cap">Nuestra política con reset del kit (19.1 pasos; óptimo 18.6).</p></div>
-</div>
-<p class="insight reveal d3">Con inicios lejanos el presupuesto de 40 pasos no alcanza: es límite de la tarea, no del aprendizaje.</p>
-</div>
-</section>
-<!-- 4 Ablación -->
-<section class="slide" aria-label="Exploración">
-<div class="slide-content">
-<h2 class="reveal"><span class="n">03</span> Explorar mucho al inicio gana</h2>
-<div class="reveal d1"><img src="assets/fig_kit_eval.png" alt="Curva de evaluación greedy: épsilon decreciente sobre constante"></div>
-<p class="insight reveal d2">ε decreciente llega al 80 % en 12–16k episodios; el constante necesita 16–32k y termina más bajo (85.7 vs 84.3 %).</p>
-</div>
-</section>
-<!-- 5 Entrenamiento -->
-<section class="slide" aria-label="Entrenamiento">
-<div class="slide-content">
-<h2 class="reveal"><span class="n">04</span> El retorno cuenta la misma historia</h2>
-<div class="reveal d1"><img src="assets/fig_kit_training.png" alt="Retorno G0 y éxito durante el entrenamiento"></div>
-<p class="insight reveal d2">G0 104.1 con 26.3 pasos (decreciente) frente a 102.2 con 26.6 (constante).</p>
-</div>
-</section>
-<!-- 6 Política -->
-<section class="slide" aria-label="Política">
-<div class="slide-content">
-<h2 class="reveal"><span class="n">05</span> La política cabe en una frase</h2>
-<div class="reveal d1"><img src="assets/fig_kit_policy_value.png" alt="Política greedy y función de valor aprendidas"></div>
-<p class="insight reveal d2">Avanza entre −35° y +17.5°; fuera de ahí, gira hacia el balón. Sin oscilaciones.</p>
-</div>
-</section>
-<!-- 7 Discretización -->
-<section class="slide" aria-label="Discretización">
-<div class="slide-content">
-<h2 class="reveal"><span class="n">06</span> La rejilla fina decide el resultado</h2>
-<div class="reveal d1">
-<p>Kit 20 estados → 56.6 %</p><div class="bar"><i style="width:56.6%"></i></div>
-<p>Nuestra 20 estados → 61.0 %</p><div class="bar"><i style="width:61%"></i></div>
-<p><b>R3, 99 estados → 85.7 %</b></p><div class="bar"><i class="r" style="width:85.7%"></i></div>
-</div>
-<p class="insight reveal d2">R3 representa la ventana asimétrica de avance; refinar más (R4) empeora por falta de datos.</p>
-</div>
-</section>
-<!-- 8 Servidor -->
-<section class="slide" aria-label="Servidor real">
-<div class="slide-content">
-<h2 class="reveal"><span class="n">07</span> En el servidor real manda la física</h2>
-<div class="grid2">
-<div class="reveal d1"><img src="assets/fig_live_capture_by_distance.png" alt="Captura en vivo según distancia inicial"></div>
-<div class="reveal d2">
-<p>Política del kit en vivo: <b>26 %</b>. Reentrenada con física real: <b>73.5 %</b>.</p>
-<p class="insight">Los fallos se concentran pasando los 30 m: ≈ 98 % debajo, 0 % sobre 35 m.</p>
-</div>
-</div>
-</div>
-</section>
-<!-- 9 Cierre -->
-<section class="slide" aria-label="Cierre">
-<div class="slide-content">
-<h2 class="reveal"><span class="n">08</span> Cierre</h2>
-<div class="reveal d1">
-<p><b>100 %</b> con reset del kit · <b>85.7 %</b> en rango (óptimo 87.9 %) · verificado en <b>rcssserver</b>.</p>
-<p>P2: DQN/PPO continuos, entrenar con física del servidor, recompensa consistente con el descuento.</p>
-</div>
-<p class="cap reveal d2">Código, notebooks y artefactos en github.com/artrivas/RL-Project</p>
-</div>
-</section>
-</main>
+<nav class="tabs" aria-label="Secciones">
+  <button class="tab" data-c="clay" data-i="0">P1</button>
+  <button class="tab" data-c="mint" data-i="1">Tarea</button>
+  <button class="tab" data-c="peach" data-i="2">MDP</button>
+  <button class="tab" data-c="lavender" data-i="5">Método</button>
+  <button class="tab" data-c="butter" data-i="7">Resultados</button>
+  <button class="tab" data-c="sky" data-i="11">Análisis</button>
+  <button class="tab" data-c="rose" data-i="12">Transfer.</button>
+  <button class="tab" data-c="sage" data-i="13">Cierre</button>
+</nav>
 <div id="progress"></div>
-<div id="counter">1 / 9</div>
-<div class="hint">← → o rueda para navegar</div>
+
+<main id="deck">
+
+<!-- 1. Portada -->
+<section class="slide cover" style="--acc:var(--clay)" aria-label="Portada">
+  <div class="sheet">
+    <div class="binder" aria-hidden="true"><i></i><i></i><i></i></div>
+    <header class="sheet-head"><span>Informe técnico · Proyecto 1</span><span class="sec">Fase 1</span></header>
+    <div class="slide-content">
+      <p class="kicker reveal">DS5345 · Aprendizaje por Refuerzo · 2026-II</p>
+      <h1 class="reveal d1">Persecución e intercepción de balón en RoboCup 2D con Q-Learning tabular</h1>
+      <div class="rule reveal d1"></div>
+      <p class="reveal d2" style="font-size:var(--body-size)"><b>Grupo N° 1</b> — Leonardo Candio · Dimael Rivas<br>
+      Docente: Percy W. Lovón Ramos · UTEC</p>
+      <p class="cap reveal d3">MDP con 99 estados y 396 valores Q · 80 000 episodios por corrida con 5 semillas ·
+      validación en vivo contra <b>rcssserver</b> · github.com/artrivas/RL-Project</p>
+    </div>
+    <footer class="sheet-foot"><span>Informe P1 · Persecución de balón</span><span>1 / 14</span></footer>
+  </div>
+</section>
+
+<!-- 2. Tarea -->
+<section class="slide" style="--acc:var(--mint)" aria-label="La tarea">
+  <div class="sheet">
+    <div class="binder" aria-hidden="true"><i></i><i></i><i></i></div>
+    <header class="sheet-head"><span>1 · Introducción y descripción de la tarea</span><span class="sec">Tarea</span></header>
+    <div class="slide-content">
+      <h2 class="reveal"><span class="num">01</span> La tarea: interceptar un balón inmóvil</h2>
+      <div class="grid2">
+        <div class="reveal d1">
+          <ul>
+            <li>RoboCup 2D: el jugador ejecuta un comando por ciclo de 100 ms, así que <b>40 pasos = 4 segundos</b> de juego.</li>
+            <li>Parte de posición y orientación arbitrarias con el balón quieto a $d_0 \in [5, 40]$ m; debe capturarlo ($d \le 0.8$ m) en el menor tiempo posible.</li>
+            <li>Criterio del enunciado: tasa de captura <b>&gt; 90 %</b> en menos de 40 pasos.</li>
+            <li>Entorno principal: cinemática exacta del starter kit del curso, sin inercia ni ruido, con observación verdadera de $(d, \theta)$.</li>
+          </ul>
+        </div>
+        <div class="reveal d2">
+          <div class="eq eq-lg">$$\texttt{DASH } p:\ \mathbf{x} \mathrel{+}= \ell_p\,(\cos\phi,\ \sin\phi),\quad \ell_{100}=1\ \text{m},\ \ell_{50}=0.5\ \text{m}$$</div>
+          <div class="eq eq-lg">$$\texttt{TURN } {\pm}35:\ \phi \mathrel{+}= {\pm}\,35^\circ$$</div>
+          <div class="cards" style="margin-top:var(--gap)">
+            <div class="card"><span class="k">Distribución de entrenamiento</span><span class="s">$d_0$ uniforme en [5, 40] m, con posición y orientación arbitrarias; también evalúa.</span></div>
+            <div class="card"><span class="k">Reset del kit</span><span class="s">Jugador cerca de $(-15, 0)$ y balón en el centro: $d_0 \approx 11$–19 m.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="sheet-foot"><span>Grupo N° 1 · Leonardo Candio — Dimael Rivas</span><span>2 / 14</span></footer>
+  </div>
+</section>
+
+<!-- 3. MDP -->
+<section class="slide" style="--acc:var(--peach)" aria-label="Formulación del MDP">
+  <div class="sheet">
+    <div class="binder" aria-hidden="true"><i></i><i></i><i></i></div>
+    <header class="sheet-head"><span>2 · Modelado formal como MDP</span><span class="sec">MDP</span></header>
+    <div class="slide-content">
+      <h2 class="reveal"><span class="num">02</span> Formulación del MDP</h2>
+      <div class="eq eq-lg reveal d1">$$\mathcal{M} = \langle \mathcal{S},\ \mathcal{A},\ \mathcal{P},\ \mathcal{R},\ \gamma \rangle$$</div>
+      <div class="grid2">
+        <div class="reveal d1">
+          <ul>
+            <li><b>Estados:</b> $s = \big(b_d(d),\ b_\theta(\theta)\big)$ más un estado terminal de captura: 9 zonas de distancia × 11 sectores de rumbo.</li>
+            <li><b>Acciones:</b> $\mathcal{A} = \{\texttt{DASH 100},\ \texttt{DASH 50},\ \texttt{TURN +35},\ \texttt{TURN -35}\}$.</li>
+            <li><b>Transiciones:</b> deterministas sobre $(\mathbf{x}, \phi)$; sobre los bins, $\mathcal{P}(s' \mid s, a)$ es estocástica.</li>
+          </ul>
+        </div>
+        <div class="reveal d2">
+          <div class="eq">$$|\mathcal{S}| = 9 \times 11 = 99, \qquad |\mathcal{Q}| = 99 \times 4 = 396$$</div>
+          <ul>
+            <li>El bin no guarda la posición exacta: un <code>TURN +35</code> pone al frente un balón a $30^\circ$, pero no uno a $80^\circ$, aunque estén en el mismo sector.</li>
+            <li>Es <b>aliasing de estados</b>: $\mathcal{S}$ es una aproximación, no un estado de Markov exacto.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <footer class="sheet-foot"><span>Grupo N° 1 · Leonardo Candio — Dimael Rivas</span><span>3 / 14</span></footer>
+  </div>
+</section>
+
+<!-- 4. Recompensa -->
+<section class="slide" style="--acc:var(--peach)" aria-label="Recompensa y descuento">
+  <div class="sheet">
+    <div class="binder" aria-hidden="true"><i></i><i></i><i></i></div>
+    <header class="sheet-head"><span>2 · Modelado formal como MDP</span><span class="sec">MDP</span></header>
+    <div class="slide-content">
+      <h2 class="reveal"><span class="num">03</span> Recompensa, retorno y descuento</h2>
+      <div class="grid2 wide-left">
+        <div class="reveal d1">
+          <div class="eq eq-lg">$$r_t = (d_t - d_{t+1}) - 0.2 + 100 \cdot \mathbf{1}\{d_{t+1} \le 0.8\}$$</div>
+          <div class="eq eq-lg">$$G_0 = \sum_{t=0}^{T-1} \gamma^{t} r_t \ \overset{\gamma = 1}{=}\ (d_0 - d_T) - 0.2\,T + 100 \cdot \mathbf{1}\{\text{captura}\}$$</div>
+        </div>
+        <div class="reveal d2">
+          <ul>
+            <li>La recompensa es la del enunciado; con captura, $d_T$ es casi constante, así que <b>maximizar $G_0$ equivale a capturar en menos pasos</b>.</li>
+            <li>Truncación en $T_{\max} = 40$ con bootstrap desde $s'$: el tiempo no forma parte del estado.</li>
+          </ul>
+          <div class="cards">
+            <div class="card"><span class="k">Bono con $\gamma = 0.99$</span><span class="v">67.6</span><span class="s">$100 \cdot 0.99^{39}$ en el paso 39</span></div>
+            <div class="card"><span class="k">Con $\gamma = 0.9$</span><span class="v">1.6</span><span class="s">$100 \cdot 0.9^{39}$: el bono se evapora</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="sheet-foot"><span>Grupo N° 1 · Leonardo Candio — Dimael Rivas</span><span>4 / 14</span></footer>
+  </div>
+</section>
+
+<!-- 5. Discretización -->
+<section class="slide" style="--acc:var(--peach)" aria-label="Discretización del estado">
+  <div class="sheet">
+    <div class="binder" aria-hidden="true"><i></i><i></i><i></i></div>
+    <header class="sheet-head"><span>2 · Modelado formal como MDP</span><span class="sec">MDP</span></header>
+    <div class="slide-content">
+      <h2 class="reveal"><span class="num">04</span> Discretización del estado (R3)</h2>
+      <div class="grid2">
+        <div class="reveal d1">
+          <table>
+            <tr><th>Componente</th><th>Bordes de los bins</th></tr>
+            <tr><td>Rumbo $b_\theta$</td><td>$\pm 2.5^\circ$, $\pm 7.5^\circ$, $\pm 17.5^\circ$, $\pm 35^\circ$, $\pm 90^\circ$</td></tr>
+            <tr><td>Distancia $b_d$</td><td>3, 6, 10, 15, 20, 25, 30, 35 m</td></tr>
+          </table>
+          <div class="eq" style="margin-top:var(--gap)">$$\theta_{\text{tol}} = \arcsin(0.8 / d)$$</div>
+        </div>
+        <div class="reveal d2">
+          <ul>
+            <li>La tolerancia angular de captura es $\theta_{\text{tol}}$: <b>4.6° a 10 m, 2.3° a 20 m, 1.5° a 30 m</b>, por eso los sectores son finos cerca del frente.</li>
+            <li>$17.5^\circ$ es la mitad del giro de $35^\circ$ (el error máximo tras girar), $35^\circ$ es un giro completo y $90^\circ$ separa delante de detrás.</li>
+            <li>Cada zona de distancia equivale a <b>3–5 pasos</b> frente al presupuesto de 40; más finas cerca, donde se decide la maniobra final.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <footer class="sheet-foot"><span>Grupo N° 1 · Leonardo Candio — Dimael Rivas</span><span>5 / 14</span></footer>
+  </div>
+</section>
+
+<!-- 6. Algoritmo -->
+<section class="slide" style="--acc:var(--lavender)" aria-label="Algoritmo">
+  <div class="sheet">
+    <div class="binder" aria-hidden="true"><i></i><i></i><i></i></div>
+    <header class="sheet-head"><span>3 · Algoritmo de aprendizaje por refuerzo</span><span class="sec">Método</span></header>
+    <div class="slide-content">
+      <h2 class="reveal"><span class="num">05</span> Q-Learning y estrategia de exploración</h2>
+      <div class="eq eq-lg reveal d1">$$Q(s, a) \leftarrow Q(s, a) + \alpha \Big[ r + \gamma \max_{a'} Q(s', a') - Q(s, a) \Big]$$</div>
+      <div class="grid2">
+        <div class="reveal d1">
+          <ul>
+            <li>Acciones $\varepsilon$-greedy con desempate al azar y sin bootstrap en estados terminales.</li>
+            <li>Dos exploraciones con <b>el mismo nivel final</b>: constante frente a decaiente.</li>
+            <li>Q-Learning, SARSA y Monte Carlo first-visit terminan empatados dentro del ruido ($\approx 85$ %); se reporta Q-Learning.</li>
+          </ul>
+          <div class="eq">$$\varepsilon_k = \max(0.1,\ 1.0 \cdot d^k),\qquad d = 0.999952$$</div>
+        </div>
+        <div class="reveal d2">
+          <div class="cards">
+            <div class="card"><span class="k">Tasa de aprendizaje</span><span class="v">0.1</span><span class="s">$\alpha$ fijo</span></div>
+            <div class="card"><span class="k">Descuento</span><span class="v">0.99</span><span class="s">$\gamma$ fijo</span></div>
+            <div class="card"><span class="k">Corrida</span><span class="v">80 000</span><span class="s">episodios por condición</span></div>
+            <div class="card"><span class="k">Semillas</span><span class="v">5</span><span class="s">por condición</span></div>
+          </div>
+          <p class="cap">El decaimiento llega a $\varepsilon = 0.1$ al 60 % del presupuesto; la evaluación greedy usa $\varepsilon = 0$.</p>
+        </div>
+      </div>
+    </div>
+    <footer class="sheet-foot"><span>Grupo N° 1 · Leonardo Candio — Dimael Rivas</span><span>6 / 14</span></footer>
+  </div>
+</section>
+
+<!-- 7. Diseño experimental -->
+<section class="slide" style="--acc:var(--lavender)" aria-label="Diseño experimental">
+  <div class="sheet">
+    <div class="binder" aria-hidden="true"><i></i><i></i><i></i></div>
+    <header class="sheet-head"><span>3 · Algoritmo de aprendizaje por refuerzo</span><span class="sec">Método</span></header>
+    <div class="slide-content">
+      <h2 class="reveal"><span class="num">06</span> Diseño experimental</h2>
+      <div class="steps reveal d1">
+        <div class="step"><span class="chip">1</span> Entrenar con $d_0 \in [5, 40]$ m</div>
+        <span class="arrow">→</span>
+        <div class="step"><span class="chip">2</span> Evaluar la política greedy cada 4 000 episodios sobre 500 inicios fijos</div>
+        <span class="arrow">→</span>
+        <div class="step"><span class="chip">3</span> Evaluar la Q-table final sobre 500 inicios del reset del kit</div>
+        <span class="arrow">→</span>
+        <div class="step"><span class="chip">4</span> Ejecutar en vivo en <b>rcssserver</b> (200 episodios por distribución)</div>
+      </div>
+      <div class="grid2">
+        <div class="reveal d2">
+          <div class="cards">
+            <div class="card"><span class="k">Fidelidad al kit</span><span class="v">89.2 % ± 17.2</span><span class="s">Configuración del notebook del kit (MC first-visit, 3 500 episodios) en 8 semillas: entre 44.8 % y 100 %. Una sola semilla no es representativa.</span></div>
+            <div class="card"><span class="k">Óptimo exacto (A*)</span><span class="v">87.9 %</span><span class="s">Mínimo exacto de pasos sobre todas las secuencias de acciones, con heurística admisible, 1 000 inicios y ningún caso indeterminado.</span></div>
+          </div>
+        </div>
+        <div class="reveal d3">
+          <div class="eq eq-lg">$$\hat{p} = \frac{1}{N} \sum_{i=1}^{N} \mathbf{1}\{T_i < 40\}$$</div>
+          <ul>
+            <li>Métrica principal: tasa de capturas en menos de 40 pasos; además, pasos medios y retorno $G_0$.</li>
+            <li>Se guardan Q-table, historial y configuración de cada corrida.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <footer class="sheet-foot"><span>Grupo N° 1 · Leonardo Candio — Dimael Rivas</span><span>7 / 14</span></footer>
+  </div>
+</section>
+
+<!-- 8. Resultados: ablación -->
+<section class="slide" style="--acc:var(--butter)" aria-label="Ablación de la exploración">
+  <div class="sheet">
+    <div class="binder" aria-hidden="true"><i></i><i></i><i></i></div>
+    <header class="sheet-head"><span>4 · Resultados experimentales</span><span class="sec">Resultados</span></header>
+    <div class="slide-content">
+      <h2 class="reveal"><span class="num">07</span> Ablación de la exploración</h2>
+      <div class="grid2 wide-left" style="flex:1;min-height:0;align-items:stretch">
+        <div class="reveal d1" style="display:flex;flex-direction:column;gap:var(--gap);min-height:0;justify-content:center">
+          <table>
+            <tr><th>Exploración</th><th>Final [5, 40] m</th><th>70 % / 80 % (episodios)</th><th>Reset kit</th><th>Pasos</th></tr>
+            <tr class="win"><td>$\varepsilon$ decreciente</td><td>0.857 ± 0.003</td><td>12k / 12k–16k</td><td>1.000</td><td>19.1</td></tr>
+            <tr><td>$\varepsilon = 0.1$ constante</td><td>0.843 ± 0.013</td><td>16k / 16k–32k</td><td>1.000</td><td>19.3</td></tr>
+            <tr class="opt"><td>Óptimo exacto (A*)</td><td>0.879</td><td>—</td><td>1.000</td><td>18.6</td></tr>
+          </table>
+          <p class="cap">Q-Learning, R3, evaluación greedy, 5 semillas. Con el decreciente, $G_0 = 104.1$ con 26.3 pasos; con el constante, $G_0 = 102.2$ con 26.6.</p>
+        </div>
+        <figure class="figure reveal d2" style="margin:0">
+          <img src="assets/fig_kit_eval.png" alt="Curva de evaluación greedy: epsilon decreciente sobre epsilon constante">
+          <figcaption>Evaluación greedy sobre 500 inicios fijos en [5, 40] m (media ± desv. est., 5 semillas).</figcaption>
+        </figure>
+      </div>
+      <div class="insight reveal d3">El decreciente alcanza el 80 % en 12 000–16 000 episodios; el constante necesita 16 000–32 000 y termina <b>1.4 pp más abajo</b>. Ninguna política supera el techo de 87.9 %.</div>
+    </div>
+    <footer class="sheet-foot"><span>Grupo N° 1 · Leonardo Candio — Dimael Rivas</span><span>8 / 14</span></footer>
+  </div>
+</section>
+
+<!-- 9. Entrenamiento -->
+<section class="slide" style="--acc:var(--butter)" aria-label="Entrenamiento">
+  <div class="sheet">
+    <div class="binder" aria-hidden="true"><i></i><i></i><i></i></div>
+    <header class="sheet-head"><span>4 · Resultados experimentales</span><span class="sec">Resultados</span></header>
+    <div class="slide-content">
+      <h2 class="reveal"><span class="num">08</span> Retorno y éxito durante el entrenamiento</h2>
+      <figure class="figure reveal d1" style="margin:0">
+        <img src="assets/fig_kit_training.png" alt="Retorno G0 y tasa de éxito de los episodios de entrenamiento">
+        <figcaption>Retorno $G_0$ y tasa de éxito de los episodios de entrenamiento (con exploración), media móvil de 500 episodios.</figcaption>
+      </figure>
+      <div class="insight reveal d2">Con exploración $\varepsilon$ decreciente, $G_0 = 104.1$ con 26.3 pasos; con constante, $G_0 = 102.2$ con 26.6. Las curvas de entrenamiento quedan <b>por debajo de la evaluación greedy</b> porque siguen explorando.</div>
+    </div>
+    <footer class="sheet-foot"><span>Grupo N° 1 · Leonardo Candio — Dimael Rivas</span><span>9 / 14</span></footer>
+  </div>
+</section>
+
+<!-- 10. Política y valor -->
+<section class="slide" style="--acc:var(--butter)" aria-label="Política y valor">
+  <div class="sheet">
+    <div class="binder" aria-hidden="true"><i></i><i></i><i></i></div>
+    <header class="sheet-head"><span>4 · Resultados experimentales</span><span class="sec">Resultados</span></header>
+    <div class="slide-content">
+      <h2 class="reveal"><span class="num">09</span> Política y valor aprendidos</h2>
+      <figure class="figure reveal d1" style="margin:0">
+        <img src="assets/fig_kit_policy_value.png" alt="Política greedy y función de valor aprendidas">
+        <figcaption>Política greedy $\hat{\pi}(s)$ (izq.) y valor $\hat{V}(s) = \max_a Q(s, a)$ (der.); filas: distancia, columnas: rumbo relativo.</figcaption>
+      </figure>
+      <div class="insight reveal d2"><code>DASH 100</code> cuando el balón está entre <b>−35° y +17.5°</b>; fuera de esa ventana, gira hacia él. La ventana es más ancha que un giro de 35°, así que tras girar el balón queda dentro y la política no oscila.</div>
+    </div>
+    <footer class="sheet-foot"><span>Grupo N° 1 · Leonardo Candio — Dimael Rivas</span><span>10 / 14</span></footer>
+  </div>
+</section>
+
+<!-- 11. Trayectorias -->
+<section class="slide" style="--acc:var(--butter)" aria-label="Trayectorias">
+  <div class="sheet">
+    <div class="binder" aria-hidden="true"><i></i><i></i><i></i></div>
+    <header class="sheet-head"><span>4 · Resultados experimentales</span><span class="sec">Resultados</span></header>
+    <div class="slide-content">
+      <h2 class="reveal"><span class="num">10</span> Trayectorias: de erráticas a casi rectas</h2>
+      <figure class="figure reveal d1" style="margin:0">
+        <img src="assets/fig_kit_learning_traj.png" alt="Trayectorias 2D de la política greedy a lo largo del entrenamiento">
+        <figcaption>Trayectorias 2D de la política greedy guardada durante el entrenamiento en 4 inicios del reset del kit (claro = temprano, oscuro = tarde).</figcaption>
+      </figure>
+      <div class="insight reveal d2">La corrección fina no la aporta un estado especial: es <b>geométrica</b>. Al acercarse con un error pequeño, el rumbo del balón crece hasta cruzar el umbral de $17.5^\circ$ y el agente gira.</div>
+    </div>
+    <footer class="sheet-foot"><span>Grupo N° 1 · Leonardo Candio — Dimael Rivas</span><span>11 / 14</span></footer>
+  </div>
+</section>
+
+<!-- 12. Discusión -->
+<section class="slide" style="--acc:var(--sky)" aria-label="Discusión">
+  <div class="sheet">
+    <div class="binder" aria-hidden="true"><i></i><i></i><i></i></div>
+    <header class="sheet-head"><span>5 · Discusión y análisis de ablación</span><span class="sec">Análisis</span></header>
+    <div class="slide-content">
+      <h2 class="reveal"><span class="num">11</span> ¿Por qué no obtenemos mejores resultados?</h2>
+      <div class="grid2">
+        <div class="reveal d1">
+          <ul>
+            <li><b>El presupuesto de 40 pasos no alcanza.</b> Con 1 m por paso, un balón a 35–40 m consume casi todo el horizonte: el óptimo captura apenas el 18.7 % de esos inicios. El 90 % en [5, 40] m es <b>inalcanzable para cualquier política</b>.</li>
+            <li><b>Brecha de la representación tabular.</b> 85.7 % frente a 87.9 %: hasta 30 m capturamos el 100 %, la diferencia está en 30–40 m, donde el óptimo usa maniobras precisas.</li>
+            <li><b>La física del kit no es la del servidor.</b> En <code>rcssserver</code> el avance crece de 0.6 a 1 m por ciclo, el giro se reduce con la velocidad, hay ruido y visión parcial.</li>
+          </ul>
+        </div>
+        <div class="reveal d2">
+          <div class="bars">
+            <span class="title">Rejillas comparadas en [5, 40] m (5 semillas)</span>
+            <div><div class="bar-head"><span>Rejilla del kit (20 estados)</span><b>56.6 %</b></div><div class="track"><i style="width:56.6%"></i></div></div>
+            <div><div class="bar-head"><span>Nuestra v1 (20 estados)</span><b>61.0 %</b></div><div class="track"><i style="width:61%"></i></div></div>
+            <div><div class="bar-head"><span><b>R3 (99 estados)</b></span><b>84.7 %</b></div><div class="track"><i class="best" style="width:84.7%"></i></div></div>
+            <div><div class="bar-head"><span>R4 (150 estados)</span><b>81.0 %</b></div><div class="track"><i style="width:81%"></i></div></div>
+          </div>
+          <p class="cap">Refinar más no ayuda: R4 necesita más datos de los que da el presupuesto de 80 000 episodios.</p>
+        </div>
+      </div>
+    </div>
+    <footer class="sheet-foot"><span>Grupo N° 1 · Leonardo Candio — Dimael Rivas</span><span>12 / 14</span></footer>
+  </div>
+</section>
+
+<!-- 13. Transferencia -->
+<section class="slide" style="--acc:var(--rose)" aria-label="Transferencia al servidor real">
+  <div class="sheet">
+    <div class="binder" aria-hidden="true"><i></i><i></i><i></i></div>
+    <header class="sheet-head"><span>5 · Discusión y análisis de ablación</span><span class="sec">Transfer.</span></header>
+    <div class="slide-content">
+      <h2 class="reveal"><span class="num">12</span> Transferencia a <code>rcssserver</code></h2>
+      <div class="grid2 wide-right" style="flex:1;min-height:0;align-items:stretch">
+        <figure class="figure reveal d1" style="margin:0">
+          <img src="assets/fig_live_capture_by_distance.png" alt="Tasa de captura en vivo según la distancia inicial">
+          <figcaption>Captura en vivo según la distancia inicial (200 episodios por distribución).</figcaption>
+        </figure>
+        <div class="reveal d2" style="display:flex;flex-direction:column;gap:var(--gap);justify-content:center">
+          <div class="cards">
+            <div class="card"><span class="k">Política del kit en vivo · reset kit</span><span class="v">26.0 % ± 3.1</span><span class="s">20.5 % ± 2.9 en [5, 40] m</span></div>
+            <div class="card"><span class="k">Reentrenada con física del servidor · [5, 40] m</span><span class="v">73.5 % ± 3.1</span><span class="s">71.5 % en su simulador</span></div>
+          </div>
+          <ul>
+            <li>Nuestro simulador con la física del servidor da 26.0 % y 21.0 %: la caída se debe a la <b>física, no a la conexión</b>.</li>
+            <li>0 comandos perdidos y 0 errores de reset en 200 episodios; prueba de <b>500 episodios seguidos sin errores de socket</b>.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="insight reveal d3">La misma política pasa del <b>26 %</b> al <b>73.5 %</b> cuando se entrena con la física real del servidor: el entorno, no el algoritmo, es el cuello de botella.</div>
+    </div>
+    <footer class="sheet-foot"><span>Grupo N° 1 · Leonardo Candio — Dimael Rivas</span><span>13 / 14</span></footer>
+  </div>
+</section>
+
+<!-- 14. Conclusiones -->
+<section class="slide" style="--acc:var(--sage)" aria-label="Conclusiones">
+  <div class="sheet">
+    <div class="binder" aria-hidden="true"><i></i><i></i><i></i></div>
+    <header class="sheet-head"><span>6 · Conclusiones</span><span class="sec">Cierre</span></header>
+    <div class="slide-content">
+      <h2 class="reveal"><span class="num">13</span> Conclusiones y trabajo futuro</h2>
+      <div class="stats reveal d1">
+        <div class="stat"><span class="v">100 %</span><span class="k">Reset del kit: 19.1 pasos (óptimo exacto: 18.6), en las 5 semillas</span></div>
+        <div class="stat"><span class="v">85.7 %</span><span class="k">[5, 40] m: el 97.5 % del techo exacto de 87.9 %</span></div>
+        <div class="stat"><span class="v">73.5 %</span><span class="k">En vivo con física del servidor y política reentrenada</span></div>
+      </div>
+      <div class="grid2">
+        <div class="reveal d2">
+          <ul>
+            <li><b>Formulación:</b> MDP tabular de 99 estados con discretización justificada por la tolerancia angular de captura y el giro de 35°.</li>
+            <li><b>Exploración:</b> el $\varepsilon$ decreciente aprende antes y es más estable que el constante.</li>
+            <li><b>Criterio:</b> cumplido con el reset del kit; en [5, 40] m el 90 % no es alcanzable para ninguna política.</li>
+          </ul>
+        </div>
+        <div class="reveal d3">
+          <ul>
+            <li><b>Transferencia:</b> ejecución verificada en <code>rcssserver</code> y reentrenamiento con su física.</li>
+            <li><b>Otras tareas del catálogo:</b> MDP formulados con tablas de 216 a 1 296 valores Q (conducción 432, tiro 216, 2v1 1 296), pendientes de implementar.</li>
+            <li><b>P2:</b> DQN/PPO continuos sobre $(d, \theta, v)$, entrenar con la física del servidor y recompensa consistente con el descuento.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <footer class="sheet-foot"><span>Grupo N° 1 · Leonardo Candio — Dimael Rivas</span><span>14 / 14</span></footer>
+  </div>
+</section>
+
+</main>
+
+<script src="assets/katex/katex.min.js"></script>
+<script src="assets/katex/contrib/auto-render.min.js"></script>
 <script>
-// Controlador: teclado, rueda, tactil, progreso y animaciones de entrada.
+// Render de ecuaciones estilo LaTeX con KaTeX local.
+document.addEventListener("DOMContentLoaded", function(){
+  if (window.renderMathInElement) {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left:"$$", right:"$$", display:true},
+        {left:"$",  right:"$",  display:false}
+      ],
+      throwOnError: false
+    });
+  }
+});
+
+// Controlador: teclado, rueda del mouse, tactil, pestanas de seccion y animaciones de entrada.
 (function(){
-  var slides=Array.prototype.slice.call(document.querySelectorAll(".slide"));
-  var i=0, bar=document.getElementById("progress"), counter=document.getElementById("counter");
+  var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+  var tabs = Array.prototype.slice.call(document.querySelectorAll(".tab"));
+  var starts = tabs.map(function(t){ return parseInt(t.getAttribute("data-i"), 10); });
+  var i = 0;
+  var bar = document.getElementById("progress");
+
+  function paint(){
+    slides.forEach(function(s, k){ s.classList.toggle("active", k === i); });
+    bar.style.width = ((i + 1) / slides.length * 100) + "%";
+    var sec = 0;
+    for (var k = 0; k < starts.length; k++){ if (i >= starts[k]) sec = k; }
+    tabs.forEach(function(t, k){ t.classList.toggle("on", k === sec); });
+  }
+
   function go(n){
-    i=Math.max(0,Math.min(slides.length-1,n));
-    slides[i].scrollIntoView({behavior:"document" in document&&window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    var smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    slides[i].scrollIntoView({behavior: smooth ? "smooth" : "auto"});
     paint();
   }
-  function paint(){
-    slides.forEach(function(s,k){s.classList.toggle("active",k===i);});
-    bar.style.width=((i+1)/slides.length*100)+"%";
-    counter.textContent=(i+1)+" / "+slides.length;
-  }
-  document.addEventListener("keydown",function(e){
-    if(e.key==="ArrowRight"||e.key===" "||e.key==="PageDown")go(i+1);
-    if(e.key==="ArrowLeft"||e.key==="PageUp")go(i-1);
-    if(e.key==="Home")go(0);
-    if(e.key==="End")go(slides.length-1);
+
+  document.addEventListener("keydown", function(e){
+    if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") go(i + 1);
+    if (e.key === "ArrowLeft" || e.key === "PageUp") go(i - 1);
+    if (e.key === "Home") go(0);
+    if (e.key === "End") go(slides.length - 1);
   });
-  var lock=false;
-  window.addEventListener("wheel",function(e){
-    if(lock)return; lock=true; setTimeout(function(){lock=false;},700);
-    go(i+(e.deltaY>0?1:-1));
-  },{passive:true});
-  var x0=null;
-  document.addEventListener("touchstart",function(e){x0=e.touches[0].clientY;},{passive:true});
-  document.addEventListener("touchend",function(e){
-    if(x0===null)return; var d=x0-e.changedTouches[0].clientY; x0=null;
-    if(Math.abs(d)>40)go(i+(d>0?1:-1));
-  },{passive:true});
-  var obs=new IntersectionObserver(function(es){
-    es.forEach(function(en){if(en.isIntersecting){i=slides.indexOf(en.target);paint();}});
-  },{threshold:0.55});
-  slides.forEach(function(s){obs.observe(s);});
+
+  var lock = false;
+  window.addEventListener("wheel", function(e){
+    if (lock) return;
+    lock = true;
+    setTimeout(function(){ lock = false; }, 700);
+    go(i + (e.deltaY > 0 ? 1 : -1));
+  }, {passive:true});
+
+  var y0 = null;
+  document.addEventListener("touchstart", function(e){ y0 = e.touches[0].clientY; }, {passive:true});
+  document.addEventListener("touchend", function(e){
+    if (y0 === null) return;
+    var d = y0 - e.changedTouches[0].clientY;
+    y0 = null;
+    if (Math.abs(d) > 40) go(i + (d > 0 ? 1 : -1));
+  }, {passive:true});
+
+  tabs.forEach(function(t, k){
+    t.addEventListener("click", function(){ go(parseInt(t.getAttribute("data-i"), 10)); });
+  });
+
+  var obs = new IntersectionObserver(function(es){
+    es.forEach(function(en){
+      if (en.isIntersecting){ i = slides.indexOf(en.target); paint(); }
+    });
+  }, {threshold:0.55});
+  slides.forEach(function(s){ obs.observe(s); });
+
   paint();
 })();
 </script>
