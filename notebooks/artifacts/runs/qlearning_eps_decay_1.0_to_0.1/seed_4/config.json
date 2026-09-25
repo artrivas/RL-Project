@@ -26,10 +26,6 @@
     ]
   },
   "seeds": [
-    0,
-    1,
-    2,
-    3,
     4
   ],
   "t_max": 40,
@@ -37,6 +33,15 @@
   "eval_episodes": 500,
   "eval_seed": 12345,
   "params_path": "notebooks/artifacts/server_params.json",
+  "snapshot_episodes": [
+    0,
+    500,
+    1000,
+    2000,
+    5000,
+    10000,
+    20000
+  ],
   "seed": 4,
   "actions": [
     "DASH 100",
@@ -236,5 +241,6 @@
     "wind_rand": 0.0,
     "wind_random": 0.0
   },
-  "git_commit": null
+  "git_commit": null,
+  "source_sha256": "559995e7975cb0747b1e202d38bda3c825e729c5e42702febaf45e5deaa9a8b0"
 }

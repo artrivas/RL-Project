@@ -29,7 +29,7 @@ def load_policy(spec: str, params: Dict[str, Any]):
         return GreedyPursuit(params)
     with open(os.path.join(spec, "config.json")) as f:
         cfg = json.load(f)
-    disc = Discretizer(DiscretizerConfig(**{k: tuple(v) for k, v in cfg["discretizer"].items()}))
+    disc = Discretizer(DiscretizerConfig.from_dict(cfg["discretizer"]))
     return GreedyQPolicy(np.load(os.path.join(spec, "q.npy")), disc)
 
 

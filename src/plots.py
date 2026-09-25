@@ -174,9 +174,14 @@ def plot_value(Q: np.ndarray, disc: Discretizer, speed_bin: int = 0, ax=None,
 
 
 # ------------------------------------------------------------ trajectories
-def draw_pitch(ax) -> None:
-    ax.set_facecolor("#2e7d32")
-    kw = dict(color="white", linewidth=1.2)
+# Ordinal blue ramp (validated steps 250 -> 700): light = early, dark = late.
+ORDINAL_BLUES = ["#86b6ef", "#5598e7", "#3987e5", "#2a78d6", "#256abf", "#184f95", "#0d366b"]
+
+
+def draw_pitch(ax, light: bool = False) -> None:
+    """Pitch lines; ``light`` uses the chart surface with gray lines (for ordinal colours)."""
+    ax.set_facecolor(SURFACE if light else "#2e7d32")
+    kw = dict(color=GRID if light else "white", linewidth=1.2)
     ax.plot([-52.5, 52.5, 52.5, -52.5, -52.5], [-34, -34, 34, 34, -34], **kw)
     ax.plot([0, 0], [-34, 34], **kw)
     ax.add_patch(plt.Circle((0, 0), 9.15, fill=False, **kw))
@@ -243,6 +248,48 @@ def plot_trajectory_pair(live: Dict, sim: Dict, ax=None, half: float = 23.0):
     ax.set_xlim(cx - half, cx + half)
     ax.set_ylim(cy + half, cy - half)
     s = live["start"]
+    ax.set_title(f"d₀={s['distance']:.1f} m, θ₀={s['bearing']:.0f}°", fontsize=9, loc="left", color=TEXT)
+    ax.legend(fontsize=7, loc="lower left", framealpha=0.9)
+    ax.figure.set_facecolor(SURFACE)
+    return ax
+
+
+def plot_snapshot_trajectories(snapshots: Dict[str, Dict], idx: int, env: str = "sim", ax=None,
+                               half: float = 16.0):
+    """One start, the greedy policy of every training snapshot (light = early, dark = late).
+
+    ``snapshots``: ``{"ep_<k>": {"sim": [records], "live": [records]}}`` as saved by
+    ``src/live_snapshots.py``; ``idx`` selects the start.
+    """
+    ax = ax or plt.subplots(figsize=(5, 5))[1]
+    draw_pitch(ax, light=True)
+    keys = sorted(snapshots, key=lambda k: int(k.split("_")[1]))
+    colors = ORDINAL_BLUES[-len(keys):] if len(keys) <= len(ORDINAL_BLUES) else \
+        [BLUE_RAMP(x) for x in np.linspace(0.2, 1.0, len(keys))]
+    xs, ys = [], []
+    for key, color in zip(keys, colors):
+        rec = snapshots[key][env][idx]
+        px = [t["player"][0] for t in rec["trajectory"]]
+        py = [t["player"][1] for t in rec["trajectory"]]
+        ep = int(key.split("_")[1])
+        ax.plot(px, py, color=color, linewidth=2,
+                label=f"ep {ep:>5}: " + (f"captura en {rec['steps']}" if rec["captured"] else "sin captura"))
+        if not rec["captured"]:
+            ax.plot(px[-1], py[-1], "x", color=color, markersize=7, markeredgewidth=2)
+        xs += px
+        ys += py
+    first = snapshots[keys[0]][env][idx]
+    bx, by = first["trajectory"][0]["ball"]
+    ax.plot(first["trajectory"][0]["player"][0], first["trajectory"][0]["player"][1], "o",
+            color=TEXT_2, markersize=6)
+    ax.plot(bx, by, "o", color="white", markeredgecolor=TEXT, markersize=8)
+    xs.append(bx)
+    ys.append(by)
+    cx, cy = (min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2
+    half = max(half, (max(xs) - min(xs)) / 2 + 2, (max(ys) - min(ys)) / 2 + 2)
+    ax.set_xlim(cx - half, cx + half)
+    ax.set_ylim(cy + half, cy - half)
+    s = first["start"]
     ax.set_title(f"d₀={s['distance']:.1f} m, θ₀={s['bearing']:.0f}°", fontsize=9, loc="left", color=TEXT)
     ax.legend(fontsize=7, loc="lower left", framealpha=0.9)
     ax.figure.set_facecolor(SURFACE)

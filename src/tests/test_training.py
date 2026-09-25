@@ -105,3 +105,20 @@ def test_source_fingerprint_is_stable():
     from src.train import source_fingerprint
     a, b = source_fingerprint(), source_fingerprint()
     assert a == b and len(a) == 64
+
+
+def test_speed_dependent_angle_edges():
+    default = Discretizer(DiscretizerConfig())
+    same = Discretizer(DiscretizerConfig((3.0, 10.0, 20.0), (17.5, 90.0, 180.0), (0.2,), None))
+    for d in (1, 5, 15, 30):
+        for t in (-170, -60, -10, 0, 10, 60, 170):
+            for v in (0.0, 0.4):
+                assert default(obs(d, t, v)) == same(obs(d, t, v))
+    f = Discretizer(DiscretizerConfig((3.0, 10.0, 20.0), (17.5, 35.0, 90.0, 180.0), (0.2,),
+                                      angle_edges_moving=(5.85, 17.5, 90.0, 180.0)))
+    assert f.angle_bin(10.0, speed_bin=0) == 0      # at rest: front is +/-17.5
+    assert f.angle_bin(10.0, speed_bin=1) == 1      # moving: front is +/-5.85
+    cfg = f.config
+    assert DiscretizerConfig.from_dict(cfg.as_dict()) == cfg
+    assert DiscretizerConfig.from_dict({"distance_edges": [3], "angle_edges": [10, 180],
+                                        "speed_edges": []}).angle_edges_moving is None

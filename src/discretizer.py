@@ -13,11 +13,15 @@ no state index.
   the bin nearer the front; ``theta`` is wrapped to (-180, 180] first.
 * Speed: ``speed_edges`` interior edges on the sense_body speed (empty = no
   speed feature).
+* Optional ``angle_edges_moving``: angle edges used in every speed bin above the
+  first (the turn quantum shrinks with speed, so finer heading bins are only
+  reachable while moving). Must have as many edges as ``angle_edges``; ``None``
+  (default) uses ``angle_edges`` at all speeds.
 """
 
 import bisect
 from dataclasses import asdict, dataclass
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 from src.perception import UNKNOWN, Observation
 from src.sampler import wrap_deg
@@ -29,18 +33,30 @@ class DiscretizerConfig:
     distance_edges: Tuple[float, ...] = (3.0, 10.0, 20.0)
     angle_edges: Tuple[float, ...] = (17.5, 90.0, 180.0)
     speed_edges: Tuple[float, ...] = (0.2,)
+    angle_edges_moving: Optional[Tuple[float, ...]] = None
 
     def as_dict(self) -> dict:
-        return {k: list(v) for k, v in asdict(self).items()}
+        return {k: (list(v) if v is not None else None) for k, v in asdict(self).items()}
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "DiscretizerConfig":
+        """Inverse of ``as_dict``; also reads configs saved before optional fields existed."""
+        return cls(**{k: (tuple(v) if v is not None else None) for k, v in d.items()})
 
 
 class Discretizer:
     def __init__(self, config: DiscretizerConfig = DiscretizerConfig()):
         if list(config.distance_edges) != sorted(config.distance_edges):
             raise ValueError("distance_edges must be increasing")
-        edges = list(config.angle_edges)
-        if edges != sorted(edges) or edges[-1] != 180.0 or edges[0] <= 0.0:
-            raise ValueError("angle_edges must be positive, increasing and end at 180")
+        for edges in (config.angle_edges, config.angle_edges_moving):
+            if edges is None:
+                continue
+            edges = list(edges)
+            if edges != sorted(edges) or edges[-1] != 180.0 or edges[0] <= 0.0:
+                raise ValueError("angle edges must be positive, increasing and end at 180")
+        if (config.angle_edges_moving is not None
+                and len(config.angle_edges_moving) != len(config.angle_edges)):
+            raise ValueError("angle_edges_moving must have as many edges as angle_edges")
         self.config = config
         self.n_dist = len(config.distance_edges) + 1
         self.n_angle = 2 * len(config.angle_edges) - 1
@@ -51,10 +67,13 @@ class Discretizer:
     def distance_bin(self, d: float) -> int:
         return bisect.bisect_right(self.config.distance_edges, d)
 
-    def angle_bin(self, theta: float) -> int:
+    def angle_bin(self, theta: float, speed_bin: int = 0) -> int:
         """0 = front; then (right_1, left_1, right_2, left_2, ...) moving backwards."""
         theta = wrap_deg(theta)
-        ring = bisect.bisect_left(self.config.angle_edges, abs(theta))
+        edges = self.config.angle_edges
+        if speed_bin > 0 and self.config.angle_edges_moving is not None:
+            edges = self.config.angle_edges_moving
+        ring = bisect.bisect_left(edges, abs(theta))
         if ring == 0:
             return 0
         return 2 * ring - 1 if theta > 0 else 2 * ring
@@ -65,8 +84,9 @@ class Discretizer:
     def __call__(self, obs: Observation) -> int:
         if obs.status == UNKNOWN:
             return self.unknown_state
-        return ((self.distance_bin(obs.d) * self.n_angle + self.angle_bin(obs.theta))
-                * self.n_speed + self.speed_bin(obs.speed))
+        v = self.speed_bin(obs.speed)
+        return ((self.distance_bin(obs.d) * self.n_angle + self.angle_bin(obs.theta, v))
+                * self.n_speed + v)
 
     # ------------------------------------------------------------- labels
     def angle_labels(self) -> List[str]:

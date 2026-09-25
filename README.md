@@ -62,15 +62,16 @@ en `notebooks/artifacts/server_params.json`, y el simulador los usa.
 │   ├── train.py              # entrenamiento, evaluación y guardado de corridas
 │   ├── live_eval.py          # evaluación en vivo y estabilidad de largo plazo
 │   ├── sim_vs_live.py        # secuencias fijas: simulador vs. servidor
+│   ├── live_snapshots.py     # políticas guardadas durante el entrenamiento, ejecutadas en vivo
 │   ├── feasibility.py        # estimaciones de factibilidad del presupuesto de 40 pasos
 │   ├── live_check.py         # verificación rápida de la conexión
 │   ├── plots.py              # figuras de los notebooks
 │   └── tests/                # pruebas offline (incluye un servidor falso de punta a punta)
 └── notebooks/
     ├── 01_mdp_formulation.ipynb    # tupla ⟨S, A, P, R, γ⟩, discretización, P̂ empírica, γ, presupuesto temporal
-    ├── 02_train_baseline.ipynb     # selección del estado, ablación, curvas, π̂(s), V̂(s), trayectorias
-    ├── 03_live_validation.ipynb    # conexión, estabilidad, simulador vs. servidor, política en vivo
-    ├── 04_algorithm_selection.ipynb  # interno: Q-Learning vs. SARSA vs. MC (no es parte del informe P1)
+    ├── 02_train_baseline.ipynb     # selección del estado, ablación, curvas, π̂(s), V̂(s), trayectorias durante el aprendizaje
+    ├── 03_live_validation.ipynb    # conexión, estabilidad, simulador vs. servidor, política en vivo, aprendizaje en vivo
+    ├── 04_algorithm_selection.ipynb  # interno: Q-Learning vs. SARSA vs. MC y representaciones más finas
     └── artifacts/                  # corridas guardadas (Q-tables, historiales, configs), figuras, JSON
 ```
 
@@ -86,6 +87,9 @@ Todos los comandos corren dentro del contenedor (`docker compose exec rl-agent .
 | Comparación de representaciones de estado | `python -m src.train --preset discretization --out notebooks/artifacts/runs_discretization` | 3 min |
 | Ídem con α = 0.03 (candidatos B y C) | `python -m src.train --preset discretization --alpha 0.03 --only disc_B_front17.5 disc_C_front17.5_speed --out notebooks/artifacts/runs_discretization` | 2 min |
 | **Ablación de exploración** (5 semillas × 20k episodios) | `python -m src.train --preset ablation --out notebooks/artifacts/runs` | 2 min |
+| Instantáneas de aprendizaje (corrida en vivo, semilla 4) | `python -m src.train --preset ablation --only qlearning_eps_decay_1.0_to_0.1 --seeds 4 --snapshots 0 500 1000 2000 5000 10000 20000 --out notebooks/artifacts/runs` | 1 min |
+| Instantáneas ejecutadas en el servidor | `python -m src.live_snapshots --run notebooks/artifacts/runs/qlearning_eps_decay_1.0_to_0.1/seed_4` | 2 min |
+| Representaciones más finas (comparación interna) | `python -m src.train --preset refinement --out notebooks/artifacts/runs_refinement` | 6 min |
 | Comparación interna de algoritmos | `python -m src.train --preset algorithms --out notebooks/artifacts/runs_algorithms` | 3 min |
 | Estimaciones de factibilidad (controlador / cota demostrable sin ruido) | `python -m src.feasibility --controller --params notebooks/artifacts/server_params.json` y `... --ceiling` | 30 s |
 | Estabilidad y controlador en vivo (500 episodios) | `python -m src.live_eval --policy greedy --episodes 500` | 30 min |
@@ -127,6 +131,13 @@ Criterio de éxito: captura en < 40 pasos (1 paso = 1 ciclo de servidor de 100 m
 
 - La política aprendida captura ≥ 95 % de los balones que parten a menos de 30 m.
 - En 500 episodios consecutivos en vivo hubo 0 comandos perdidos, 0 errores de reset y 0 cambios de modo.
+- Durante el entrenamiento, la política greedy pasa de 0–1/4 capturas (0–1 000 episodios) a 4/4 desde 5 000
+  episodios sobre 4 inicios fijos, tanto en el servidor como en el simulador.
+- En el simulador, los algoritmos (Q-Learning, SARSA, MC) y las representaciones probadas se estancan cerca de
+  75 % (mejor evaluación individual 74–75 %), con distinto promedio y estabilidad. En vivo, los fallos se
+  concentran a más de 30 m: 97.8 % de captura bajo 30 m, 33 % entre 30 y 35 m, 0 % sobre 35 m. Estos datos no
+  determinan la causa (tiempo, percepción, acciones, representación o aprendizaje) ni establecen un techo
+  universal.
 - La física del simulador coincide con la del servidor: sesgo de posición ≤ 0.16 m, menor que el ruido
   propio del servidor.
 

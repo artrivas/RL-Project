@@ -189,6 +189,10 @@ fallback before a snapshot exists.
 | 2026-09-25 | **Provable** noiseless ceiling: turn until the ball is ahead (≤ 35°/cycle), then straight full dash | 94.9% `<40`, 97.6% `≤40` (N = 200k) — above 90%, so it does **not** show the criterion is unreachable. With noise a cycle can cover up to ≈ 1.155 m, so there is no strict impossibility | `python -m src.feasibility --ceiling` |
 | 2026-09-25 | Far starts, measured | learned policy 0 / 26 captured at d₀ ≥ 35 m; heuristic 1 / 71 (35.24 m in 39 steps, live and simulated) | `live_eval_*.json` |
 
+| 2026-09-25 | Finer representations (α 0.03, 40k episodes, 5 seeds): C control, D front ±5°, E front ±7° + 30 m edge, F speed-dependent front (±17.5° at rest, ±5.85° moving) | last-5: 72.9%, 63.2%, 57.3%, 60.6% (± 18.8); best single evaluation of any configuration ≤ 75.2% (also for Q-learning, SARSA and MC) | `python -m src.train --preset refinement`, notebook 04 |
+| 2026-09-25 | Learned policy by start distance (live, 200 starts) | < 30 m: 135/138 (97.8%); 30–35 m: 12/36 (33.3%); 35–40 m: 0/26 → observed 147/200 = 73.5%. Reweighted to uniform d₀: 74.6% ± 1.4 (an estimate, not the observed total; the sample had 31% starts ≥ 30 m vs 28.6% expected). Under uniform d₀, exceeding 90% needs > 65% capture at 30–40 m; the data do not determine why far starts fail | notebook 04 |
+| 2026-09-25 | Learning snapshots (Q after 0 … 20k episodes), 4 fixed starts | greedy captures 1, 0, 1, 3, 4, 4, 4 of 4 live; 0, 0, 1, 3, 4, 4, 4 in the simulator | `python -m src.live_snapshots`, notebooks 02 §5 and 03 §6 |
+
 Except for the provable ceiling, no row is an upper bound over admissible policies. Together they show the 40-step budget is tight,
 that the ±35 action set loses substantially to 35° turn quantization (relaxed 88.9% vs realizable
 74.0%), and that initial acquisition costs about 5 pp. Noise slightly *helps* the greedy

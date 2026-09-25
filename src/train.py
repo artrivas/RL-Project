@@ -47,6 +47,9 @@ class ExperimentConfig:
     eval_episodes: int = 500
     eval_seed: int = 12345
     params_path: Optional[str] = DEFAULT_PARAMS_PATH
+    # Episodes (completed so far) at which to save a Q-table copy and record that training
+    # episode's trajectory, to show the policy while it learns. Does not affect results.
+    snapshot_episodes: List[int] = field(default_factory=list)
 
     def to_dict(self) -> Dict[str, Any]:
         d = asdict(self)
@@ -58,16 +61,24 @@ def load_run_params(path: Optional[str]) -> Dict[str, Any]:
     return load_params(path) if path and os.path.exists(path) else dict(DEFAULT_PARAMS)
 
 
+TRAJECTORY_KEYS = ("step", "player", "body_dir", "ball", "true_d", "true_theta", "ball_status")
+
+
 def run_episode(env: BallPursuitEnvBase, agent: TabularAgent, disc: Discretizer,
-                epsilon: float, learn: bool = True, start: Optional[StartConfig] = None
-                ) -> Dict[str, Any]:
-    obs, _ = env.reset(start)
+                epsilon: float, learn: bool = True, start: Optional[StartConfig] = None,
+                record: bool = False) -> Dict[str, Any]:
+    obs, info = env.reset(start)
+    trajectory = [{k: info[k] for k in TRAJECTORY_KEYS}] if record else None
+    actions = []
     s = disc(obs)
     a = agent.act(s, epsilon)
     ret, disc_ret, discount = 0.0, 0.0, 1.0
     terminated = truncated = False
     while not (terminated or truncated):
-        obs, r, terminated, truncated, _ = env.step(a)
+        obs, r, terminated, truncated, info = env.step(a)
+        if record:
+            trajectory.append({k: info[k] for k in TRAJECTORY_KEYS})
+            actions.append(a)
         s2 = disc(obs)
         # Next action: needed to act, and by SARSA at truncation to bootstrap from s2.
         # Other agents skip the draw at the end so their random streams are unchanged.
@@ -81,8 +92,11 @@ def run_episode(env: BallPursuitEnvBase, agent: TabularAgent, disc: Discretizer,
         s, a = s2, a2
     if learn:
         agent.end_episode()
-    return {"return": ret, "discounted_return": disc_ret, "steps": env.step_count,
-            "captured": terminated, "capture_step": env.step_count if terminated else None}
+    out = {"return": ret, "discounted_return": disc_ret, "steps": env.step_count,
+           "captured": terminated, "capture_step": env.step_count if terminated else None}
+    if record:
+        out["trajectory"], out["actions"] = trajectory, actions
+    return out
 
 
 def evaluate(env: SimBallPursuitEnv, agent: TabularAgent, disc: Discretizer,
@@ -133,9 +147,14 @@ def train_one(cfg: ExperimentConfig, seed: int, out_dir: Optional[str] = None) -
     hist = {k: np.zeros(cfg.n_episodes) for k in
             ("return", "discounted_return", "steps", "captured", "capture_step", "epsilon")}
     evals, t0 = [], time.time()
+    snapshots, snapshot_q, train_trajs = set(cfg.snapshot_episodes), {}, []
     for ep in range(cfg.n_episodes):
         eps = schedule(ep)
-        r = run_episode(env, agent, disc, eps)
+        if ep in snapshots:
+            snapshot_q[f"ep_{ep}"] = agent.Q.copy()
+        r = run_episode(env, agent, disc, eps, record=ep in snapshots)
+        if ep in snapshots:
+            train_trajs.append({"episode": ep, "epsilon": eps, **r})
         hist["return"][ep], hist["discounted_return"][ep] = r["return"], r["discounted_return"]
         hist["steps"][ep], hist["captured"][ep] = r["steps"], r["captured"]
         hist["capture_step"][ep] = r["capture_step"] or np.nan
@@ -149,6 +168,12 @@ def train_one(cfg: ExperimentConfig, seed: int, out_dir: Optional[str] = None) -
         run_dir = os.path.join(out_dir, cfg.name, f"seed_{seed}")
         os.makedirs(run_dir, exist_ok=True)
         np.save(os.path.join(run_dir, "q.npy"), agent.Q)
+        if cfg.n_episodes in snapshots:
+            snapshot_q[f"ep_{cfg.n_episodes}"] = agent.Q.copy()
+        if snapshot_q:
+            np.savez_compressed(os.path.join(run_dir, "q_snapshots.npz"), **snapshot_q)
+            with open(os.path.join(run_dir, "train_trajectories.json"), "w") as f:
+                json.dump(train_trajs, f)
         np.savez_compressed(os.path.join(run_dir, "history.npz"), **hist)
         with open(os.path.join(run_dir, "eval.json"), "w") as f:
             json.dump(result, f, indent=2)
@@ -218,8 +243,30 @@ def algorithm_configs(n_episodes: int = 20_000, **overrides) -> List[ExperimentC
             for algo in ("qlearning", "sarsa", "mc_first_visit", "mc_first_visit_alpha")]
 
 
+def refinement_configs(n_episodes: int = 40_000, **overrides) -> List[ExperimentConfig]:
+    """Is the ~74% plateau set by the state representation? Finer heading bins (for the
+    small corrections made while moving) and an extra far-distance edge, with twice the
+    budget; C at the same budget is the control."""
+    decay = {"kind": "decay", "eps_start": 1.0, "eps_min": 0.1,
+             "decay": decay_reaching(1.0, 0.1, int(0.6 * n_episodes))}
+    base = ExperimentConfig(name="", n_episodes=n_episodes, schedule=decay,
+                            eval_every=2000, **overrides)
+    return [
+        replace(base, name="ref_C_control", discretizer=DiscretizerConfig()),
+        replace(base, name="ref_D_front5",
+                discretizer=DiscretizerConfig((3.0, 10.0, 20.0), (5.0, 17.5, 90.0, 180.0), (0.2,))),
+        replace(base, name="ref_E_front7_far30",
+                discretizer=DiscretizerConfig((3.0, 10.0, 20.0, 30.0), (7.0, 17.5, 90.0, 180.0), (0.2,))),
+        # Front width = half the turn quantum at each speed: +/-17.5 at rest (35 deg turns),
+        # +/-5.85 while moving (35/(1+5*0.4) = 11.7 deg turns at cruise).
+        replace(base, name="ref_F_speed_dependent_front",
+                discretizer=DiscretizerConfig((3.0, 10.0, 20.0), (17.5, 35.0, 90.0, 180.0), (0.2,),
+                                              angle_edges_moving=(5.85, 17.5, 90.0, 180.0))),
+    ]
+
+
 PRESETS = {"ablation": ablation_configs, "discretization": discretization_configs,
-           "algorithms": algorithm_configs}
+           "algorithms": algorithm_configs, "refinement": refinement_configs}
 
 
 def main() -> None:
@@ -230,8 +277,15 @@ def main() -> None:
     ap.add_argument("--workers", type=int, default=8)
     ap.add_argument("--alpha", type=float, default=None, help="override the learning rate")
     ap.add_argument("--only", nargs="*", help="run only these config names (before suffixes)")
+    ap.add_argument("--seeds", nargs="*", type=int, help="override the training seeds")
+    ap.add_argument("--snapshots", nargs="*", type=int, default=[],
+                    help="episodes at which to save Q snapshots and training trajectories")
     args = ap.parse_args()
     for cfg in PRESETS[args.preset](args.episodes):
+        if args.seeds:
+            cfg = replace(cfg, seeds=args.seeds)
+        if args.snapshots:
+            cfg = replace(cfg, snapshot_episodes=args.snapshots)
         if args.only and cfg.name not in args.only:
             continue
         if args.alpha is not None:
