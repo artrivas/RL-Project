@@ -12,13 +12,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     iputils-ping \
     && rm -rf /var/lib/apt/lists/*
 
-# Crear y establecer directorio de trabajo
+# Crear y establecer directorio de trabajo; src/ y notebooks/ se montan como volúmenes
 WORKDIR /workspace
 
 # Copiar e instalar dependencias de Python
 COPY requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir -U pip setuptools wheel && \
     pip install --no-cache-dir -r /tmp/requirements.txt
+
+# Capas añadidas después de la instalación pesada (reutiliza la caché de PyTorch)
+RUN pip install --no-cache-dir pytest
+ENV PYTHONPATH=/workspace
 
 # Exponer el puerto de Jupyter Lab
 EXPOSE 8888

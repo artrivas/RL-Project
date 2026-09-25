@@ -1,0 +1,57 @@
+[25/500] 87s live <40: 0.720 sim <40: 0.720 stats={'missed_commands': 0, 'late_see': 266, 'stale_see': 0, 'cycles': 815, 'resets': 25}
+[50/500] 159s live <40: 0.740 sim <40: 0.720 stats={'missed_commands': 0, 'late_see': 486, 'stale_see': 0, 'cycles': 1494, 'resets': 50}
+[75/500] 244s live <40: 0.693 sim <40: 0.693 stats={'missed_commands': 0, 'late_see': 743, 'stale_see': 0, 'cycles': 2302, 'resets': 75}
+[100/500] 319s live <40: 0.700 sim <40: 0.710 stats={'missed_commands': 0, 'late_see': 974, 'stale_see': 0, 'cycles': 3011, 'resets': 100}
+[125/500] 409s live <40: 0.680 sim <40: 0.688 stats={'missed_commands': 0, 'late_see': 1252, 'stale_see': 0, 'cycles': 3867, 'resets': 125}
+[150/500] 490s live <40: 0.687 sim <40: 0.680 stats={'missed_commands': 0, 'late_see': 1504, 'stale_see': 0, 'cycles': 4646, 'resets': 150}
+[175/500] 573s live <40: 0.686 sim <40: 0.674 stats={'missed_commands': 0, 'late_see': 1761, 'stale_see': 0, 'cycles': 5430, 'resets': 175}
+[200/500] 653s live <40: 0.705 sim <40: 0.680 stats={'missed_commands': 0, 'late_see': 2004, 'stale_see': 0, 'cycles': 6181, 'resets': 200}
+[225/500] 738s live <40: 0.684 sim <40: 0.671 stats={'missed_commands': 0, 'late_see': 2269, 'stale_see': 0, 'cycles': 6976, 'resets': 225}
+[250/500] 817s live <40: 0.684 sim <40: 0.680 stats={'missed_commands': 0, 'late_see': 2503, 'stale_see': 0, 'cycles': 7715, 'resets': 250}
+[275/500] 915s live <40: 0.662 sim <40: 0.662 stats={'missed_commands': 0, 'late_see': 2798, 'stale_see': 0, 'cycles': 8634, 'resets': 275}
+[300/500] 988s live <40: 0.673 sim <40: 0.667 stats={'missed_commands': 0, 'late_see': 3015, 'stale_see': 0, 'cycles': 9315, 'resets': 300}
+[325/500] 1064s live <40: 0.686 sim <40: 0.674 stats={'missed_commands': 0, 'late_see': 3245, 'stale_see': 0, 'cycles': 10023, 'resets': 325}
+[350/500] 1147s live <40: 0.689 sim <40: 0.680 stats={'missed_commands': 0, 'late_see': 3491, 'stale_see': 0, 'cycles': 10792, 'resets': 350}
+[375/500] 1234s live <40: 0.688 sim <40: 0.672 stats={'missed_commands': 0, 'late_see': 3753, 'stale_see': 0, 'cycles': 11602, 'resets': 375}
+[400/500] 1325s live <40: 0.680 sim <40: 0.672 stats={'missed_commands': 0, 'late_see': 4029, 'stale_see': 0, 'cycles': 12450, 'resets': 400}
+[425/500] 1407s live <40: 0.680 sim <40: 0.675 stats={'missed_commands': 0, 'late_see': 4281, 'stale_see': 0, 'cycles': 13218, 'resets': 425}
+[450/500] 1489s live <40: 0.676 sim <40: 0.673 stats={'missed_commands': 0, 'late_see': 4522, 'stale_see': 0, 'cycles': 13981, 'resets': 450}
+[475/500] 1571s live <40: 0.678 sim <40: 0.678 stats={'missed_commands': 0, 'late_see': 4772, 'stale_see': 0, 'cycles': 14745, 'resets': 475}
+[500/500] 1661s live <40: 0.672 sim <40: 0.676 stats={'missed_commands': 0, 'late_see': 5044, 'stale_see': 0, 'cycles': 15588, 'resets': 500}
+{
+  "live": {
+    "n": 500,
+    "mean_return": 84.78514364033722,
+    "mean_steps": 30.176,
+    "capture_rate_<40": {
+      "rate": 0.672,
+      "stderr": 0.02099599961897504
+    },
+    "capture_rate_<=40": {
+      "rate": 0.698,
+      "stderr": 0.02053270561811083
+    }
+  },
+  "sim": {
+    "n": 500,
+    "mean_return": 85.05250369368697,
+    "mean_steps": 30.008,
+    "capture_rate_<40": {
+      "rate": 0.676,
+      "stderr": 0.020929596269398033
+    },
+    "capture_rate_<=40": {
+      "rate": 0.7,
+      "stderr": 0.020493901531919198
+    }
+  },
+  "stats": {
+    "missed_commands": 0,
+    "late_see": 5044,
+    "stale_see": 0,
+    "cycles": 15588,
+    "resets": 500
+  },
+  "server_errors": []
+}
+results -> notebooks/artifacts/live_eval_greedy_500.json
