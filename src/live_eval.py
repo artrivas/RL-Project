@@ -74,15 +74,16 @@ def main() -> int:
     ap.add_argument("--episodes", type=int, default=500)
     ap.add_argument("--start-seed", type=int, default=2026, help="seed of the fixed start list")
     ap.add_argument("--keep-trajectories", type=int, default=20)
-    ap.add_argument("--distance-dist", default="uniform", choices=sorted(DISTANCE_DISTRIBUTIONS),
-                    help="law of d0 over [5, 40] m (uniform = implemented baseline)")
+    ap.add_argument("--distance-dist", default="uniform", choices=sorted(DISTANCE_DISTRIBUTIONS) + ["kit"],
+                    help="start law: d0 law over [5, 40] m (uniform = implemented baseline) "
+                         "or 'kit' (the starter kit's reset, d0 about 11-19 m)")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
 
     name = "greedy" if args.policy == "greedy" else os.path.basename(os.path.normpath(args.policy))
     out = args.out or f"notebooks/artifacts/live_eval_{name}_{args.episodes}.json"
     os.makedirs(os.path.dirname(out), exist_ok=True)
-    starts = evaluation_starts(args.episodes, seed=args.start_seed, distance_dist=args.distance_dist)
+    starts = evaluation_starts(args.episodes, seed=args.start_seed, law=args.distance_dist)
     k = policy_cycles_per_step(args.policy)
 
     env = LiveBallPursuitEnv.connect(cycles_per_step=k)

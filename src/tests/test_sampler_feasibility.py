@@ -85,3 +85,17 @@ def test_distance_distributions():
     assert abs(means["uniform"] - 22.5) < 0.3
     assert abs(means["area"] - (2 / 3) * (40**3 - 5**3) / (40**2 - 5**2)) < 0.3    # 26.9
     assert abs(means["near"] - (5 + 5 + 40) / 3) < 0.3                             # 16.7
+
+
+def test_kit_start_matches_starter_kit_reset():
+    from src.sampler import draw_start, kit_start
+    rng = np.random.default_rng(0)
+    starts = [kit_start(rng) for _ in range(5000)]
+    d = np.array([s.distance for s in starts])
+    assert 10.5 < d.min() and d.max() < 19.9                    # starter kit: about 11-19 m
+    for s in starts[:50]:
+        assert -17.0 <= s.player_x <= -13.0 and abs(s.player_y) <= 4.0
+        assert abs(s.ball_x) <= 2.0 and abs(s.ball_y) <= 3.0
+        rel = wrap_deg(math.degrees(math.atan2(s.ball_y - s.player_y, s.ball_x - s.player_x)) - s.heading)
+        assert abs(wrap_deg(rel - s.bearing)) < 1e-9
+    assert draw_start(np.random.default_rng(3)) == sample_start(np.random.default_rng(3))

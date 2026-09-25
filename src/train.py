@@ -52,6 +52,11 @@ class ExperimentConfig:
     snapshot_episodes: List[int] = field(default_factory=list)
     # Server cycles per decision step (alternative reading of "paso"; 1 = implemented baseline).
     cycles_per_step: int = 1
+    # "server_sim": simulator with rcssserver physics and player sensing (src/sim_env.py);
+    # "kit": the course starter kit's kinematic environment (src/kit_env.py).
+    env: str = "server_sim"
+    # Extra start laws evaluated once with the final Q-table (e.g. ["kit"] = starter-kit reset).
+    extra_eval_laws: List[str] = field(default_factory=list)
 
     def to_dict(self) -> Dict[str, Any]:
         d = asdict(self)
@@ -141,12 +146,20 @@ def git_commit() -> Optional[str]:
         return None
 
 
+def make_env(cfg: ExperimentConfig, params: Dict[str, Any], seed: int):
+    if cfg.env == "kit":
+        from src.kit_env import KitBallPursuitEnv
+        return KitBallPursuitEnv(t_max=cfg.t_max, seed=seed)
+    if cfg.env == "server_sim":
+        return SimBallPursuitEnv(params, t_max=cfg.t_max, seed=seed, cycles_per_step=cfg.cycles_per_step)
+    raise ValueError(f"unknown env {cfg.env!r}")
+
+
 def train_one(cfg: ExperimentConfig, seed: int, out_dir: Optional[str] = None) -> Dict[str, Any]:
     params = load_run_params(cfg.params_path)
     disc = Discretizer(cfg.discretizer)
-    env = SimBallPursuitEnv(params, t_max=cfg.t_max, seed=seed, cycles_per_step=cfg.cycles_per_step)
-    eval_env = SimBallPursuitEnv(params, t_max=cfg.t_max, seed=cfg.eval_seed,
-                                 cycles_per_step=cfg.cycles_per_step)
+    env = make_env(cfg, params, seed)
+    eval_env = make_env(cfg, params, cfg.eval_seed)
     starts = evaluation_starts(cfg.eval_episodes, seed=cfg.eval_seed)
     agent = AGENTS[cfg.algorithm](disc.n_states, len(ACTIONS), cfg.alpha, cfg.gamma, seed=seed)
     schedule = make_schedule(cfg.schedule)
@@ -171,6 +184,9 @@ def train_one(cfg: ExperimentConfig, seed: int, out_dir: Optional[str] = None) -
 
     result = {"name": cfg.name, "seed": seed, "evals": evals, "final_eval": evals[-1],
               "train_seconds": time.time() - t0}
+    for law in cfg.extra_eval_laws:
+        extra = evaluation_starts(cfg.eval_episodes, seed=cfg.eval_seed, law=law)
+        result[f"final_eval_{law}"] = evaluate(eval_env, agent, disc, extra, cfg.eval_seed)
     if out_dir:
         run_dir = os.path.join(out_dir, cfg.name, f"seed_{seed}")
         os.makedirs(run_dir, exist_ok=True)
@@ -284,9 +300,53 @@ def macro_configs(n_episodes: int = 20_000, **overrides) -> List[ExperimentConfi
     return [replace(base, name=f"macro_k{k}", cycles_per_step=k) for k in (1, 2, 3)]
 
 
+# ---------------------------------------------------------------- starter kit
+KIT_DISCRETIZATIONS = {
+    # The starter kit's own scheme (agente_cero notebook): 0.8 / 3 / 8 m, 15 / 60 deg.
+    "kitdisc": DiscretizerConfig((0.8, 3.0, 8.0), (15.0, 60.0, 180.0), ()),
+    # Ours without the speed bit (the kit has no inertia): 3 / 10 / 20 m, +/-17.5 / 90 deg.
+    "ourdisc": DiscretizerConfig((3.0, 10.0, 20.0), (17.5, 90.0, 180.0), ()),
+}
+
+
+def _kit_base(n_episodes: int, **overrides) -> ExperimentConfig:
+    decay = {"kind": "decay", "eps_start": 1.0, "eps_min": 0.1,
+             "decay": decay_reaching(1.0, 0.1, int(0.6 * n_episodes))}
+    overrides.setdefault("schedule", decay)
+    return ExperimentConfig(name="", n_episodes=n_episodes, env="kit", params_path=None,
+                            extra_eval_laws=["kit"], **overrides)
+
+
+def kit_discretization_configs(n_episodes: int = 20_000, **overrides) -> List[ExperimentConfig]:
+    """Starter-kit environment: its discretization vs ours (no speed bit), Q-learning, two alphas."""
+    base = _kit_base(n_episodes, **overrides)
+    return [replace(base, name=f"kit_{dname}_alpha{alpha:g}", discretizer=dcfg, alpha=alpha)
+            for dname, dcfg in KIT_DISCRETIZATIONS.items() for alpha in (0.03, 0.1)]
+
+
+def kit_algorithm_configs(n_episodes: int = 20_000, discretizer: str = "ourdisc", alpha: float = 0.03,
+                          **overrides) -> List[ExperimentConfig]:
+    """Starter-kit environment: internal algorithm selection with the chosen representation."""
+    base = _kit_base(n_episodes, discretizer=KIT_DISCRETIZATIONS[discretizer], alpha=alpha, **overrides)
+    return [replace(base, name=f"kit_algo_{algo}", algorithm=algo)
+            for algo in ("qlearning", "sarsa", "mc_first_visit", "mc_first_visit_alpha")]
+
+
+def kit_ablation_configs(n_episodes: int = 20_000, discretizer: str = "ourdisc", alpha: float = 0.03,
+                         algorithm: str = "qlearning", **overrides) -> List[ExperimentConfig]:
+    """Starter-kit environment: the required exploration ablation (constant vs decaying epsilon)."""
+    base = _kit_base(n_episodes, discretizer=KIT_DISCRETIZATIONS[discretizer], alpha=alpha,
+                     algorithm=algorithm, **overrides)
+    return [
+        replace(base, name=f"kit_{algorithm}_eps_const_0.1", schedule={"kind": "constant", "eps": 0.1}),
+        replace(base, name=f"kit_{algorithm}_eps_decay_1.0_to_0.1"),
+    ]
+
+
 PRESETS = {"ablation": ablation_configs, "discretization": discretization_configs,
            "algorithms": algorithm_configs, "refinement": refinement_configs,
-           "macro": macro_configs}
+           "macro": macro_configs, "kit_discretization": kit_discretization_configs,
+           "kit_algorithms": kit_algorithm_configs, "kit_ablation": kit_ablation_configs}
 
 
 def main() -> None:

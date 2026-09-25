@@ -2,7 +2,8 @@
 
 **Curso:** DS5345 · Aprendizaje por Refuerzo (UTEC, 2026-II) · **Docente:** Percy W. Lovon Ramos
 **Entrega:** P1, baseline tabular. **Tarea:** *Ball Pursuit*. **Algoritmo:** Q-Learning tabular, con ablación
-ε constante vs. ε decreciente geométrico.
+ε constante vs. ε decreciente geométrico. **Entorno principal:** el del *starter kit* del curso
+(`src/kit_env.py`); `rcssserver` se usa para validar la transferencia.
 
 El agente aprende a orientarse y acelerar hacia un balón situado a d₀ ∈ [5, 40] m y capturarlo
 (d ≤ 0.8 m) con 4 macro-acciones: `DASH 100`, `DASH 50`, `TURN +35`, `TURN −35`. Se entrena en un
@@ -57,6 +58,7 @@ en `notebooks/artifacts/server_params.json`, y el simulador los usa.
 │   ├── agents.py             # Q-Learning tabular (agente)
 │   ├── exploration.py        # ε constante y ε decreciente geométrico
 │   ├── env_base.py           # lógica de episodio común: recompensa, captura, truncamiento
+│   ├── kit_env.py            # entorno cinemático del starter kit (entorno principal de P1)
 │   ├── sim_env.py            # simulador rápido con la física de rcssserver
 │   ├── live_env.py           # mismo entorno sobre el servidor real
 │   ├── sampler.py            # distribución de inicios compartida
@@ -77,6 +79,7 @@ en `notebooks/artifacts/server_params.json`, y el simulador los usa.
     ├── 04_algorithm_selection.ipynb  # interno: Q-Learning vs. SARSA vs. MC y representaciones más finas
     ├── 05_sensitivity_analysis.ipynb # misma política bajo otros supuestos de evaluación (d₀, ciclos, información)
     ├── 06_alternative_interpretations.ipynb # lecturas alternativas del criterio, medidas en el servidor
+    ├── 07_starter_kit_baseline.ipynb # RESULTADO PRINCIPAL: entorno del kit, ablación y transferencia
     └── artifacts/                  # corridas guardadas (Q-tables, historiales, configs), figuras, JSON
 ```
 
@@ -99,6 +102,8 @@ Todos los comandos corren dentro del contenedor (`docker compose exec rl-agent .
 | Lectura alternativa: 1 paso = k ciclos (entrenamiento) | `python -m src.train --preset macro --out notebooks/artifacts/runs_macro` | 3 min |
 | Lecturas alternativas en vivo | `python -m src.live_eval --policy <corrida> --episodes 200 [--distance-dist near]` | 12–20 min c/u |
 | Compilar el informe | `cd informe && tectonic informe_p1.tex` (o pdfLaTeX/Overleaf) | 1 min |
+| **Kit: discretización, algoritmos y ablación** | `python -m src.train --preset kit_discretization --out notebooks/artifacts/runs_kit_discretization`; `--preset kit_algorithms --out notebooks/artifacts/runs_kit_algorithms`; `--preset kit_ablation --snapshots 0 500 1000 2000 5000 10000 20000 --out notebooks/artifacts/runs_kit` | 1 min c/u |
+| Kit: transferencia a rcssserver | `python -m src.live_eval --policy notebooks/artifacts/runs_kit/kit_qlearning_eps_decay_1.0_to_0.1/seed_2 --episodes 200 [--distance-dist kit]` | 12 min c/u |
 | Comparación interna de algoritmos | `python -m src.train --preset algorithms --out notebooks/artifacts/runs_algorithms` | 3 min |
 | Estimaciones de factibilidad (controlador / cota demostrable sin ruido) | `python -m src.feasibility --controller --params notebooks/artifacts/server_params.json` y `... --ceiling` | 30 s |
 | Estabilidad y controlador en vivo (500 episodios) | `python -m src.live_eval --policy greedy --episodes 500` | 30 min |
@@ -121,34 +126,31 @@ Los notebooks cargan esos artefactos; `RETRAIN = True` / `RUN_LIVE_EVAL = True` 
 
 ## 4. Resultados principales
 
-Criterio de éxito: captura en < 40 pasos (1 paso = 1 ciclo de servidor de 100 ms). También se reporta ≤ 40.
+Criterio de éxito: captura (d ≤ 0.8 m) en menos de 40 pasos. Todo con 5 semillas.
 
-**Simulador.** Evaluación greedy sobre 500 inicios fijos; media ± desviación estándar en 5 semillas:
+**Entorno del starter kit** (notebook 07). Q-Learning con ε decreciente, evaluación greedy:
 
-| condición | captura < 40 |
-|---|---|
-| Q-Learning, ε decreciente 1.0 → 0.1 | **73.8 % ± 0.6** |
-| Q-Learning, ε constante 0.1 | 70.0 % ± 3.7 |
-| Controlador heurístico (mismos inicios) | 71.6 % |
+| inicios | captura < 40 pasos | pasos |
+|---|---|---|
+| reset del kit (d₀ ≈ 11–19 m) | **99.6 % ± 0.0** (5/5 semillas > 90 %) | 24.2 |
+| d₀ ∈ [5, 40] m (rango del enunciado) | 61.0 % ± 0.8 | 30.7 |
 
-**Servidor real** (`rcssserver`). Mismos inicios en ambos entornos; error estándar entre paréntesis:
+- **Ablación:** con ε decreciente se alcanza el 55 % en [5, 40] m en 2 000–3 000 episodios, frente a
+  8 000–9 000 con ε = 0.1 constante, y el resultado final es más estable (peor evaluación 57.6 % frente a
+  46.6 %). Con el reset del kit ambas exploraciones llegan a 99.6 %.
+- **Fidelidad al kit:** con la configuración del notebook del kit (MC, 3 500 episodios) el éxito varía mucho
+  entre semillas: 89.2 % ± 17.2, entre 44.8 % y 100 %.
+- **Transferencia a rcssserver** (200 episodios): la política del kit captura 26.0 % con el reset del kit y
+  22.0 % en [5, 40] m, igual que en el simulador con física del servidor. La cinemática idealizada del kit no
+  se transfiere a la física real.
+
+**Extensión: física del servidor** (notebooks 01–05). Una política entrenada con la física de `rcssserver`,
+solo con la percepción del jugador:
 
 | política | servidor < 40 | simulador < 40 | servidor ≤ 40 |
 |---|---|---|---|
 | Q-Learning, ε decreciente (200 episodios) | **73.5 % (± 3.1)** | 71.5 % | 76.5 % |
 | Controlador heurístico (500 episodios) | 67.2 % (± 2.1) | 67.6 % | 69.8 % |
-
-- La política aprendida captura ≥ 95 % de los balones que parten a menos de 30 m.
-- En 500 episodios consecutivos en vivo hubo 0 comandos perdidos, 0 errores de reset y 0 cambios de modo.
-- Durante el entrenamiento, la política greedy pasa de 0–1/4 capturas (0–1 000 episodios) a 4/4 desde 5 000
-  episodios sobre 4 inicios fijos, tanto en el servidor como en el simulador.
-- En el simulador, los algoritmos (Q-Learning, SARSA, MC) y las representaciones probadas se estancan cerca de
-  75 % (mejor evaluación individual 74–75 %), con distinto promedio y estabilidad. En vivo, los fallos se
-  concentran a más de 30 m: 97.8 % de captura bajo 30 m, 33 % entre 30 y 35 m, 0 % sobre 35 m. Estos datos no
-  determinan la causa (tiempo, percepción, acciones, representación o aprendizaje) ni establecen un techo
-  universal.
-- La física del simulador coincide con la del servidor: sesgo de posición ≤ 0.16 m, menor que el ruido
-  propio del servidor.
 
 **Lecturas alternativas del enunciado** (servidor, 200 episodios; notebook 06). El enunciado no fija la
 duración del paso ni la forma de la distribución de d₀. Estas cifras dependen de esa lectura; no son el

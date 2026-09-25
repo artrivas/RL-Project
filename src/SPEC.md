@@ -203,6 +203,8 @@ fallback before a snapshot exists.
 
 | 2026-09-25 | Alternative readings, live server, 200 episodes each (notebook 06) | d₀ triangular ∝ (40 − d) over [5, 40] m, same policy: 92.5% ± 1.9 (sim 92.5%). 1 step = 2 cycles, retrained: 99.5% ± 0.5 (sim 100%; 26/26 starts ≥ 35 m). 1 step = 3 cycles: 96.0% ± 1.4 (sim 98.0%). 0 missed commands, 0 errors. Conditional on the reading; not the reported main result | `python -m src.live_eval ... [--distance-dist near]`, `python -m src.train --preset macro` |
 
+| 2026-09-25 | **Starter-kit environment** (`src/kit_env.py`, main P1 task), Q-learning, our representation without speed bit, α 0.03, 5 seeds | kit reset: 99.6% (5/5 seeds), 24.2 steps; d₀ ∈ [5, 40]: 61.0% ± 0.8. Const ε: 58.1% ± 3.8 on [5, 40]. Kit discretization: bimodal on its reset (≈46% or ≈98%). Fidelity (kit's MC config, 8 seeds): 89.2% ± 17.2. Transfer to rcssserver: 26.0% (kit reset), 22.0% ([5, 40]) | notebook 07 |
+
 Except for the provable ceiling, no row is an upper bound over admissible policies. Together they show the 40-step budget is tight,
 that the ±35 action set loses substantially to 35° turn quantization (relaxed 88.9% vs realizable
 74.0%), and that initial acquisition costs about 5 pp. Noise slightly *helps* the greedy

@@ -85,7 +85,28 @@ def sample_start(rng: np.random.Generator, d_min: float = 5.0, d_max: float = 40
     return StartConfig(distance, bearing, heading, px, py, px + dx, py + dy)
 
 
-def evaluation_starts(n: int, seed: int, **kwargs) -> list:
+def kit_start(rng: np.random.Generator) -> StartConfig:
+    """The starter kit's own reset (``BallPursuitSimEnv.reset`` in
+    ``agente_cero_mc_control_persecucion.ipynb``): player at (-15 + U(-2, 2), U(-4, 4)) with
+    heading U(-180, 180), ball at (U(-2, 2), U(-3, 3)); d0 is therefore about 11-19 m."""
+    px = -15.0 + float(rng.uniform(-2.0, 2.0))
+    py = float(rng.uniform(-4.0, 4.0))
+    heading = wrap_deg(float(rng.uniform(-180.0, 180.0)))
+    bx = float(rng.uniform(-2.0, 2.0))
+    by = float(rng.uniform(-3.0, 3.0))
+    dx, dy = bx - px, by - py
+    bearing = wrap_deg(math.degrees(math.atan2(dy, dx)) - heading)
+    return StartConfig(math.hypot(dx, dy), bearing, heading, px, py, bx, by)
+
+
+def draw_start(rng: np.random.Generator, law: str = "uniform", **kwargs) -> StartConfig:
+    """``law``: a key of ``DISTANCE_DISTRIBUTIONS`` (over [5, 40] m) or ``"kit"`` (kit reset)."""
+    if law == "kit":
+        return kit_start(rng)
+    return sample_start(rng, distance_dist=law, **kwargs)
+
+
+def evaluation_starts(n: int, seed: int, law: str = "uniform", **kwargs) -> list:
     """Fixed, reproducible list of starts used for every evaluation condition."""
     rng = np.random.default_rng(seed)
-    return [sample_start(rng, **kwargs) for _ in range(n)]
+    return [draw_start(rng, law, **kwargs) for _ in range(n)]
