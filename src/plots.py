@@ -340,19 +340,26 @@ def plot_task_eval_curves(runs: Dict[str, List[Dict]], variant: str, metric: str
 def plot_policy_grid(actions: np.ndarray, disc, row: str, col: str, facet: str,
                      action_short: Sequence[str], action_colors: Sequence[str],
                      values: Optional[np.ndarray] = None, mask: Optional[np.ndarray] = None,
-                     title: str = "", figsize=None, names: Optional[Dict[str, str]] = None):
+                     title: str = "", figsize=None, names: Optional[Dict[str, str]] = None,
+                     axes=None, fontsize: int = 8):
     """Small multiples of a policy over a ``ProductDiscretizer`` with three features: one panel
     per ``facet`` bin, ``row`` x ``col`` cells labelled with the action (and ``values`` if
     given). Every cell is labelled, so identity never relies on colour. ``mask``: states to
-    blank (e.g. never visited). ``names``: display name per feature key."""
+    blank (e.g. never visited). ``names``: display name per feature key. ``axes``: draw into these
+    (one per facet bin) instead of a new figure."""
     names = names or {}
     keys = [f.key for f in disc.features]
     fi = {k: keys.index(k) for k in (row, col, facet)}
     feats = {k: disc.features[i] for k, i in fi.items()}
     n_f = feats[facet].n_bins
-    fig, axes = plt.subplots(1, n_f, figsize=figsize or (3.1 * n_f, 2.6), squeeze=False)
+    own = axes is None
+    if own:
+        fig, axes = plt.subplots(1, n_f, figsize=figsize or (3.1 * n_f, 2.6), squeeze=False)
+        axes = axes[0]
+    else:
+        fig = axes[0].figure
     cmap = ListedColormap(list(action_colors))
-    for p, ax in enumerate(axes[0]):
+    for p, ax in enumerate(axes):
         grid = np.full((feats[row].n_bins, feats[col].n_bins), np.nan)
         vals = np.full_like(grid, np.nan)
         for r in range(feats[row].n_bins):
@@ -371,7 +378,7 @@ def plot_policy_grid(actions: np.ndarray, disc, row: str, col: str, facet: str,
             text = "—" if np.isnan(a) else action_short[int(a)]
             if values is not None and not np.isnan(vals[r, c]):
                 text += f"\n{vals[r, c]:.0f}"
-            ax.text(c, r, text, ha="center", va="center", fontsize=8, color=TEXT)
+            ax.text(c, r, text, ha="center", va="center", fontsize=fontsize, color=TEXT)
         ax.set_xticks(range(feats[col].n_bins), feats[col].bin_labels, fontsize=8)
         ax.set_yticks(range(feats[row].n_bins), feats[row].bin_labels if p == 0 else [""] * feats[row].n_bins,
                       fontsize=8)
@@ -381,7 +388,8 @@ def plot_policy_grid(actions: np.ndarray, disc, row: str, col: str, facet: str,
     if title:
         fig.suptitle(title, x=0.01, ha="left", fontsize=11, color=TEXT)
     fig.set_facecolor(SURFACE)
-    fig.tight_layout()
+    if own:
+        fig.tight_layout()
     return fig
 
 
