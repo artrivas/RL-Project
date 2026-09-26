@@ -47,8 +47,10 @@ def test_artifacts_and_alpha_pick(tmp_path):
     hist = np.load(os.path.join(run, "history.npz"))
     assert {"success", "outcome", "n_conducir", "epsilon"} <= set(hist.files)
     picked = pick_alphas(out, "shooting")
-    assert set(picked["table"]["qlearning"]) == {"0.03", "0.3"}
-    assert picked["alphas"]["qlearning"] in (0.03, 0.3)
+    key = "qlearning|eps_const_0.1"
+    assert set(picked["table"][key]) == {"0.03", "0.3"}
+    assert picked["alphas"][key] in (0.03, 0.3)
+    assert picked["alphas"]["qlearning"] == picked["alphas"][key]   # single schedule swept
 
 
 def test_matrix_has_every_method_and_both_schedules():
@@ -56,3 +58,16 @@ def test_matrix_has_every_method_and_both_schedules():
     assert len(cfgs) == 2 * len(METHODS)
     assert {c.schedule["kind"] for c in cfgs} == {"constant", "decay"}
     assert all(c.alpha == 0.3 for c in cfgs if c.algorithm == "qlearning")
+
+
+def test_per_schedule_sweep_and_lookup():
+    from src.task_train import alpha_sweep_configs, alpha_key, decay_schedule
+    cfgs = alpha_sweep_configs("shooting", 1000)
+    assert len(cfgs) == 3 * 2 * 3                                  # methods x schedules x alphas
+    assert all(c.seeds == [5, 6, 7, 8, 9] for c in cfgs)
+    assert len(alpha_sweep_configs("shooting", 1000, per_schedule=False)) == 3 * 3
+    const, decay = {"kind": "constant", "eps": 0.1}, decay_schedule(1000)
+    alphas = {alpha_key("sarsa", const): 0.3, alpha_key("sarsa", decay): 0.03}
+    by_name = {c.name: c.alpha for c in matrix_configs("shooting", 1000, alphas)}
+    assert by_name["shooting_sarsa_eps_const_0.1"] == 0.3
+    assert by_name["shooting_sarsa_eps_decay_1_to_0.1"] == 0.03

@@ -80,8 +80,14 @@ def _shooting_spec() -> TaskSpec:
     return se.task_spec(TaskSpec)
 
 
+def _dribbling_spec() -> TaskSpec:
+    from src import dribbling_env as de
+    return de.task_spec(TaskSpec)
+
+
 TASKS: Dict[str, Callable[[], TaskSpec]] = {"pursuit_kit": _pursuit_kit_spec,
-                                            "shooting": _shooting_spec}
+                                            "shooting": _shooting_spec,
+                                            "dribbling": _dribbling_spec}
 
 
 def get_task(name: str) -> TaskSpec:
@@ -254,15 +260,24 @@ def schedule_name(schedule: Dict[str, Any]) -> str:
     return f"eps_decay_{schedule['eps_start']:g}_to_{schedule['eps_min']:g}"
 
 
+def matrix_schedules(n_episodes: int) -> List[Dict[str, Any]]:
+    return [{"kind": "constant", "eps": 0.1}, decay_schedule(n_episodes)]
+
+
+def alpha_key(method: str, schedule: Dict[str, Any]) -> str:
+    return f"{method}|{schedule_name(schedule)}"
+
+
 def matrix_configs(task: str, n_episodes: int, alphas: Optional[Dict[str, float]] = None,
                    methods: Sequence[str] = METHODS, **overrides) -> List[TaskConfig]:
     """Every method x {constant eps 0.1, decaying eps 1.0 -> 0.1}, same budget, seeds and starts.
-    ``alphas``: step size per method (chosen by ``alpha_sweep_configs`` on other seeds)."""
+    ``alphas``: step size per ``"method|schedule"`` (per-schedule sweep) or per method (the
+    shooting sweep, decaying schedule only), chosen by ``alpha_sweep_configs`` on seeds 5-9."""
     alphas = alphas or {}
     out = []
     for method in methods:
-        for sched in ({"kind": "constant", "eps": 0.1}, decay_schedule(n_episodes)):
-            alpha = alphas.get(method, 0.1)
+        for sched in matrix_schedules(n_episodes):
+            alpha = alphas.get(alpha_key(method, sched), alphas.get(method, 0.1))
             out.append(TaskConfig(name=f"{task}_{method}_{schedule_name(sched)}", task=task,
                                   algorithm=method, n_episodes=n_episodes, alpha=alpha,
                                   schedule=sched, **overrides))
@@ -270,33 +285,50 @@ def matrix_configs(task: str, n_episodes: int, alphas: Optional[Dict[str, float]
 
 
 def alpha_sweep_configs(task: str, n_episodes: int, alphas: Sequence[float] = (0.03, 0.1, 0.3),
-                        seeds: Sequence[int] = (5, 6, 7, 8, 9), **overrides) -> List[TaskConfig]:
-    """Step-size selection on seeds disjoint from the reported ones (0-4), decaying epsilon."""
-    return [TaskConfig(name=f"{task}_sweep_{m}_alpha{a:g}", task=task, algorithm=m,
-                       n_episodes=n_episodes, alpha=a, schedule=decay_schedule(n_episodes),
-                       seeds=list(seeds), **overrides)
-            for m in ALPHA_METHODS for a in alphas]
+                        seeds: Sequence[int] = (5, 6, 7, 8, 9), per_schedule: bool = True,
+                        **overrides) -> List[TaskConfig]:
+    """Step-size selection on seeds disjoint from the reported ones (0-4). ``per_schedule``:
+    one sweep per exploration schedule (used from dribbling on); otherwise decaying epsilon
+    only (the shooting sweep, whose alpha was then reused for constant epsilon)."""
+    scheds = matrix_schedules(n_episodes) if per_schedule else [decay_schedule(n_episodes)]
+    out = []
+    for m in ALPHA_METHODS:
+        for sched in scheds:
+            tag = f"_{schedule_name(sched)}" if per_schedule else ""
+            for a in alphas:
+                out.append(TaskConfig(name=f"{task}_sweep_{m}{tag}_alpha{a:g}", task=task,
+                                      algorithm=m, n_episodes=n_episodes, alpha=a, schedule=sched,
+                                      seeds=list(seeds), **overrides))
+    return out
 
 
 def pick_alphas(sweep_dir: str, task: str, metric: str = "success_rate",
                 last_k: int = 5) -> Dict[str, Any]:
-    """Best alpha per method from a finished sweep: mean over seeds of the last ``last_k``
-    greedy evaluations of ``metric`` (primary variant, or the mean over all variants when a
-    task has several). Returns ``{"alphas": {...}, "table": {...}}`` for saving as JSON."""
+    """Best alpha per ``"method|schedule"`` from a finished sweep: mean over seeds of the last
+    ``last_k`` greedy evaluations of ``metric`` (mean over variants when a task has several).
+    Method, schedule and alpha are read from each run's ``config.json``. Returns
+    ``{"alphas": {...}, "table": {...}}`` for saving as JSON."""
     table: Dict[str, Dict[str, float]] = {}
-    prefix = f"{task}_sweep_"
     for cond in sorted(os.listdir(sweep_dir)):
-        if not cond.startswith(prefix):
+        if not cond.startswith(f"{task}_sweep_"):
             continue
-        method, alpha = cond[len(prefix):].rsplit("_alpha", 1)
-        scores = []
+        scores, cfg = [], None
         for sd in sorted(os.listdir(os.path.join(sweep_dir, cond))):
             with open(os.path.join(sweep_dir, cond, sd, "eval.json")) as f:
                 evals = json.load(f)["evals"][-last_k:]
+            with open(os.path.join(sweep_dir, cond, sd, "config.json")) as f:
+                cfg = json.load(f)
             scores.append(np.mean([np.mean([m[metric] for m in e["variants"].values()])
                                    for e in evals]))
-        table.setdefault(method, {})[alpha] = float(np.mean(scores))
-    alphas = {m: float(max(t, key=t.get)) for m, t in table.items()}
+        key = alpha_key(cfg["algorithm"], cfg["schedule"])
+        table.setdefault(key, {})[f"{cfg['alpha']:g}"] = float(np.mean(scores))
+    alphas = {k: float(max(t, key=t.get)) for k, t in table.items()}
+    # A method swept under a single schedule (the shooting sweep) also gets a plain key, which
+    # matrix_configs uses for every schedule of that method.
+    for method in {k.split("|")[0] for k in table}:
+        keys = [k for k in table if k.split("|")[0] == method]
+        if len(keys) == 1:
+            alphas[method] = alphas[keys[0]]
     return {"metric": metric, "last_k": last_k, "alphas": alphas, "table": table}
 
 
@@ -328,7 +360,40 @@ def shooting_diagnostic_configs(n_episodes: int, alphas: Optional[Dict[str, floa
     return out
 
 
-DIAGNOSTICS = {"shooting": shooting_diagnostic_configs}
+def dribbling_diagnostic_configs(n_episodes: int, alphas: Optional[Dict[str, float]] = None
+                                 ) -> List[TaskConfig]:
+    """Dribbling diagnostics (seeds 0-4, same starts, alphas from the per-schedule sweep).
+
+    * aliasing: the greedy policy oscillates and falls into TURN +/- cycles between coarse
+      states with near-tied values. The 245-state ``fine`` representation vs the 36-state
+      ``default`` one, both at 2x the budget, decaying epsilon, every method;
+    * risk: loss radius 8 m instead of 4 m, constant epsilon, every method (does the gap between
+      on-policy and off-policy behaviour while exploring shrink when mistakes cost less?).
+    """
+    alphas = alphas or {}
+    decay2 = decay_schedule(2 * n_episodes)
+    const = {"kind": "constant", "eps": 0.1}
+    out = []
+    for m in METHODS:
+        a_decay = alphas.get(alpha_key(m, decay_schedule(n_episodes)), 0.1)
+        a_const = alphas.get(alpha_key(m, const), 0.1)
+        for rep in ("default", "fine"):
+            out.append(TaskConfig(name=f"dribbling_diag_rep_{rep}_{m}", task="dribbling",
+                                  algorithm=m, n_episodes=2 * n_episodes, alpha=a_decay,
+                                  schedule=decay2, representation=rep, eval_every=4000))
+        out.append(TaskConfig(name=f"dribbling_diag_loss8_{m}", task="dribbling", algorithm=m,
+                              n_episodes=n_episodes, alpha=a_const, schedule=const,
+                              env_kwargs={"loss_radius": 8.0}, eval_every=2000))
+    # MC with constant alpha: success rose as alpha fell in the sweep (0.3 < 0.1 < 0.03, the grid
+    # edge). Mechanism check, not a new selection: smaller steps, decaying epsilon.
+    for a in (0.01, 0.003):
+        out.append(TaskConfig(name=f"dribbling_diag_mcalpha_alpha{a:g}", task="dribbling",
+                              algorithm="mc_first_visit_alpha", n_episodes=n_episodes, alpha=a,
+                              schedule=decay_schedule(n_episodes), eval_every=2000))
+    return out
+
+
+DIAGNOSTICS = {"shooting": shooting_diagnostic_configs, "dribbling": dribbling_diagnostic_configs}
 
 
 def main() -> None:
@@ -345,10 +410,14 @@ def main() -> None:
     ap.add_argument("--seeds", nargs="*", type=int, help="override the training seeds")
     ap.add_argument("--snapshots", nargs="*", type=int, default=[])
     ap.add_argument("--representation", default="default")
+    ap.add_argument("--decay-only-sweep", action="store_true",
+                    help="alpha_sweep under decaying epsilon only (how the shooting sweep was run)")
     args = ap.parse_args()
 
-    overrides: Dict[str, Any] = {"representation": args.representation}
-    if args.eval_every:
+    overrides: Dict[str, Any] = {}
+    if args.representation != "default" or args.preset != "diagnostics":
+        overrides["representation"] = args.representation
+    if args.eval_every and args.preset != "diagnostics":
         overrides["eval_every"] = args.eval_every
     alphas = None
     if args.alphas:
@@ -359,7 +428,8 @@ def main() -> None:
     elif args.preset == "diagnostics":
         cfgs = [replace(c, **overrides) for c in DIAGNOSTICS[args.task](args.episodes, alphas)]
     else:
-        cfgs = alpha_sweep_configs(args.task, args.episodes, **overrides)
+        cfgs = alpha_sweep_configs(args.task, args.episodes,
+                                   per_schedule=not args.decay_only_sweep, **overrides)
     for cfg in cfgs:
         if args.only and cfg.name not in args.only:
             continue

@@ -1,0 +1,117 @@
+{
+  "name": "dribbling_diag_rep_fine_sarsa",
+  "task": "dribbling",
+  "algorithm": "sarsa",
+  "n_episodes": 120000,
+  "alpha": 0.03,
+  "gamma": 0.99,
+  "schedule": {
+    "kind": "decay",
+    "eps_start": 1.0,
+    "eps_min": 0.1,
+    "decay": 0.9999680201628521
+  },
+  "q_init": 0.0,
+  "representation": "fine",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "t_max": null,
+  "env_kwargs": {},
+  "eval_every": 4000,
+  "eval_episodes": 500,
+  "eval_seed": 12345,
+  "snapshot_episodes": [],
+  "seed": 2,
+  "actions": [
+    "KICK 25",
+    "DASH 80",
+    "TURN +35",
+    "TURN -35"
+  ],
+  "n_states": 245,
+  "representation_detail": {
+    "features": [
+      {
+        "key": "d_b",
+        "kind": "bins",
+        "edges": [
+          0.8,
+          1.4,
+          2.0,
+          3.0
+        ],
+        "labels": [
+          "\u2264 0.8 m",
+          "0.8\u20131.4 m",
+          "1.4\u20132 m",
+          "2\u20133 m",
+          "3\u20134 m"
+        ],
+        "split": [],
+        "none_label": null,
+        "right_closed": true
+      },
+      {
+        "key": "theta_b",
+        "kind": "angle",
+        "edges": [
+          17.5,
+          52.5,
+          90.0,
+          180.0
+        ],
+        "labels": [
+          "frente",
+          "der. 17\u201352",
+          "izq. 17\u201352",
+          "der. 52\u201390",
+          "izq. 52\u201390",
+          "der. atr\u00e1s",
+          "izq. atr\u00e1s"
+        ],
+        "split": [
+          false,
+          true,
+          true,
+          true
+        ],
+        "none_label": null,
+        "right_closed": false
+      },
+      {
+        "key": "theta_g",
+        "kind": "angle",
+        "edges": [
+          17.5,
+          52.5,
+          90.0,
+          180.0
+        ],
+        "labels": [
+          "frente",
+          "der. 17\u201352",
+          "izq. 17\u201352",
+          "der. 52\u201390",
+          "izq. 52\u201390",
+          "der. atr\u00e1s",
+          "izq. atr\u00e1s"
+        ],
+        "split": [
+          false,
+          true,
+          true,
+          true
+        ],
+        "none_label": null,
+        "right_closed": false
+      }
+    ]
+  },
+  "git_commit": "cb5e579a58cde6bb090c53f09213011d8ea1053e",
+  "source_sha256": "ff67e36c14194e2562fec8adca48d457b50a3536a28741e795b838315936ffc3"
+}

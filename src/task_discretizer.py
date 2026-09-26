@@ -10,6 +10,7 @@ Feature kinds:
 * ``"bins"``: interior ``edges``; bin ``i`` is ``[e_{i-1}, e_i)`` (``bisect_right``), the first
   and last bins are unbounded. ``none_label`` adds a leading bin for a ``None`` value (e.g. no
   goalkeeper); ``labels`` then name only the numeric bins (``bin_labels`` lists all).
+  ``right_closed`` makes the bins ``(e_{i-1}, e_i]`` (e.g. possession ``d <= 0.8``).
 * ``"angle"``: a signed angle in degrees, wrapped to (-180, 180]. ``edges`` are positive,
   increasing and end at 180; ring 0 is ``|theta| <= e_0`` (front). Ring ``i`` covers
   ``(e_{i-1}, e_i]`` and is split into right (theta > 0) and left bins when ``split[i]`` is true.
@@ -31,6 +32,7 @@ class Feature:
     labels: Tuple[str, ...]
     split: Tuple[bool, ...] = ()    # "angle" only: one flag per ring (ring 0 is never split)
     none_label: Optional[str] = None
+    right_closed: bool = False      # "bins" only: bins (e_{i-1}, e_i] instead of [e_{i-1}, e_i)
 
     def __post_init__(self):
         if list(self.edges) != sorted(self.edges):
@@ -63,7 +65,8 @@ class Feature:
                 if value is None:
                     return 0
                 offset = 1
-            return offset + bisect.bisect_right(self.edges, value)
+            search = bisect.bisect_left if self.right_closed else bisect.bisect_right
+            return offset + search(self.edges, value)
         theta = wrap_deg(value)
         ring = bisect.bisect_left(self.edges, abs(theta))
         index = sum(2 if s else 1 for s in self.split[:ring])
@@ -114,4 +117,5 @@ class ProductDiscretizer:
     def as_dict(self) -> dict:
         return {"features": [{"key": f.key, "kind": f.kind, "edges": list(f.edges),
                               "labels": list(f.labels), "split": list(f.split),
-                              "none_label": f.none_label} for f in self.features]}
+                              "none_label": f.none_label, "right_closed": f.right_closed}
+                             for f in self.features]}

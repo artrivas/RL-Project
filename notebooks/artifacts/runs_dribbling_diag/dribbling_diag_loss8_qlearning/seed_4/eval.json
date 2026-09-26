@@ -1,0 +1,504 @@
+{
+  "name": "dribbling_diag_loss8_qlearning",
+  "task": "dribbling",
+  "seed": 4,
+  "evals": [
+    {
+      "episode": 2000,
+      "variants": {
+        "default": {
+          "success_rate": 0.862,
+          "mean_return": 63.89571093582923,
+          "mean_discounted_return": 39.28886252825206,
+          "mean_steps": 65.456,
+          "lost_rate": 0.0,
+          "out_rate": 0.03,
+          "timeout_rate": 0.108,
+          "mean_progress": 28.241310935829237,
+          "mean_steps_success": 61.06032482598608
+        }
+      }
+    },
+    {
+      "episode": 4000,
+      "variants": {
+        "default": {
+          "success_rate": 1.0,
+          "mean_return": 75.20683952674942,
+          "mean_discounted_return": 46.09333572660784,
+          "mean_steps": 60.928,
+          "lost_rate": 0.0,
+          "out_rate": 0.0,
+          "timeout_rate": 0.0,
+          "mean_progress": 31.29963952674943,
+          "mean_steps_success": 60.928
+        }
+      }
+    },
+    {
+      "episode": 6000,
+      "variants": {
+        "default": {
+          "success_rate": 0.988,
+          "mean_return": 74.45764635522042,
+          "mean_discounted_return": 46.05581648618155,
+          "mean_steps": 60.58,
+          "lost_rate": 0.0,
+          "out_rate": 0.0,
+          "timeout_rate": 0.012,
+          "mean_progress": 31.11564635522044,
+          "mean_steps_success": 60.10121457489878
+        }
+      }
+    },
+    {
+      "episode": 8000,
+      "variants": {
+        "default": {
+          "success_rate": 0.998,
+          "mean_return": 75.16711094538495,
+          "mean_discounted_return": 46.471999323223386,
+          "mean_steps": 60.18,
+          "lost_rate": 0.0,
+          "out_rate": 0.0,
+          "timeout_rate": 0.002,
+          "mean_progress": 31.285110945384965,
+          "mean_steps_success": 60.100200400801604
+        }
+      }
+    },
+    {
+      "episode": 10000,
+      "variants": {
+        "default": {
+          "success_rate": 1.0,
+          "mean_return": 75.24677905021824,
+          "mean_discounted_return": 46.303376009938816,
+          "mean_steps": 60.696,
+          "lost_rate": 0.0,
+          "out_rate": 0.0,
+          "timeout_rate": 0.0,
+          "mean_progress": 31.316379050218245,
+          "mean_steps_success": 60.696
+        }
+      }
+    },
+    {
+      "episode": 12000,
+      "variants": {
+        "default": {
+          "success_rate": 0.994,
+          "mean_return": 74.71946089227505,
+          "mean_discounted_return": 45.782485490948005,
+          "mean_steps": 61.222,
+          "lost_rate": 0.0,
+          "out_rate": 0.0,
+          "timeout_rate": 0.006,
+          "mean_progress": 31.141660892275052,
+          "mean_steps_success": 60.987927565392354
+        }
+      }
+    },
+    {
+      "episode": 14000,
+      "variants": {
+        "default": {
+          "success_rate": 0.998,
+          "mean_return": 74.97565203661483,
+          "mean_discounted_return": 45.6663474910231,
+          "mean_steps": 61.514,
+          "lost_rate": 0.0,
+          "out_rate": 0.0,
+          "timeout_rate": 0.002,
+          "mean_progress": 31.227052036614847,
+          "mean_steps_success": 61.43687374749499
+        }
+      }
+    },
+    {
+      "episode": 16000,
+      "variants": {
+        "default": {
+          "success_rate": 0.998,
+          "mean_return": 75.15130207412221,
+          "mean_discounted_return": 46.367704931795885,
+          "mean_steps": 60.418,
+          "lost_rate": 0.0,
+          "out_rate": 0.0,
+          "timeout_rate": 0.002,
+          "mean_progress": 31.29310207412223,
+          "mean_steps_success": 60.33867735470942
+        }
+      }
+    },
+    {
+      "episode": 18000,
+      "variants": {
+        "default": {
+          "success_rate": 0.642,
+          "mean_return": 45.34140031878228,
+          "mean_discounted_return": 27.722882094565417,
+          "mean_steps": 75.41,
+          "lost_rate": 0.0,
+          "out_rate": 0.0,
+          "timeout_rate": 0.358,
+          "mean_progress": 20.782400318782276,
+          "mean_steps_success": 61.69781931464174
+        }
+      }
+    },
+    {
+      "episode": 20000,
+      "variants": {
+        "default": {
+          "success_rate": 0.998,
+          "mean_return": 75.04472348730957,
+          "mean_discounted_return": 46.039819118283944,
+          "mean_steps": 60.83,
+          "lost_rate": 0.0,
+          "out_rate": 0.0,
+          "timeout_rate": 0.002,
+          "mean_progress": 31.227723487309596,
+          "mean_steps_success": 60.75150300601202
+        }
+      }
+    },
+    {
+      "episode": 22000,
+      "variants": {
+        "default": {
+          "success_rate": 0.56,
+          "mean_return": 38.59969543907179,
+          "mean_discounted_return": 24.000410396422975,
+          "mean_steps": 77.774,
+          "lost_rate": 0.0,
+          "out_rate": 0.0,
+          "timeout_rate": 0.44,
+          "mean_progress": 18.377095439071784,
+          "mean_steps_success": 60.31071428571428
+        }
+      }
+    },
+    {
+      "episode": 24000,
+      "variants": {
+        "default": {
+          "success_rate": 0.58,
+          "mean_return": 41.88434471157227,
+          "mean_discounted_return": 26.21606708847448,
+          "mean_steps": 77.018,
+          "lost_rate": 0.0,
+          "out_rate": 0.0,
+          "timeout_rate": 0.42,
+          "mean_progress": 20.586144711572274,
+          "mean_steps_success": 60.37586206896552
+        }
+      }
+    },
+    {
+      "episode": 26000,
+      "variants": {
+        "default": {
+          "success_rate": 0.994,
+          "mean_return": 74.71946089227505,
+          "mean_discounted_return": 45.782485490948005,
+          "mean_steps": 61.222,
+          "lost_rate": 0.0,
+          "out_rate": 0.0,
+          "timeout_rate": 0.006,
+          "mean_progress": 31.141660892275052,
+          "mean_steps_success": 60.987927565392354
+        }
+      }
+    },
+    {
+      "episode": 28000,
+      "variants": {
+        "default": {
+          "success_rate": 0.95,
+          "mean_return": 71.78877978115034,
+          "mean_discounted_return": 44.390065903294854,
+          "mean_steps": 62.172,
+          "lost_rate": 0.0,
+          "out_rate": 0.0,
+          "timeout_rate": 0.05,
+          "mean_progress": 30.505979781150366,
+          "mean_steps_success": 60.18105263157895
+        }
+      }
+    },
+    {
+      "episode": 30000,
+      "variants": {
+        "default": {
+          "success_rate": 0.956,
+          "mean_return": 71.69419262412251,
+          "mean_discounted_return": 44.33045175751312,
+          "mean_steps": 60.88,
+          "lost_rate": 0.0,
+          "out_rate": 0.03,
+          "timeout_rate": 0.014,
+          "mean_progress": 30.882192624122517,
+          "mean_steps_success": 60.13807531380753
+        }
+      }
+    },
+    {
+      "episode": 32000,
+      "variants": {
+        "default": {
+          "success_rate": 0.952,
+          "mean_return": 71.50217554849704,
+          "mean_discounted_return": 43.82792427575483,
+          "mean_steps": 61.786,
+          "lost_rate": 0.0,
+          "out_rate": 0.03,
+          "timeout_rate": 0.018,
+          "mean_progress": 30.98077554849704,
+          "mean_steps_success": 60.91386554621849
+        }
+      }
+    },
+    {
+      "episode": 34000,
+      "variants": {
+        "default": {
+          "success_rate": 0.96,
+          "mean_return": 72.24455878677308,
+          "mean_discounted_return": 44.81671989064473,
+          "mean_steps": 60.31,
+          "lost_rate": 0.0,
+          "out_rate": 0.026,
+          "timeout_rate": 0.014,
+          "mean_progress": 31.055558786773094,
+          "mean_steps_success": 59.572916666666664
+        }
+      }
+    },
+    {
+      "episode": 36000,
+      "variants": {
+        "default": {
+          "success_rate": 0.956,
+          "mean_return": 72.25869597651673,
+          "mean_discounted_return": 44.65295490723179,
+          "mean_steps": 62.006,
+          "lost_rate": 0.0,
+          "out_rate": 0.0,
+          "timeout_rate": 0.044,
+          "mean_progress": 30.659295976516745,
+          "mean_steps_success": 60.25732217573222
+        }
+      }
+    },
+    {
+      "episode": 38000,
+      "variants": {
+        "default": {
+          "success_rate": 0.592,
+          "mean_return": 41.19934867154055,
+          "mean_discounted_return": 25.27918875963077,
+          "mean_steps": 77.192,
+          "lost_rate": 0.0,
+          "out_rate": 0.0,
+          "timeout_rate": 0.408,
+          "mean_progress": 19.31854867154055,
+          "mean_steps_success": 61.472972972972975
+        }
+      }
+    },
+    {
+      "episode": 40000,
+      "variants": {
+        "default": {
+          "success_rate": 0.98,
+          "mean_return": 73.93391511712508,
+          "mean_discounted_return": 46.175955068165045,
+          "mean_steps": 59.496,
+          "lost_rate": 0.0,
+          "out_rate": 0.006,
+          "timeout_rate": 0.014,
+          "mean_progress": 31.063515117125114,
+          "mean_steps_success": 58.861224489795916
+        }
+      }
+    },
+    {
+      "episode": 42000,
+      "variants": {
+        "default": {
+          "success_rate": 1.0,
+          "mean_return": 75.28159128091909,
+          "mean_discounted_return": 46.4384263333616,
+          "mean_steps": 60.344,
+          "lost_rate": 0.0,
+          "out_rate": 0.0,
+          "timeout_rate": 0.0,
+          "mean_progress": 31.3159912809191,
+          "mean_steps_success": 60.344
+        }
+      }
+    },
+    {
+      "episode": 44000,
+      "variants": {
+        "default": {
+          "success_rate": 0.994,
+          "mean_return": 74.6473436958449,
+          "mean_discounted_return": 45.47416291304367,
+          "mean_steps": 61.654,
+          "lost_rate": 0.0,
+          "out_rate": 0.0,
+          "timeout_rate": 0.006,
+          "mean_progress": 31.11274369584493,
+          "mean_steps_success": 61.42253521126761
+        }
+      }
+    },
+    {
+      "episode": 46000,
+      "variants": {
+        "default": {
+          "success_rate": 0.98,
+          "mean_return": 73.86722550899131,
+          "mean_discounted_return": 45.85985777058894,
+          "mean_steps": 60.036,
+          "lost_rate": 0.0,
+          "out_rate": 0.002,
+          "timeout_rate": 0.018,
+          "mean_progress": 30.930825508991315,
+          "mean_steps_success": 59.26734693877551
+        }
+      }
+    },
+    {
+      "episode": 48000,
+      "variants": {
+        "default": {
+          "success_rate": 0.992,
+          "mean_return": 74.48259309866553,
+          "mean_discounted_return": 45.383878275870345,
+          "mean_steps": 61.708,
+          "lost_rate": 0.0,
+          "out_rate": 0.0,
+          "timeout_rate": 0.008,
+          "mean_progress": 31.05339309866555,
+          "mean_steps_success": 61.399193548387096
+        }
+      }
+    },
+    {
+      "episode": 50000,
+      "variants": {
+        "default": {
+          "success_rate": 0.998,
+          "mean_return": 75.26156305628372,
+          "mean_discounted_return": 46.74914626435856,
+          "mean_steps": 59.43,
+          "lost_rate": 0.0,
+          "out_rate": 0.0,
+          "timeout_rate": 0.002,
+          "mean_progress": 31.30456305628374,
+          "mean_steps_success": 59.34869739478958
+        }
+      }
+    },
+    {
+      "episode": 52000,
+      "variants": {
+        "default": {
+          "success_rate": 0.996,
+          "mean_return": 74.91443428051271,
+          "mean_discounted_return": 45.96909771671823,
+          "mean_steps": 60.904,
+          "lost_rate": 0.0,
+          "out_rate": 0.0,
+          "timeout_rate": 0.004,
+          "mean_progress": 31.20483428051272,
+          "mean_steps_success": 60.74698795180723
+        }
+      }
+    },
+    {
+      "episode": 54000,
+      "variants": {
+        "default": {
+          "success_rate": 0.978,
+          "mean_return": 73.63801544994749,
+          "mean_discounted_return": 45.26505791511993,
+          "mean_steps": 61.53,
+          "lost_rate": 0.0,
+          "out_rate": 0.0,
+          "timeout_rate": 0.022,
+          "mean_progress": 30.89101544994751,
+          "mean_steps_success": 60.66462167689161
+        }
+      }
+    },
+    {
+      "episode": 56000,
+      "variants": {
+        "default": {
+          "success_rate": 1.0,
+          "mean_return": 75.37838722469766,
+          "mean_discounted_return": 46.93894472410628,
+          "mean_steps": 59.048,
+          "lost_rate": 0.0,
+          "out_rate": 0.0,
+          "timeout_rate": 0.0,
+          "mean_progress": 31.28318722469769,
+          "mean_steps_success": 59.048
+        }
+      }
+    },
+    {
+      "episode": 58000,
+      "variants": {
+        "default": {
+          "success_rate": 0.998,
+          "mean_return": 75.03831125660872,
+          "mean_discounted_return": 46.02002226225207,
+          "mean_steps": 60.898,
+          "lost_rate": 0.0,
+          "out_rate": 0.0,
+          "timeout_rate": 0.002,
+          "mean_progress": 31.22811125660873,
+          "mean_steps_success": 60.81963927855711
+        }
+      }
+    },
+    {
+      "episode": 60000,
+      "variants": {
+        "default": {
+          "success_rate": 0.412,
+          "mean_return": 26.58886515164549,
+          "mean_discounted_return": 16.91714314145666,
+          "mean_steps": 75.628,
+          "lost_rate": 0.014,
+          "out_rate": 0.24,
+          "timeout_rate": 0.334,
+          "mean_progress": 21.171665151645495,
+          "mean_steps_success": 61.43689320388349
+        }
+      }
+    }
+  ],
+  "final_eval": {
+    "episode": 60000,
+    "variants": {
+      "default": {
+        "success_rate": 0.412,
+        "mean_return": 26.58886515164549,
+        "mean_discounted_return": 16.91714314145666,
+        "mean_steps": 75.628,
+        "lost_rate": 0.014,
+        "out_rate": 0.24,
+        "timeout_rate": 0.334,
+        "mean_progress": 21.171665151645495,
+        "mean_steps_success": 61.43689320388349
+      }
+    }
+  },
+  "train_seconds": 287.6430416107178
+}

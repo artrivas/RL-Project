@@ -1,6 +1,7 @@
 # Plan: the other three catalog tasks + algorithm comparison (P1)
 
-Status (2026-09-25): M0 done; M1 (shooting) done except its rcssserver check (M5). Branch `dimael`.
+Status (2026-09-26): M0, M1 (shooting) and M2 (dribbling) done except their rcssserver checks (M5).
+Branch `dimael`.
 See "Progress log" at the end.
 
 ## 0. Scope
@@ -276,3 +277,28 @@ Execution and logging only; no performance claims beyond what is measured.
 ### Protocol change proposed for M2/M3 (from the shooting confound)
 Alpha was selected with decaying epsilon only and then reused for constant epsilon, which confounded the
 epsilon ablation. For dribbling and 2v1, sweep alpha per (method, schedule) on seeds 5–9.
+
+### M2 — dribbling (all but the live check)
+- Constructive bound: the scripted controller succeeds on 500/500 evaluation starts and 20 000/20 000 random
+  starts (mean 60.4 steps, max 85 < T_max 100). The plan's "<= ~53 steps" estimate was wrong: after each kick the
+  chase takes 2–3 dashes.
+- Per-schedule alpha sweep (seeds 5–9, 60k episodes, `dribbling_alphas.json`): Q-learning 0.1 (constant) /
+  0.03 (decay); SARSA 0.03 / 0.03; MC constant alpha 0.1 / 0.03.
+- Matrix (`runs_dribbling`, 60k, seeds 0–4) and diagnostics (`runs_dribbling_diag`), summarized in
+  `dribbling_summary.json`. Notebook `11_conduccion.ipynb`, figures `fig_dribbling_*.png`.
+- **Finding: the greedy policy oscillates** in a deterministic env. The dips are timeouts from TURN +/-35 two-cycles
+  between aggregated states with near-tied values. With the 245-state representation, Q-learning and SARSA are
+  at 100% in every one of the last 5 evaluations (36 states: 95.1% / 97.6%), so the oscillation is caused by
+  aggregation. The pre-registered 36-state representation is too coarse for this task.
+- Epsilon ablation (Q-learning, alpha tuned per schedule): decaying beats constant (last-5 mean 97.7 vs 89.7%,
+  CIs separated). SARSA: no final difference, but decaying is much slower (AUC 76 vs 96%).
+- **H2 (risk/cliff) not observed:** losses while exploring are <= 0.5%; failures are timeouts, and a loss radius
+  of 8 m changes nothing.
+- **H3 (MC robust to aliasing) contradicted:** sample-average MC suffers most from the coarse representation
+  (64.5%, frozen policy) and gains most from the fine one (97.8%).
+- MC with constant alpha fails everywhere (<= 53% even at alpha 0.003, and with 245 states). Cause not isolated.
+- Compute note: runs are CPU-bound Python (8.8 us/step alone). Running 15 workers on this 8-core laptop made each
+  about 6x slower; use about 8 workers in total for 2v1.
+- Plot change: task curves now use min–max bands (mean ± std went outside [0, 1]); notebooks 10 and 11 re-run.
+- Provenance note: the dribbling sweep runs were saved while `src/` gained additive code (the fine representation,
+  diagnostics, plots), so their `source_sha256` is that of the later code; sweep behavior was not changed.

@@ -1,0 +1,100 @@
+{
+  "name": "dribbling_sweep_mc_first_visit_alpha_eps_decay_1_to_0.1_alpha0.03",
+  "task": "dribbling",
+  "algorithm": "mc_first_visit_alpha",
+  "n_episodes": 60000,
+  "alpha": 0.03,
+  "gamma": 0.99,
+  "schedule": {
+    "kind": "decay",
+    "eps_start": 1.0,
+    "eps_min": 0.1,
+    "decay": 0.9999360413484142
+  },
+  "q_init": 0.0,
+  "representation": "default",
+  "seeds": [
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "t_max": null,
+  "env_kwargs": {},
+  "eval_every": 2000,
+  "eval_episodes": 500,
+  "eval_seed": 12345,
+  "snapshot_episodes": [],
+  "seed": 5,
+  "actions": [
+    "KICK 25",
+    "DASH 80",
+    "TURN +35",
+    "TURN -35"
+  ],
+  "n_states": 36,
+  "representation_detail": {
+    "features": [
+      {
+        "key": "d_b",
+        "kind": "bins",
+        "edges": [
+          0.8,
+          2.0
+        ],
+        "labels": [
+          "\u2264 0.8 m",
+          "0.8\u20132 m",
+          "2\u20134 m"
+        ],
+        "split": [],
+        "none_label": null,
+        "right_closed": true
+      },
+      {
+        "key": "theta_b",
+        "kind": "angle",
+        "edges": [
+          17.5,
+          180.0
+        ],
+        "labels": [
+          "frente",
+          "der.",
+          "izq."
+        ],
+        "split": [
+          false,
+          true
+        ],
+        "none_label": null,
+        "right_closed": false
+      },
+      {
+        "key": "theta_g",
+        "kind": "angle",
+        "edges": [
+          17.5,
+          90.0,
+          180.0
+        ],
+        "labels": [
+          "frente",
+          "der.",
+          "izq.",
+          "atr\u00e1s"
+        ],
+        "split": [
+          false,
+          true,
+          false
+        ],
+        "none_label": null,
+        "right_closed": false
+      }
+    ]
+  },
+  "git_commit": "cb5e579a58cde6bb090c53f09213011d8ea1053e",
+  "source_sha256": "ff67e36c14194e2562fec8adca48d457b50a3536a28741e795b838315936ffc3"
+}

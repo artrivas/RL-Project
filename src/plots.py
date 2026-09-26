@@ -312,7 +312,8 @@ def plot_task_eval_curves(runs: Dict[str, List[Dict]], variant: str, metric: str
                           refs: Optional[Dict[str, float]] = None, ax=None, ylabel: str = "",
                           title: str = "", labels: Optional[Dict[str, str]] = None,
                           colors: Optional[Dict[str, str]] = None, direct_labels: bool = False):
-    """Greedy evaluation curves (mean ± std over seeds) of ``task_train`` runs for one variant.
+    """Greedy evaluation curves of ``task_train`` runs for one variant: mean over seeds, band =
+    min-max over seeds (stays inside [0, 1] for rates, unlike mean ± std).
     ``runs``: ``{condition: [run, ...]}`` from ``src.task_analysis.load_condition``."""
     ax = ax or plt.subplots(figsize=(8, 4))[1]
     x0 = 0
@@ -320,7 +321,12 @@ def plot_task_eval_curves(runs: Dict[str, List[Dict]], variant: str, metric: str
         x = np.array([e["episode"] for e in rs[0]["evals"]])
         ys = np.array([[e["variants"][variant][metric] for e in r["evals"]] for r in rs])
         color = (colors or {}).get(cond, SERIES[i % len(SERIES)])
-        _band(ax, x, ys, color, (labels or {}).get(cond, cond), direct_labels)
+        label = (labels or {}).get(cond, cond)
+        ax.fill_between(x, ys.min(axis=0), ys.max(axis=0), color=color, alpha=0.15, linewidth=0)
+        ax.plot(x, ys.mean(axis=0), color=color, linewidth=2, label=label)
+        if direct_labels:
+            ax.annotate(label, (x[-1], ys.mean(axis=0)[-1]), xytext=(6, 0),
+                        textcoords="offset points", color=TEXT, fontsize=8, va="center")
         x0 = x[0]
     for label, y in (refs or {}).items():
         ax.axhline(y, color=REF, linewidth=1, linestyle="--")
@@ -421,4 +427,46 @@ def plot_shooting_episodes(records: Sequence[Dict], ax=None, title: str = "",
     ax.set_aspect("equal")
     style(ax, title, "x (m)", "y (m)")
     ax.legend(frameon=False, fontsize=8, loc="lower left")
+    return ax
+
+
+DRIBBLE_OUTCOME_COLORS = {1: "#1baf7a", 2: "#eb6834", 3: "#eb6834", 0: "#8a8984"}
+
+
+def plot_dribbling_episodes(records: Sequence[Dict], ax=None, title: str = "",
+                            outcome_names: Optional[Dict[int, str]] = None, full_pitch: bool = False):
+    """Dribbling episodes on the pitch (light surface): ball path coloured by outcome, player
+    path in gray, start as a ring, 30 m progress line per episode. +y downward, as on the
+    monitor."""
+    from src import dribbling_env as de
+    ax = ax or plt.subplots(figsize=(8, 5.4))[1]
+    draw_pitch(ax, light=True)
+    names = outcome_names or de.OUTCOME_NAMES
+    seen, xs, ys = set(), [], []
+    for rec in records:
+        traj = rec["trajectory"]
+        px = [t["player"][0] for t in traj]
+        py = [t["player"][1] for t in traj]
+        bx = [t["ball"][0] for t in traj]
+        by = [t["ball"][1] for t in traj]
+        outcome = traj[-1]["outcome"]
+        ax.plot(px, py, color=REF, linewidth=1.0)
+        label = names[outcome]
+        ax.plot(bx, by, color=DRIBBLE_OUTCOME_COLORS[outcome], linewidth=1.8,
+                label=None if label in seen else label)
+        seen.add(label)
+        ax.plot(px[0], py[0], "o", color=TEXT_2, markerfacecolor="none", markersize=6)
+        ax.plot([bx[0] + de.GOAL_ADVANCE] * 2, [by[0] - 1.5, by[0] + 1.5], color=TEXT_2,
+                linewidth=1, linestyle=":")
+        xs += px + bx + [bx[0] + de.GOAL_ADVANCE]
+        ys += py + by
+    if not full_pitch and xs:
+        pad = 3.0
+        x0, x1 = min(xs) - pad, max(xs) + pad
+        y0, y1 = min(ys) - pad, max(ys) + pad
+        ax.set_xlim(x0, x1)
+        ax.set_ylim(y1, y0)
+    ax.set_title(title, fontsize=11, loc="left", color=TEXT)
+    ax.legend(frameon=False, fontsize=8, loc="lower left")
+    ax.figure.set_facecolor(SURFACE)
     return ax

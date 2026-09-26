@@ -47,3 +47,8 @@ def test_product_index_roundtrip_and_labels():
     assert seen == set(range(6))
     assert disc({"a": 2.0, "b": -60.0}) == disc.compose((1, 2))
     assert disc.state_to_label(disc.compose((1, 2))) == "a=hi | b=l"
+
+
+def test_right_closed_bins():
+    f = Feature("d", "bins", (0.8, 2.0), ("pos", "near", "far"), right_closed=True)
+    assert f.bin(0.8) == 0 and f.bin(0.81) == 1 and f.bin(2.0) == 1 and f.bin(2.01) == 2

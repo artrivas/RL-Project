@@ -7,6 +7,8 @@ Per condition and evaluation variant, over training seeds:
 * ``auc``: mean greedy success over all evaluations (sample efficiency: higher = learned sooner);
 * ``online_final``: epsilon-greedy success of the last 10% of training episodes (the behaviour
   while exploring; on-policy methods optimise this, off-policy ones the greedy policy);
+* ``last5_mean`` / ``last5_worst``: mean and minimum of the last 5 greedy evaluations per seed
+  (the greedy policy can oscillate between evaluations, e.g. in dribbling);
 * ``seed_std``: standard deviation of the final greedy success across seeds.
 
 Two conditions differ "detectably" only when their bootstrap CIs do not overlap; with 5 seeds
@@ -64,7 +66,10 @@ def summarize_condition(runs: List[Dict[str, Any]], metric: str = "success_rate"
     for v in runs[0]["final_eval"]["variants"]:
         curves = np.array([[e["variants"][v][metric] for e in r["evals"]] for r in runs])
         final = curves[:, -1]
+        last = curves[:, -5:]
         out["variants"][v] = {"final": _stats(final), "auc": _stats(curves.mean(axis=1)),
+                              "last5_mean": _stats(last.mean(axis=1)),
+                              "last5_worst": _stats(last.min(axis=1)),
                               "seed_std": float(final.std()),
                               "episodes": [e["episode"] for e in runs[0]["evals"]],
                               "curve_mean": curves.mean(axis=0).tolist()}

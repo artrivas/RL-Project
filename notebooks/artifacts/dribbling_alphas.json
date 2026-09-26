@@ -1,0 +1,44 @@
+{
+  "metric": "success_rate",
+  "last_k": 5,
+  "alphas": {
+    "mc_first_visit_alpha|eps_const_0.1": 0.1,
+    "mc_first_visit_alpha|eps_decay_1_to_0.1": 0.03,
+    "qlearning|eps_const_0.1": 0.1,
+    "qlearning|eps_decay_1_to_0.1": 0.03,
+    "sarsa|eps_const_0.1": 0.03,
+    "sarsa|eps_decay_1_to_0.1": 0.03
+  },
+  "table": {
+    "mc_first_visit_alpha|eps_const_0.1": {
+      "0.03": 0.21767999999999996,
+      "0.1": 0.27088000000000007,
+      "0.3": 0.05272
+    },
+    "mc_first_visit_alpha|eps_decay_1_to_0.1": {
+      "0.03": 0.374,
+      "0.1": 0.28392,
+      "0.3": 0.11728000000000001
+    },
+    "qlearning|eps_const_0.1": {
+      "0.03": 0.90952,
+      "0.1": 0.97008,
+      "0.3": 0.84968
+    },
+    "qlearning|eps_decay_1_to_0.1": {
+      "0.03": 0.96424,
+      "0.1": 0.89376,
+      "0.3": 0.8702400000000001
+    },
+    "sarsa|eps_const_0.1": {
+      "0.03": 0.9616,
+      "0.1": 0.86664,
+      "0.3": 0.65912
+    },
+    "sarsa|eps_decay_1_to_0.1": {
+      "0.03": 0.94776,
+      "0.1": 0.84512,
+      "0.3": 0.7548
+    }
+  }
+}
