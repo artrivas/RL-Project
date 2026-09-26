@@ -1,0 +1,762 @@
+{
+  "name": "shooting_mc_first_visit_alpha_eps_const_0.1",
+  "task": "shooting",
+  "seed": 4,
+  "evals": [
+    {
+      "episode": 2000,
+      "variants": {
+        "open": {
+          "success_rate": 0.952,
+          "mean_return": 93.76,
+          "mean_discounted_return": 93.76,
+          "mean_steps": 1.0,
+          "goal_rate": 0.952,
+          "off_target_rate": 0.048,
+          "saved_rate": 0.0,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.0
+        },
+        "keeper": {
+          "success_rate": 0.776,
+          "mean_return": 69.132,
+          "mean_discounted_return": 69.03523182,
+          "mean_steps": 1.13,
+          "goal_rate": 0.776,
+          "off_target_rate": 0.138,
+          "saved_rate": 0.076,
+          "blocked_rate": 0.01,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.14
+        }
+      }
+    },
+    {
+      "episode": 4000,
+      "variants": {
+        "open": {
+          "success_rate": 0.952,
+          "mean_return": 93.76,
+          "mean_discounted_return": 93.76,
+          "mean_steps": 1.0,
+          "goal_rate": 0.952,
+          "off_target_rate": 0.048,
+          "saved_rate": 0.0,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.0
+        },
+        "keeper": {
+          "success_rate": 0.776,
+          "mean_return": 69.132,
+          "mean_discounted_return": 69.03523182,
+          "mean_steps": 1.13,
+          "goal_rate": 0.776,
+          "off_target_rate": 0.138,
+          "saved_rate": 0.076,
+          "blocked_rate": 0.01,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.14
+        }
+      }
+    },
+    {
+      "episode": 6000,
+      "variants": {
+        "open": {
+          "success_rate": 0.952,
+          "mean_return": 93.76,
+          "mean_discounted_return": 93.76,
+          "mean_steps": 1.0,
+          "goal_rate": 0.952,
+          "off_target_rate": 0.048,
+          "saved_rate": 0.0,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.0
+        },
+        "keeper": {
+          "success_rate": 0.786,
+          "mean_return": 70.632,
+          "mean_discounted_return": 70.53523182,
+          "mean_steps": 1.13,
+          "goal_rate": 0.786,
+          "off_target_rate": 0.138,
+          "saved_rate": 0.066,
+          "blocked_rate": 0.01,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.14
+        }
+      }
+    },
+    {
+      "episode": 8000,
+      "variants": {
+        "open": {
+          "success_rate": 0.952,
+          "mean_return": 93.76,
+          "mean_discounted_return": 93.76,
+          "mean_steps": 1.0,
+          "goal_rate": 0.952,
+          "off_target_rate": 0.048,
+          "saved_rate": 0.0,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.0
+        },
+        "keeper": {
+          "success_rate": 0.786,
+          "mean_return": 70.632,
+          "mean_discounted_return": 70.53523182,
+          "mean_steps": 1.13,
+          "goal_rate": 0.786,
+          "off_target_rate": 0.138,
+          "saved_rate": 0.066,
+          "blocked_rate": 0.01,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.14
+        }
+      }
+    },
+    {
+      "episode": 10000,
+      "variants": {
+        "open": {
+          "success_rate": 0.952,
+          "mean_return": 93.76,
+          "mean_discounted_return": 93.76,
+          "mean_steps": 1.0,
+          "goal_rate": 0.952,
+          "off_target_rate": 0.048,
+          "saved_rate": 0.0,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.0
+        },
+        "keeper": {
+          "success_rate": 0.786,
+          "mean_return": 70.632,
+          "mean_discounted_return": 70.53523182,
+          "mean_steps": 1.13,
+          "goal_rate": 0.786,
+          "off_target_rate": 0.138,
+          "saved_rate": 0.066,
+          "blocked_rate": 0.01,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.14
+        }
+      }
+    },
+    {
+      "episode": 12000,
+      "variants": {
+        "open": {
+          "success_rate": 0.952,
+          "mean_return": 93.76,
+          "mean_discounted_return": 93.76,
+          "mean_steps": 1.0,
+          "goal_rate": 0.952,
+          "off_target_rate": 0.048,
+          "saved_rate": 0.0,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.0
+        },
+        "keeper": {
+          "success_rate": 0.782,
+          "mean_return": 70.312,
+          "mean_discounted_return": 70.21523182,
+          "mean_steps": 1.13,
+          "goal_rate": 0.782,
+          "off_target_rate": 0.152,
+          "saved_rate": 0.056,
+          "blocked_rate": 0.01,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.14
+        }
+      }
+    },
+    {
+      "episode": 14000,
+      "variants": {
+        "open": {
+          "success_rate": 0.952,
+          "mean_return": 93.76,
+          "mean_discounted_return": 93.76,
+          "mean_steps": 1.0,
+          "goal_rate": 0.952,
+          "off_target_rate": 0.048,
+          "saved_rate": 0.0,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.0
+        },
+        "keeper": {
+          "success_rate": 0.782,
+          "mean_return": 70.312,
+          "mean_discounted_return": 70.21523182,
+          "mean_steps": 1.13,
+          "goal_rate": 0.782,
+          "off_target_rate": 0.152,
+          "saved_rate": 0.056,
+          "blocked_rate": 0.01,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.14
+        }
+      }
+    },
+    {
+      "episode": 16000,
+      "variants": {
+        "open": {
+          "success_rate": 0.952,
+          "mean_return": 93.76,
+          "mean_discounted_return": 93.76,
+          "mean_steps": 1.0,
+          "goal_rate": 0.952,
+          "off_target_rate": 0.048,
+          "saved_rate": 0.0,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.0
+        },
+        "keeper": {
+          "success_rate": 0.782,
+          "mean_return": 70.312,
+          "mean_discounted_return": 70.21523182,
+          "mean_steps": 1.13,
+          "goal_rate": 0.782,
+          "off_target_rate": 0.152,
+          "saved_rate": 0.056,
+          "blocked_rate": 0.01,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.14
+        }
+      }
+    },
+    {
+      "episode": 18000,
+      "variants": {
+        "open": {
+          "success_rate": 0.952,
+          "mean_return": 93.76,
+          "mean_discounted_return": 93.76,
+          "mean_steps": 1.0,
+          "goal_rate": 0.952,
+          "off_target_rate": 0.048,
+          "saved_rate": 0.0,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.0
+        },
+        "keeper": {
+          "success_rate": 0.782,
+          "mean_return": 70.312,
+          "mean_discounted_return": 70.21523182,
+          "mean_steps": 1.13,
+          "goal_rate": 0.782,
+          "off_target_rate": 0.152,
+          "saved_rate": 0.056,
+          "blocked_rate": 0.01,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.14
+        }
+      }
+    },
+    {
+      "episode": 20000,
+      "variants": {
+        "open": {
+          "success_rate": 0.952,
+          "mean_return": 93.76,
+          "mean_discounted_return": 93.76,
+          "mean_steps": 1.0,
+          "goal_rate": 0.952,
+          "off_target_rate": 0.048,
+          "saved_rate": 0.0,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.0
+        },
+        "keeper": {
+          "success_rate": 0.782,
+          "mean_return": 70.312,
+          "mean_discounted_return": 70.21523182,
+          "mean_steps": 1.13,
+          "goal_rate": 0.782,
+          "off_target_rate": 0.152,
+          "saved_rate": 0.056,
+          "blocked_rate": 0.01,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.14
+        }
+      }
+    },
+    {
+      "episode": 22000,
+      "variants": {
+        "open": {
+          "success_rate": 0.952,
+          "mean_return": 93.76,
+          "mean_discounted_return": 93.76,
+          "mean_steps": 1.0,
+          "goal_rate": 0.952,
+          "off_target_rate": 0.048,
+          "saved_rate": 0.0,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.0
+        },
+        "keeper": {
+          "success_rate": 0.782,
+          "mean_return": 70.312,
+          "mean_discounted_return": 70.21523182,
+          "mean_steps": 1.13,
+          "goal_rate": 0.782,
+          "off_target_rate": 0.152,
+          "saved_rate": 0.056,
+          "blocked_rate": 0.01,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.14
+        }
+      }
+    },
+    {
+      "episode": 24000,
+      "variants": {
+        "open": {
+          "success_rate": 0.952,
+          "mean_return": 93.76,
+          "mean_discounted_return": 93.76,
+          "mean_steps": 1.0,
+          "goal_rate": 0.952,
+          "off_target_rate": 0.048,
+          "saved_rate": 0.0,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.0
+        },
+        "keeper": {
+          "success_rate": 0.782,
+          "mean_return": 70.312,
+          "mean_discounted_return": 70.21523182,
+          "mean_steps": 1.13,
+          "goal_rate": 0.782,
+          "off_target_rate": 0.152,
+          "saved_rate": 0.056,
+          "blocked_rate": 0.01,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.14
+        }
+      }
+    },
+    {
+      "episode": 26000,
+      "variants": {
+        "open": {
+          "success_rate": 0.952,
+          "mean_return": 93.76,
+          "mean_discounted_return": 93.76,
+          "mean_steps": 1.0,
+          "goal_rate": 0.952,
+          "off_target_rate": 0.048,
+          "saved_rate": 0.0,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.0
+        },
+        "keeper": {
+          "success_rate": 0.782,
+          "mean_return": 70.312,
+          "mean_discounted_return": 70.21523182,
+          "mean_steps": 1.13,
+          "goal_rate": 0.782,
+          "off_target_rate": 0.152,
+          "saved_rate": 0.056,
+          "blocked_rate": 0.01,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.14
+        }
+      }
+    },
+    {
+      "episode": 28000,
+      "variants": {
+        "open": {
+          "success_rate": 0.952,
+          "mean_return": 93.76,
+          "mean_discounted_return": 93.76,
+          "mean_steps": 1.0,
+          "goal_rate": 0.952,
+          "off_target_rate": 0.048,
+          "saved_rate": 0.0,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.0
+        },
+        "keeper": {
+          "success_rate": 0.782,
+          "mean_return": 70.312,
+          "mean_discounted_return": 70.21523182,
+          "mean_steps": 1.13,
+          "goal_rate": 0.782,
+          "off_target_rate": 0.152,
+          "saved_rate": 0.056,
+          "blocked_rate": 0.01,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.14
+        }
+      }
+    },
+    {
+      "episode": 30000,
+      "variants": {
+        "open": {
+          "success_rate": 0.952,
+          "mean_return": 93.76,
+          "mean_discounted_return": 93.76,
+          "mean_steps": 1.0,
+          "goal_rate": 0.952,
+          "off_target_rate": 0.048,
+          "saved_rate": 0.0,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.0
+        },
+        "keeper": {
+          "success_rate": 0.782,
+          "mean_return": 70.312,
+          "mean_discounted_return": 70.21523182,
+          "mean_steps": 1.13,
+          "goal_rate": 0.782,
+          "off_target_rate": 0.152,
+          "saved_rate": 0.056,
+          "blocked_rate": 0.01,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.14
+        }
+      }
+    },
+    {
+      "episode": 32000,
+      "variants": {
+        "open": {
+          "success_rate": 0.952,
+          "mean_return": 93.76,
+          "mean_discounted_return": 93.76,
+          "mean_steps": 1.0,
+          "goal_rate": 0.952,
+          "off_target_rate": 0.048,
+          "saved_rate": 0.0,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.0
+        },
+        "keeper": {
+          "success_rate": 0.782,
+          "mean_return": 70.312,
+          "mean_discounted_return": 70.21523182,
+          "mean_steps": 1.13,
+          "goal_rate": 0.782,
+          "off_target_rate": 0.152,
+          "saved_rate": 0.056,
+          "blocked_rate": 0.01,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.14
+        }
+      }
+    },
+    {
+      "episode": 34000,
+      "variants": {
+        "open": {
+          "success_rate": 0.952,
+          "mean_return": 93.76,
+          "mean_discounted_return": 93.76,
+          "mean_steps": 1.0,
+          "goal_rate": 0.952,
+          "off_target_rate": 0.048,
+          "saved_rate": 0.0,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.0
+        },
+        "keeper": {
+          "success_rate": 0.822,
+          "mean_return": 75.6868,
+          "mean_discounted_return": 75.65238884,
+          "mean_steps": 1.066,
+          "goal_rate": 0.822,
+          "off_target_rate": 0.12,
+          "saved_rate": 0.058,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.066
+        }
+      }
+    },
+    {
+      "episode": 36000,
+      "variants": {
+        "open": {
+          "success_rate": 0.952,
+          "mean_return": 93.76,
+          "mean_discounted_return": 93.76,
+          "mean_steps": 1.0,
+          "goal_rate": 0.952,
+          "off_target_rate": 0.048,
+          "saved_rate": 0.0,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.0
+        },
+        "keeper": {
+          "success_rate": 0.822,
+          "mean_return": 75.6868,
+          "mean_discounted_return": 75.65238884,
+          "mean_steps": 1.066,
+          "goal_rate": 0.822,
+          "off_target_rate": 0.12,
+          "saved_rate": 0.058,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.066
+        }
+      }
+    },
+    {
+      "episode": 38000,
+      "variants": {
+        "open": {
+          "success_rate": 0.952,
+          "mean_return": 93.76,
+          "mean_discounted_return": 93.76,
+          "mean_steps": 1.0,
+          "goal_rate": 0.952,
+          "off_target_rate": 0.048,
+          "saved_rate": 0.0,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.0
+        },
+        "keeper": {
+          "success_rate": 0.828,
+          "mean_return": 76.5468,
+          "mean_discounted_return": 76.51238884,
+          "mean_steps": 1.066,
+          "goal_rate": 0.828,
+          "off_target_rate": 0.118,
+          "saved_rate": 0.054,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.066
+        }
+      }
+    },
+    {
+      "episode": 40000,
+      "variants": {
+        "open": {
+          "success_rate": 0.952,
+          "mean_return": 93.76,
+          "mean_discounted_return": 93.76,
+          "mean_steps": 1.0,
+          "goal_rate": 0.952,
+          "off_target_rate": 0.048,
+          "saved_rate": 0.0,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.0
+        },
+        "keeper": {
+          "success_rate": 0.828,
+          "mean_return": 76.5468,
+          "mean_discounted_return": 76.51238884,
+          "mean_steps": 1.066,
+          "goal_rate": 0.828,
+          "off_target_rate": 0.118,
+          "saved_rate": 0.054,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.066
+        }
+      }
+    },
+    {
+      "episode": 42000,
+      "variants": {
+        "open": {
+          "success_rate": 0.974,
+          "mean_return": 96.62,
+          "mean_discounted_return": 96.62,
+          "mean_steps": 1.0,
+          "goal_rate": 0.974,
+          "off_target_rate": 0.026,
+          "saved_rate": 0.0,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.0
+        },
+        "keeper": {
+          "success_rate": 0.828,
+          "mean_return": 76.5468,
+          "mean_discounted_return": 76.51238884,
+          "mean_steps": 1.066,
+          "goal_rate": 0.828,
+          "off_target_rate": 0.118,
+          "saved_rate": 0.054,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.066
+        }
+      }
+    },
+    {
+      "episode": 44000,
+      "variants": {
+        "open": {
+          "success_rate": 0.974,
+          "mean_return": 96.62,
+          "mean_discounted_return": 96.62,
+          "mean_steps": 1.0,
+          "goal_rate": 0.974,
+          "off_target_rate": 0.026,
+          "saved_rate": 0.0,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.0
+        },
+        "keeper": {
+          "success_rate": 0.828,
+          "mean_return": 76.5468,
+          "mean_discounted_return": 76.51238884,
+          "mean_steps": 1.066,
+          "goal_rate": 0.828,
+          "off_target_rate": 0.118,
+          "saved_rate": 0.054,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.066
+        }
+      }
+    },
+    {
+      "episode": 46000,
+      "variants": {
+        "open": {
+          "success_rate": 0.974,
+          "mean_return": 96.62,
+          "mean_discounted_return": 96.62,
+          "mean_steps": 1.0,
+          "goal_rate": 0.974,
+          "off_target_rate": 0.026,
+          "saved_rate": 0.0,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.0
+        },
+        "keeper": {
+          "success_rate": 0.828,
+          "mean_return": 76.5468,
+          "mean_discounted_return": 76.51238884,
+          "mean_steps": 1.066,
+          "goal_rate": 0.828,
+          "off_target_rate": 0.118,
+          "saved_rate": 0.054,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.066
+        }
+      }
+    },
+    {
+      "episode": 48000,
+      "variants": {
+        "open": {
+          "success_rate": 0.974,
+          "mean_return": 96.62,
+          "mean_discounted_return": 96.62,
+          "mean_steps": 1.0,
+          "goal_rate": 0.974,
+          "off_target_rate": 0.026,
+          "saved_rate": 0.0,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.0
+        },
+        "keeper": {
+          "success_rate": 0.828,
+          "mean_return": 76.5468,
+          "mean_discounted_return": 76.51238884,
+          "mean_steps": 1.066,
+          "goal_rate": 0.828,
+          "off_target_rate": 0.118,
+          "saved_rate": 0.054,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.066
+        }
+      }
+    },
+    {
+      "episode": 50000,
+      "variants": {
+        "open": {
+          "success_rate": 0.994,
+          "mean_return": 99.22,
+          "mean_discounted_return": 99.22,
+          "mean_steps": 1.0,
+          "goal_rate": 0.994,
+          "off_target_rate": 0.006,
+          "saved_rate": 0.0,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.0
+        },
+        "keeper": {
+          "success_rate": 0.842,
+          "mean_return": 78.3668,
+          "mean_discounted_return": 78.33238884,
+          "mean_steps": 1.066,
+          "goal_rate": 0.842,
+          "off_target_rate": 0.104,
+          "saved_rate": 0.054,
+          "blocked_rate": 0.0,
+          "no_shot_rate": 0.0,
+          "mean_conducir": 0.066
+        }
+      }
+    }
+  ],
+  "final_eval": {
+    "episode": 50000,
+    "variants": {
+      "open": {
+        "success_rate": 0.994,
+        "mean_return": 99.22,
+        "mean_discounted_return": 99.22,
+        "mean_steps": 1.0,
+        "goal_rate": 0.994,
+        "off_target_rate": 0.006,
+        "saved_rate": 0.0,
+        "blocked_rate": 0.0,
+        "no_shot_rate": 0.0,
+        "mean_conducir": 0.0
+      },
+      "keeper": {
+        "success_rate": 0.842,
+        "mean_return": 78.3668,
+        "mean_discounted_return": 78.33238884,
+        "mean_steps": 1.066,
+        "goal_rate": 0.842,
+        "off_target_rate": 0.104,
+        "saved_rate": 0.054,
+        "blocked_rate": 0.0,
+        "no_shot_rate": 0.0,
+        "mean_conducir": 0.066
+      }
+    }
+  },
+  "train_seconds": 2.5888442993164062
+}

@@ -305,3 +305,120 @@ def plot_snapshot_trajectories(snapshots: Dict[str, Dict], idx: int, env: str = 
         ax.legend(fontsize=7, loc="lower left", framealpha=0.9)
     ax.figure.set_facecolor(SURFACE)
     return ax
+
+
+# ------------------------------------------------------ catalog tasks (src/task_train.py)
+def plot_task_eval_curves(runs: Dict[str, List[Dict]], variant: str, metric: str = "success_rate",
+                          refs: Optional[Dict[str, float]] = None, ax=None, ylabel: str = "",
+                          title: str = "", labels: Optional[Dict[str, str]] = None,
+                          colors: Optional[Dict[str, str]] = None, direct_labels: bool = False):
+    """Greedy evaluation curves (mean ± std over seeds) of ``task_train`` runs for one variant.
+    ``runs``: ``{condition: [run, ...]}`` from ``src.task_analysis.load_condition``."""
+    ax = ax or plt.subplots(figsize=(8, 4))[1]
+    x0 = 0
+    for i, (cond, rs) in enumerate(runs.items()):
+        x = np.array([e["episode"] for e in rs[0]["evals"]])
+        ys = np.array([[e["variants"][variant][metric] for e in r["evals"]] for r in rs])
+        color = (colors or {}).get(cond, SERIES[i % len(SERIES)])
+        _band(ax, x, ys, color, (labels or {}).get(cond, cond), direct_labels)
+        x0 = x[0]
+    for label, y in (refs or {}).items():
+        ax.axhline(y, color=REF, linewidth=1, linestyle="--")
+        ax.annotate(label, (x0, y), xytext=(0, 4), textcoords="offset points", color=TEXT_2,
+                    fontsize=8)
+    style(ax, title, "episodios de entrenamiento", ylabel or metric)
+    ax.legend(frameon=False, fontsize=8, loc="lower right")
+    return ax
+
+
+def plot_policy_grid(actions: np.ndarray, disc, row: str, col: str, facet: str,
+                     action_short: Sequence[str], action_colors: Sequence[str],
+                     values: Optional[np.ndarray] = None, mask: Optional[np.ndarray] = None,
+                     title: str = "", figsize=None, names: Optional[Dict[str, str]] = None):
+    """Small multiples of a policy over a ``ProductDiscretizer`` with three features: one panel
+    per ``facet`` bin, ``row`` x ``col`` cells labelled with the action (and ``values`` if
+    given). Every cell is labelled, so identity never relies on colour. ``mask``: states to
+    blank (e.g. never visited). ``names``: display name per feature key."""
+    names = names or {}
+    keys = [f.key for f in disc.features]
+    fi = {k: keys.index(k) for k in (row, col, facet)}
+    feats = {k: disc.features[i] for k, i in fi.items()}
+    n_f = feats[facet].n_bins
+    fig, axes = plt.subplots(1, n_f, figsize=figsize or (3.1 * n_f, 2.6), squeeze=False)
+    cmap = ListedColormap(list(action_colors))
+    for p, ax in enumerate(axes[0]):
+        grid = np.full((feats[row].n_bins, feats[col].n_bins), np.nan)
+        vals = np.full_like(grid, np.nan)
+        for r in range(feats[row].n_bins):
+            for c in range(feats[col].n_bins):
+                bins = [0] * len(keys)
+                bins[fi[row]], bins[fi[col]], bins[fi[facet]] = r, c, p
+                s = disc.compose(bins)
+                if mask is not None and mask[s]:
+                    continue
+                grid[r, c] = actions[s]
+                if values is not None:
+                    vals[r, c] = values[s]
+        ax.imshow(np.ma.masked_invalid(grid), cmap=cmap, vmin=-0.5,
+                  vmax=len(action_colors) - 0.5, aspect="auto")
+        for (r, c), a in np.ndenumerate(grid):
+            text = "—" if np.isnan(a) else action_short[int(a)]
+            if values is not None and not np.isnan(vals[r, c]):
+                text += f"\n{vals[r, c]:.0f}"
+            ax.text(c, r, text, ha="center", va="center", fontsize=8, color=TEXT)
+        ax.set_xticks(range(feats[col].n_bins), feats[col].bin_labels, fontsize=8)
+        ax.set_yticks(range(feats[row].n_bins), feats[row].bin_labels if p == 0 else [""] * feats[row].n_bins,
+                      fontsize=8)
+        style(ax, f"{names.get(facet, facet)}: {feats[facet].bin_labels[p]}", names.get(col, col),
+              names.get(row, row) if p == 0 else "")
+        ax.grid(False)
+    if title:
+        fig.suptitle(title, x=0.01, ha="left", fontsize=11, color=TEXT)
+    fig.set_facecolor(SURFACE)
+    fig.tight_layout()
+    return fig
+
+
+SHOT_OUTCOME_COLORS = {1: "#1baf7a", 2: "#eb6834", 3: "#2a78d6", 4: "#8a8984", 0: "#8a8984"}
+
+
+def plot_shooting_episodes(records: Sequence[Dict], ax=None, title: str = "",
+                           outcome_names: Optional[Dict[int, str]] = None, reach: float = 2.0,
+                           show_reach: bool = True):
+    """Shooting episodes near the rival goal: start (ring), CONDUCIR path, shot to the goal line
+    coloured by outcome, keeper as a bar of its reach (or, with ``show_reach=False``, a tick at
+    its position, for many overlapping episodes). +y downward, as on the monitor."""
+    from src import shooting_env as se
+    ax = ax or plt.subplots(figsize=(5, 5))[1]
+    ax.set_facecolor(SURFACE)
+    ax.plot([se.GOAL_X, se.GOAL_X], [-12, 12], color=GRID, linewidth=1.2)
+    ax.plot([se.GOAL_X] * 2, [-se.POST_Y, se.POST_Y], color=TEXT, linewidth=3)
+    for y in (-se.POST_Y, se.POST_Y):
+        ax.plot(se.GOAL_X, y, "s", color=TEXT, markersize=4)
+    seen = set()
+    for rec in records:
+        traj = rec["trajectory"]
+        bx = [t["ball"][0] for t in traj]
+        by = [t["ball"][1] for t in traj]
+        ax.plot(bx[0], by[0], "o", color=TEXT_2, markerfacecolor="none", markersize=6)
+        ax.plot(bx, by, color=TEXT_2, linewidth=1.2)
+        keeper = traj[0]["keeper"]
+        if keeper is not None and show_reach:
+            ax.plot([se.GOAL_X + 0.6] * 2, [keeper - reach, keeper + reach], color="#2a78d6",
+                    linewidth=5, alpha=0.35, solid_capstyle="butt")
+        elif keeper is not None:
+            ax.plot(se.GOAL_X + 0.8, keeper, "_", color="#2a78d6", markersize=9, markeredgewidth=2.5)
+        end, outcome = traj[-1]["shot_end"], traj[-1]["outcome"]
+        color = SHOT_OUTCOME_COLORS[outcome]
+        label = (outcome_names or se.OUTCOME_NAMES)[outcome]
+        if end is not None:
+            ax.plot([bx[-1], end[0]], [by[-1], end[1]], color=color, linewidth=1.6,
+                    label=None if label in seen else label)
+            ax.plot(*end, "o", color=color, markersize=4)
+            seen.add(label)
+    ax.set_xlim(25, 55)
+    ax.set_ylim(13, -13)
+    ax.set_aspect("equal")
+    style(ax, title, "x (m)", "y (m)")
+    ax.legend(frameon=False, fontsize=8, loc="lower left")
+    return ax

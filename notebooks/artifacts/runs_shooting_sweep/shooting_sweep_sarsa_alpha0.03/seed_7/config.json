@@ -1,0 +1,89 @@
+{
+  "name": "shooting_sweep_sarsa_alpha0.03",
+  "task": "shooting",
+  "algorithm": "sarsa",
+  "n_episodes": 50000,
+  "alpha": 0.03,
+  "gamma": 0.99,
+  "schedule": {
+    "kind": "decay",
+    "eps_start": 1.0,
+    "eps_min": 0.1,
+    "decay": 0.9999232501089904
+  },
+  "representation": "default",
+  "seeds": [
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "t_max": null,
+  "env_kwargs": {},
+  "eval_every": 2000,
+  "eval_episodes": 500,
+  "eval_seed": 12345,
+  "snapshot_episodes": [],
+  "seed": 7,
+  "actions": [
+    "TIRO y=-6",
+    "TIRO y=-3.5",
+    "TIRO y=0",
+    "TIRO y=+3.5",
+    "TIRO y=+6",
+    "CONDUCIR"
+  ],
+  "n_states": 36,
+  "representation_detail": {
+    "features": [
+      {
+        "key": "d_g",
+        "kind": "bins",
+        "edges": [
+          15.0,
+          20.0
+        ],
+        "labels": [
+          "11\u201315 m",
+          "15\u201320 m",
+          "20\u201325 m"
+        ],
+        "split": [],
+        "none_label": null
+      },
+      {
+        "key": "y",
+        "kind": "bins",
+        "edges": [
+          -3.5,
+          3.5
+        ],
+        "labels": [
+          "izq.",
+          "centro",
+          "der."
+        ],
+        "split": [],
+        "none_label": null
+      },
+      {
+        "key": "keeper",
+        "kind": "bins",
+        "edges": [
+          -1.0,
+          1.0
+        ],
+        "labels": [
+          "izq.",
+          "centro",
+          "der."
+        ],
+        "split": [],
+        "none_label": "sin arquero"
+      }
+    ]
+  },
+  "git_commit": "7bcebf83e276d26b297c7580ab04236bdd6947d6",
+  "source_sha256": "b16975cc25c0f4bbfb00b1b1c65456df191d4c9b12d4c871a197e2970947aabd"
+}

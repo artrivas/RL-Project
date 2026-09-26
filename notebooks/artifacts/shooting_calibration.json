@@ -1,0 +1,461 @@
+{
+  "rule": "first grid point (ordered by closeness to sigma 4, reach 2.0, p_out 0.1; p_out lowered before sigma raised) that passes checks a-c",
+  "selected": {
+    "sigma_deg": 4.0,
+    "keeper_reach": 2.0,
+    "p_keeper_out": 0.02,
+    "p_keeper": 0.5
+  },
+  "grid": [
+    {
+      "params": {
+        "sigma_deg": 4.0,
+        "keeper_reach": 2.0,
+        "p_keeper_out": 0.1,
+        "p_keeper": 0.5
+      },
+      "calibration": {
+        "a_shot_differs_across_keeper_bins": true,
+        "b_conducir_optimal_somewhere": false,
+        "c_keeper_goal_rate_below_1": true,
+        "passed": false
+      },
+      "evaluation": {
+        "open": {
+          "n": 500,
+          "seed": 12345,
+          "true_optimum_goal_rate": 0.9999422062034528,
+          "true_optimum_mean_discounted_return": 99.99248680644887,
+          "true_optimum_first_action_share": {
+            "TIRO y=-6": 0.0,
+            "TIRO y=-3.5": 0.0,
+            "TIRO y=0": 0.998,
+            "TIRO y=+3.5": 0.002,
+            "TIRO y=+6": 0.0,
+            "CONDUCIR": 0.0
+          },
+          "representation_optimum_goal_rate": 0.9999421820041654,
+          "representation_optimum_mean_discounted_return": 99.99248366054151,
+          "sampling_std_of_goal_rate": 0.0003399960800290958
+        },
+        "keeper": {
+          "n": 500,
+          "seed": 12345,
+          "true_optimum_goal_rate": 0.9506564053922759,
+          "true_optimum_mean_discounted_return": 92.90316999032571,
+          "true_optimum_first_action_share": {
+            "TIRO y=-6": 0.006,
+            "TIRO y=-3.5": 0.506,
+            "TIRO y=0": 0.0,
+            "TIRO y=+3.5": 0.484,
+            "TIRO y=+6": 0.004,
+            "CONDUCIR": 0.0
+          },
+          "representation_optimum_goal_rate": 0.9308658534178905,
+          "representation_optimum_mean_discounted_return": 89.87195324966713,
+          "sampling_std_of_goal_rate": 0.010721635238360745
+        }
+      }
+    },
+    {
+      "params": {
+        "sigma_deg": 4.0,
+        "keeper_reach": 2.0,
+        "p_keeper_out": 0.05,
+        "p_keeper": 0.5
+      },
+      "calibration": {
+        "a_shot_differs_across_keeper_bins": true,
+        "b_conducir_optimal_somewhere": false,
+        "c_keeper_goal_rate_below_1": true,
+        "passed": false
+      },
+      "evaluation": {
+        "open": {
+          "n": 500,
+          "seed": 12345,
+          "true_optimum_goal_rate": 0.9999422062034528,
+          "true_optimum_mean_discounted_return": 99.99248680644887,
+          "true_optimum_first_action_share": {
+            "TIRO y=-6": 0.0,
+            "TIRO y=-3.5": 0.0,
+            "TIRO y=0": 0.998,
+            "TIRO y=+3.5": 0.002,
+            "TIRO y=+6": 0.0,
+            "CONDUCIR": 0.0
+          },
+          "representation_optimum_goal_rate": 0.9999421820041654,
+          "representation_optimum_mean_discounted_return": 99.99248366054151,
+          "sampling_std_of_goal_rate": 0.0003399960800290958
+        },
+        "keeper": {
+          "n": 500,
+          "seed": 12345,
+          "true_optimum_goal_rate": 0.9506564053922759,
+          "true_optimum_mean_discounted_return": 92.90316999032571,
+          "true_optimum_first_action_share": {
+            "TIRO y=-6": 0.006,
+            "TIRO y=-3.5": 0.506,
+            "TIRO y=0": 0.0,
+            "TIRO y=+3.5": 0.484,
+            "TIRO y=+6": 0.004,
+            "CONDUCIR": 0.0
+          },
+          "representation_optimum_goal_rate": 0.9308658534178905,
+          "representation_optimum_mean_discounted_return": 89.87195324966713,
+          "sampling_std_of_goal_rate": 0.010721635238360745
+        }
+      }
+    },
+    {
+      "params": {
+        "sigma_deg": 4.0,
+        "keeper_reach": 2.0,
+        "p_keeper_out": 0.02,
+        "p_keeper": 0.5
+      },
+      "calibration": {
+        "a_shot_differs_across_keeper_bins": true,
+        "b_conducir_optimal_somewhere": true,
+        "c_keeper_goal_rate_below_1": true,
+        "passed": true
+      },
+      "evaluation": {
+        "open": {
+          "n": 500,
+          "seed": 12345,
+          "true_optimum_goal_rate": 0.9999422062034528,
+          "true_optimum_mean_discounted_return": 99.99248680644887,
+          "true_optimum_first_action_share": {
+            "TIRO y=-6": 0.0,
+            "TIRO y=-3.5": 0.0,
+            "TIRO y=0": 0.998,
+            "TIRO y=+3.5": 0.002,
+            "TIRO y=+6": 0.0,
+            "CONDUCIR": 0.0
+          },
+          "representation_optimum_goal_rate": 0.9999421820041654,
+          "representation_optimum_mean_discounted_return": 99.99248366054151,
+          "sampling_std_of_goal_rate": 0.0003399960800290958
+        },
+        "keeper": {
+          "n": 500,
+          "seed": 12345,
+          "true_optimum_goal_rate": 0.9522217549684733,
+          "true_optimum_mean_discounted_return": 92.94637954180608,
+          "true_optimum_first_action_share": {
+            "TIRO y=-6": 0.0,
+            "TIRO y=-3.5": 0.48,
+            "TIRO y=0": 0.0,
+            "TIRO y=+3.5": 0.44,
+            "TIRO y=+6": 0.0,
+            "CONDUCIR": 0.08
+          },
+          "representation_optimum_goal_rate": 0.9327038104015449,
+          "representation_optimum_mean_discounted_return": 90.08074674088863,
+          "sampling_std_of_goal_rate": 0.010611756435185835
+        }
+      }
+    },
+    {
+      "params": {
+        "sigma_deg": 6.0,
+        "keeper_reach": 2.0,
+        "p_keeper_out": 0.1,
+        "p_keeper": 0.5
+      },
+      "calibration": {
+        "a_shot_differs_across_keeper_bins": true,
+        "b_conducir_optimal_somewhere": false,
+        "c_keeper_goal_rate_below_1": true,
+        "passed": false
+      },
+      "evaluation": {
+        "open": {
+          "n": 500,
+          "seed": 12345,
+          "true_optimum_goal_rate": 0.9961463303573238,
+          "true_optimum_mean_discounted_return": 99.49902294645209,
+          "true_optimum_first_action_share": {
+            "TIRO y=-6": 0.0,
+            "TIRO y=-3.5": 0.0,
+            "TIRO y=0": 0.998,
+            "TIRO y=+3.5": 0.002,
+            "TIRO y=+6": 0.0,
+            "CONDUCIR": 0.0
+          },
+          "representation_optimum_goal_rate": 0.9961453326024429,
+          "representation_optimum_mean_discounted_return": 99.49889323831756,
+          "sampling_std_of_goal_rate": 0.002763497242718841
+        },
+        "keeper": {
+          "n": 500,
+          "seed": 12345,
+          "true_optimum_goal_rate": 0.8489394945178302,
+          "true_optimum_mean_discounted_return": 78.63070673065384,
+          "true_optimum_first_action_share": {
+            "TIRO y=-6": 0.012,
+            "TIRO y=-3.5": 0.496,
+            "TIRO y=0": 0.0,
+            "TIRO y=+3.5": 0.474,
+            "TIRO y=+6": 0.018,
+            "CONDUCIR": 0.0
+          },
+          "representation_optimum_goal_rate": 0.8346202641106913,
+          "representation_optimum_mean_discounted_return": 76.29313992673633,
+          "sampling_std_of_goal_rate": 0.015956313349333187
+        }
+      }
+    },
+    {
+      "params": {
+        "sigma_deg": 6.0,
+        "keeper_reach": 2.0,
+        "p_keeper_out": 0.05,
+        "p_keeper": 0.5
+      },
+      "calibration": {
+        "a_shot_differs_across_keeper_bins": true,
+        "b_conducir_optimal_somewhere": false,
+        "c_keeper_goal_rate_below_1": true,
+        "passed": false
+      },
+      "evaluation": {
+        "open": {
+          "n": 500,
+          "seed": 12345,
+          "true_optimum_goal_rate": 0.9961463303573238,
+          "true_optimum_mean_discounted_return": 99.49902294645209,
+          "true_optimum_first_action_share": {
+            "TIRO y=-6": 0.0,
+            "TIRO y=-3.5": 0.0,
+            "TIRO y=0": 0.998,
+            "TIRO y=+3.5": 0.002,
+            "TIRO y=+6": 0.0,
+            "CONDUCIR": 0.0
+          },
+          "representation_optimum_goal_rate": 0.9961453326024429,
+          "representation_optimum_mean_discounted_return": 99.49889323831756,
+          "sampling_std_of_goal_rate": 0.002763497242718841
+        },
+        "keeper": {
+          "n": 500,
+          "seed": 12345,
+          "true_optimum_goal_rate": 0.8489394945178302,
+          "true_optimum_mean_discounted_return": 78.63070673065384,
+          "true_optimum_first_action_share": {
+            "TIRO y=-6": 0.012,
+            "TIRO y=-3.5": 0.496,
+            "TIRO y=0": 0.0,
+            "TIRO y=+3.5": 0.474,
+            "TIRO y=+6": 0.018,
+            "CONDUCIR": 0.0
+          },
+          "representation_optimum_goal_rate": 0.8346202641106913,
+          "representation_optimum_mean_discounted_return": 76.29313992673633,
+          "sampling_std_of_goal_rate": 0.015956313349333187
+        }
+      }
+    },
+    {
+      "params": {
+        "sigma_deg": 6.0,
+        "keeper_reach": 2.0,
+        "p_keeper_out": 0.02,
+        "p_keeper": 0.5
+      },
+      "calibration": {
+        "a_shot_differs_across_keeper_bins": true,
+        "b_conducir_optimal_somewhere": true,
+        "c_keeper_goal_rate_below_1": true,
+        "passed": true
+      },
+      "evaluation": {
+        "open": {
+          "n": 500,
+          "seed": 12345,
+          "true_optimum_goal_rate": 0.9961463303573238,
+          "true_optimum_mean_discounted_return": 99.49902294645209,
+          "true_optimum_first_action_share": {
+            "TIRO y=-6": 0.0,
+            "TIRO y=-3.5": 0.0,
+            "TIRO y=0": 0.998,
+            "TIRO y=+3.5": 0.002,
+            "TIRO y=+6": 0.0,
+            "CONDUCIR": 0.0
+          },
+          "representation_optimum_goal_rate": 0.9961453326024429,
+          "representation_optimum_mean_discounted_return": 99.49889323831756,
+          "sampling_std_of_goal_rate": 0.002763497242718841
+        },
+        "keeper": {
+          "n": 500,
+          "seed": 12345,
+          "true_optimum_goal_rate": 0.8732656029609522,
+          "true_optimum_mean_discounted_return": 80.37974094345005,
+          "true_optimum_first_action_share": {
+            "TIRO y=-6": 0.0,
+            "TIRO y=-3.5": 0.234,
+            "TIRO y=0": 0.0,
+            "TIRO y=+3.5": 0.198,
+            "TIRO y=+6": 0.004,
+            "CONDUCIR": 0.564
+          },
+          "representation_optimum_goal_rate": 0.8478181407289441,
+          "representation_optimum_mean_discounted_return": 77.18654443851311,
+          "sampling_std_of_goal_rate": 0.015520707347429344
+        }
+      }
+    },
+    {
+      "params": {
+        "sigma_deg": 8.0,
+        "keeper_reach": 2.0,
+        "p_keeper_out": 0.1,
+        "p_keeper": 0.5
+      },
+      "calibration": {
+        "a_shot_differs_across_keeper_bins": true,
+        "b_conducir_optimal_somewhere": true,
+        "c_keeper_goal_rate_below_1": true,
+        "passed": true
+      },
+      "evaluation": {
+        "open": {
+          "n": 500,
+          "seed": 12345,
+          "true_optimum_goal_rate": 0.984389344677167,
+          "true_optimum_mean_discounted_return": 97.24953054399835,
+          "true_optimum_first_action_share": {
+            "TIRO y=-6": 0.0,
+            "TIRO y=-3.5": 0.0,
+            "TIRO y=0": 0.658,
+            "TIRO y=+3.5": 0.002,
+            "TIRO y=+6": 0.0,
+            "CONDUCIR": 0.34
+          },
+          "representation_optimum_goal_rate": 0.9838607257743274,
+          "representation_optimum_mean_discounted_return": 97.2406068278827,
+          "sampling_std_of_goal_rate": 0.005608500961504458
+        },
+        "keeper": {
+          "n": 500,
+          "seed": 12345,
+          "true_optimum_goal_rate": 0.7461471366328194,
+          "true_optimum_mean_discounted_return": 64.30434599093685,
+          "true_optimum_first_action_share": {
+            "TIRO y=-6": 0.016,
+            "TIRO y=-3.5": 0.496,
+            "TIRO y=0": 0.0,
+            "TIRO y=+3.5": 0.472,
+            "TIRO y=+6": 0.016,
+            "CONDUCIR": 0.0
+          },
+          "representation_optimum_goal_rate": 0.7365488247562155,
+          "representation_optimum_mean_discounted_return": 62.66095436775556,
+          "sampling_std_of_goal_rate": 0.019119407121082427
+        }
+      }
+    },
+    {
+      "params": {
+        "sigma_deg": 8.0,
+        "keeper_reach": 2.0,
+        "p_keeper_out": 0.05,
+        "p_keeper": 0.5
+      },
+      "calibration": {
+        "a_shot_differs_across_keeper_bins": true,
+        "b_conducir_optimal_somewhere": true,
+        "c_keeper_goal_rate_below_1": true,
+        "passed": true
+      },
+      "evaluation": {
+        "open": {
+          "n": 500,
+          "seed": 12345,
+          "true_optimum_goal_rate": 0.984389344677167,
+          "true_optimum_mean_discounted_return": 97.24953054399835,
+          "true_optimum_first_action_share": {
+            "TIRO y=-6": 0.0,
+            "TIRO y=-3.5": 0.0,
+            "TIRO y=0": 0.658,
+            "TIRO y=+3.5": 0.002,
+            "TIRO y=+6": 0.0,
+            "CONDUCIR": 0.34
+          },
+          "representation_optimum_goal_rate": 0.9838607257743274,
+          "representation_optimum_mean_discounted_return": 97.2406068278827,
+          "sampling_std_of_goal_rate": 0.005608500961504458
+        },
+        "keeper": {
+          "n": 500,
+          "seed": 12345,
+          "true_optimum_goal_rate": 0.7471063226757582,
+          "true_optimum_mean_discounted_return": 64.32893502105024,
+          "true_optimum_first_action_share": {
+            "TIRO y=-6": 0.012,
+            "TIRO y=-3.5": 0.476,
+            "TIRO y=0": 0.0,
+            "TIRO y=+3.5": 0.452,
+            "TIRO y=+6": 0.012,
+            "CONDUCIR": 0.048
+          },
+          "representation_optimum_goal_rate": 0.7365488247562155,
+          "representation_optimum_mean_discounted_return": 62.66095436775556,
+          "sampling_std_of_goal_rate": 0.019119407121082427
+        }
+      }
+    },
+    {
+      "params": {
+        "sigma_deg": 8.0,
+        "keeper_reach": 2.0,
+        "p_keeper_out": 0.02,
+        "p_keeper": 0.5
+      },
+      "calibration": {
+        "a_shot_differs_across_keeper_bins": true,
+        "b_conducir_optimal_somewhere": true,
+        "c_keeper_goal_rate_below_1": true,
+        "passed": true
+      },
+      "evaluation": {
+        "open": {
+          "n": 500,
+          "seed": 12345,
+          "true_optimum_goal_rate": 0.984389344677167,
+          "true_optimum_mean_discounted_return": 97.24953054399835,
+          "true_optimum_first_action_share": {
+            "TIRO y=-6": 0.0,
+            "TIRO y=-3.5": 0.0,
+            "TIRO y=0": 0.658,
+            "TIRO y=+3.5": 0.002,
+            "TIRO y=+6": 0.0,
+            "CONDUCIR": 0.34
+          },
+          "representation_optimum_goal_rate": 0.9838607257743274,
+          "representation_optimum_mean_discounted_return": 97.2406068278827,
+          "sampling_std_of_goal_rate": 0.005608500961504458
+        },
+        "keeper": {
+          "n": 500,
+          "seed": 12345,
+          "true_optimum_goal_rate": 0.8015246239812002,
+          "true_optimum_mean_discounted_return": 69.1776721067327,
+          "true_optimum_first_action_share": {
+            "TIRO y=-6": 0.0,
+            "TIRO y=-3.5": 0.104,
+            "TIRO y=0": 0.0,
+            "TIRO y=+3.5": 0.088,
+            "TIRO y=+6": 0.004,
+            "CONDUCIR": 0.804
+          },
+          "representation_optimum_goal_rate": 0.7691219814068861,
+          "representation_optimum_mean_discounted_return": 65.33223025374741,
+          "sampling_std_of_goal_rate": 0.01827255171120147
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "name": "shooting_diag_budget4x_qlearning",
+  "task": "shooting",
+  "algorithm": "qlearning",
+  "n_episodes": 200000,
+  "alpha": 0.03,
+  "gamma": 0.99,
+  "schedule": {
+    "kind": "constant",
+    "eps": 0.1
+  },
+  "q_init": 0.0,
+  "representation": "default",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "t_max": null,
+  "env_kwargs": {},
+  "eval_every": 2000,
+  "eval_episodes": 500,
+  "eval_seed": 12345,
+  "snapshot_episodes": [],
+  "seed": 4,
+  "actions": [
+    "TIRO y=-6",
+    "TIRO y=-3.5",
+    "TIRO y=0",
+    "TIRO y=+3.5",
+    "TIRO y=+6",
+    "CONDUCIR"
+  ],
+  "n_states": 36,
+  "representation_detail": {
+    "features": [
+      {
+        "key": "d_g",
+        "kind": "bins",
+        "edges": [
+          15.0,
+          20.0
+        ],
+        "labels": [
+          "11\u201315 m",
+          "15\u201320 m",
+          "20\u201325 m"
+        ],
+        "split": [],
+        "none_label": null
+      },
+      {
+        "key": "y",
+        "kind": "bins",
+        "edges": [
+          -3.5,
+          3.5
+        ],
+        "labels": [
+          "izq.",
+          "centro",
+          "der."
+        ],
+        "split": [],
+        "none_label": null
+      },
+      {
+        "key": "keeper",
+        "kind": "bins",
+        "edges": [
+          -1.0,
+          1.0
+        ],
+        "labels": [
+          "izq.",
+          "centro",
+          "der."
+        ],
+        "split": [],
+        "none_label": "sin arquero"
+      }
+    ]
+  },
+  "git_commit": "7bcebf83e276d26b297c7580ab04236bdd6947d6",
+  "source_sha256": "b5f504f55509ed7c945e6de15da80efb2ae42af364b7a27d9a632fd2ea11fafc"
+}
