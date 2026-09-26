@@ -231,6 +231,10 @@ class RoboCupPlayer:
     def turn(self, moment: float) -> None:
         self._send(f"(turn {moment:.2f})")
 
+    def kick(self, power: float, direction: float) -> None:
+        """``direction`` is relative to the body; the server ignores it unless the ball is kickable."""
+        self._send(f"(kick {power:.2f} {direction:.2f})")
+
     def turn_neck(self, angle: float) -> None:
         """Relative neck turn; may be sent in the same cycle as a body command."""
         self._send(f"(turn_neck {angle:.2f})")

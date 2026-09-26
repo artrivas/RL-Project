@@ -1,0 +1,566 @@
+{
+  "name": "passing_mc_first_visit_alpha_eps_decay_1_to_0.1",
+  "task": "passing",
+  "seed": 1,
+  "evals": [
+    {
+      "episode": 2000,
+      "variants": {
+        "default": {
+          "success_rate": 0.004,
+          "mean_return": 450.2,
+          "mean_discounted_return": 409.19112235449677,
+          "mean_steps": 18.058,
+          "intercepted_rate": 0.05,
+          "tackled_rate": 0.032,
+          "out_rate": 0.04,
+          "cleared_rate": 0.876,
+          "full_possession_rate": 0.002,
+          "mean_passes": 15.102,
+          "mean_possession": 17.06
+        }
+      }
+    },
+    {
+      "episode": 4000,
+      "variants": {
+        "default": {
+          "success_rate": 0.002,
+          "mean_return": 451.18,
+          "mean_discounted_return": 409.6775000029106,
+          "mean_steps": 18.276,
+          "intercepted_rate": 0.068,
+          "tackled_rate": 0.034,
+          "out_rate": 0.026,
+          "cleared_rate": 0.872,
+          "full_possession_rate": 0.0,
+          "mean_passes": 15.15,
+          "mean_possession": 17.276
+        }
+      }
+    },
+    {
+      "episode": 6000,
+      "variants": {
+        "default": {
+          "success_rate": 0.008,
+          "mean_return": 459.76,
+          "mean_discounted_return": 417.2036119347394,
+          "mean_steps": 17.838,
+          "intercepted_rate": 0.142,
+          "tackled_rate": 0.05,
+          "out_rate": 0.002,
+          "cleared_rate": 0.806,
+          "full_possession_rate": 0.0,
+          "mean_passes": 15.518,
+          "mean_possession": 16.838
+        }
+      }
+    },
+    {
+      "episode": 8000,
+      "variants": {
+        "default": {
+          "success_rate": 0.008,
+          "mean_return": 477.06,
+          "mean_discounted_return": 430.49771566185075,
+          "mean_steps": 18.188,
+          "intercepted_rate": 0.032,
+          "tackled_rate": 0.038,
+          "out_rate": 0.006,
+          "cleared_rate": 0.922,
+          "full_possession_rate": 0.002,
+          "mean_passes": 15.974,
+          "mean_possession": 17.19
+        }
+      }
+    },
+    {
+      "episode": 10000,
+      "variants": {
+        "default": {
+          "success_rate": 0.008,
+          "mean_return": 494.06,
+          "mean_discounted_return": 444.6248847758189,
+          "mean_steps": 19.366,
+          "intercepted_rate": 0.014,
+          "tackled_rate": 0.02,
+          "out_rate": 0.004,
+          "cleared_rate": 0.96,
+          "full_possession_rate": 0.002,
+          "mean_passes": 16.504,
+          "mean_possession": 18.368
+        }
+      }
+    },
+    {
+      "episode": 12000,
+      "variants": {
+        "default": {
+          "success_rate": 0.014,
+          "mean_return": 488.06,
+          "mean_discounted_return": 439.43479816296195,
+          "mean_steps": 18.95,
+          "intercepted_rate": 0.028,
+          "tackled_rate": 0.012,
+          "out_rate": 0.004,
+          "cleared_rate": 0.948,
+          "full_possession_rate": 0.008,
+          "mean_passes": 16.31,
+          "mean_possession": 17.958
+        }
+      }
+    },
+    {
+      "episode": 14000,
+      "variants": {
+        "default": {
+          "success_rate": 0.004,
+          "mean_return": 493.32,
+          "mean_discounted_return": 444.8383717981031,
+          "mean_steps": 19.266,
+          "intercepted_rate": 0.004,
+          "tackled_rate": 0.014,
+          "out_rate": 0.0,
+          "cleared_rate": 0.98,
+          "full_possession_rate": 0.002,
+          "mean_passes": 16.462,
+          "mean_possession": 18.268
+        }
+      }
+    },
+    {
+      "episode": 16000,
+      "variants": {
+        "default": {
+          "success_rate": 0.012,
+          "mean_return": 487.9,
+          "mean_discounted_return": 439.802369805504,
+          "mean_steps": 18.842,
+          "intercepted_rate": 0.012,
+          "tackled_rate": 0.026,
+          "out_rate": 0.002,
+          "cleared_rate": 0.956,
+          "full_possession_rate": 0.004,
+          "mean_passes": 16.302,
+          "mean_possession": 17.846
+        }
+      }
+    },
+    {
+      "episode": 18000,
+      "variants": {
+        "default": {
+          "success_rate": 0.01,
+          "mean_return": 493.18,
+          "mean_discounted_return": 444.68214659525455,
+          "mean_steps": 19.112,
+          "intercepted_rate": 0.014,
+          "tackled_rate": 0.008,
+          "out_rate": 0.002,
+          "cleared_rate": 0.972,
+          "full_possession_rate": 0.004,
+          "mean_passes": 16.462,
+          "mean_possession": 18.116
+        }
+      }
+    },
+    {
+      "episode": 20000,
+      "variants": {
+        "default": {
+          "success_rate": 0.006,
+          "mean_return": 474.7,
+          "mean_discounted_return": 431.12544219381266,
+          "mean_steps": 17.584,
+          "intercepted_rate": 0.006,
+          "tackled_rate": 0.016,
+          "out_rate": 0.002,
+          "cleared_rate": 0.974,
+          "full_possession_rate": 0.002,
+          "mean_passes": 15.846,
+          "mean_possession": 16.586
+        }
+      }
+    },
+    {
+      "episode": 22000,
+      "variants": {
+        "default": {
+          "success_rate": 0.004,
+          "mean_return": 480.46,
+          "mean_discounted_return": 436.1126173523023,
+          "mean_steps": 18.144,
+          "intercepted_rate": 0.002,
+          "tackled_rate": 0.014,
+          "out_rate": 0.002,
+          "cleared_rate": 0.98,
+          "full_possession_rate": 0.002,
+          "mean_passes": 16.032,
+          "mean_possession": 17.146
+        }
+      }
+    },
+    {
+      "episode": 24000,
+      "variants": {
+        "default": {
+          "success_rate": 0.002,
+          "mean_return": 482.86,
+          "mean_discounted_return": 438.57976948133427,
+          "mean_steps": 17.99,
+          "intercepted_rate": 0.002,
+          "tackled_rate": 0.024,
+          "out_rate": 0.002,
+          "cleared_rate": 0.972,
+          "full_possession_rate": 0.0,
+          "mean_passes": 16.122,
+          "mean_possession": 16.99
+        }
+      }
+    },
+    {
+      "episode": 26000,
+      "variants": {
+        "default": {
+          "success_rate": 0.016,
+          "mean_return": 503.16,
+          "mean_discounted_return": 453.67288113548864,
+          "mean_steps": 19.98,
+          "intercepted_rate": 0.042,
+          "tackled_rate": 0.018,
+          "out_rate": 0.0,
+          "cleared_rate": 0.932,
+          "full_possession_rate": 0.008,
+          "mean_passes": 16.832,
+          "mean_possession": 18.988
+        }
+      }
+    },
+    {
+      "episode": 28000,
+      "variants": {
+        "default": {
+          "success_rate": 0.038,
+          "mean_return": 518.08,
+          "mean_discounted_return": 463.1326142069836,
+          "mean_steps": 21.93,
+          "intercepted_rate": 0.0,
+          "tackled_rate": 0.02,
+          "out_rate": 0.026,
+          "cleared_rate": 0.938,
+          "full_possession_rate": 0.016,
+          "mean_passes": 17.298,
+          "mean_possession": 20.946
+        }
+      }
+    },
+    {
+      "episode": 30000,
+      "variants": {
+        "default": {
+          "success_rate": 0.064,
+          "mean_return": 526.24,
+          "mean_discounted_return": 469.3789710931171,
+          "mean_steps": 23.262,
+          "intercepted_rate": 0.0,
+          "tackled_rate": 0.024,
+          "out_rate": 0.032,
+          "cleared_rate": 0.906,
+          "full_possession_rate": 0.038,
+          "mean_passes": 17.576,
+          "mean_possession": 22.3
+        }
+      }
+    },
+    {
+      "episode": 32000,
+      "variants": {
+        "default": {
+          "success_rate": 0.086,
+          "mean_return": 536.96,
+          "mean_discounted_return": 475.17448884207465,
+          "mean_steps": 24.01,
+          "intercepted_rate": 0.0,
+          "tackled_rate": 0.016,
+          "out_rate": 0.04,
+          "cleared_rate": 0.886,
+          "full_possession_rate": 0.058,
+          "mean_passes": 17.928,
+          "mean_possession": 23.068
+        }
+      }
+    },
+    {
+      "episode": 34000,
+      "variants": {
+        "default": {
+          "success_rate": 0.06,
+          "mean_return": 525.22,
+          "mean_discounted_return": 468.8514761929193,
+          "mean_steps": 23.316,
+          "intercepted_rate": 0.002,
+          "tackled_rate": 0.022,
+          "out_rate": 0.044,
+          "cleared_rate": 0.894,
+          "full_possession_rate": 0.038,
+          "mean_passes": 17.546,
+          "mean_possession": 22.354
+        }
+      }
+    },
+    {
+      "episode": 36000,
+      "variants": {
+        "default": {
+          "success_rate": 0.244,
+          "mean_return": 586.26,
+          "mean_discounted_return": 503.3987005468103,
+          "mean_steps": 31.054,
+          "intercepted_rate": 0.0,
+          "tackled_rate": 0.128,
+          "out_rate": 0.024,
+          "cleared_rate": 0.638,
+          "full_possession_rate": 0.21,
+          "mean_passes": 19.678,
+          "mean_possession": 30.264
+        }
+      }
+    },
+    {
+      "episode": 38000,
+      "variants": {
+        "default": {
+          "success_rate": 0.294,
+          "mean_return": 626.84,
+          "mean_discounted_return": 533.579470890129,
+          "mean_steps": 32.856,
+          "intercepted_rate": 0.0,
+          "tackled_rate": 0.13,
+          "out_rate": 0.058,
+          "cleared_rate": 0.558,
+          "full_possession_rate": 0.254,
+          "mean_passes": 21.044,
+          "mean_possession": 32.11
+        }
+      }
+    },
+    {
+      "episode": 40000,
+      "variants": {
+        "default": {
+          "success_rate": 0.398,
+          "mean_return": 662.5,
+          "mean_discounted_return": 555.1964609107657,
+          "mean_steps": 36.33,
+          "intercepted_rate": 0.002,
+          "tackled_rate": 0.15,
+          "out_rate": 0.11,
+          "cleared_rate": 0.394,
+          "full_possession_rate": 0.344,
+          "mean_passes": 22.272,
+          "mean_possession": 35.674
+        }
+      }
+    },
+    {
+      "episode": 42000,
+      "variants": {
+        "default": {
+          "success_rate": 0.402,
+          "mean_return": 646.34,
+          "mean_discounted_return": 542.0103371645768,
+          "mean_steps": 36.52,
+          "intercepted_rate": 0.0,
+          "tackled_rate": 0.186,
+          "out_rate": 0.118,
+          "cleared_rate": 0.328,
+          "full_possession_rate": 0.368,
+          "mean_passes": 21.77,
+          "mean_possession": 35.888
+        }
+      }
+    },
+    {
+      "episode": 44000,
+      "variants": {
+        "default": {
+          "success_rate": 0.474,
+          "mean_return": 680.36,
+          "mean_discounted_return": 566.3288615911703,
+          "mean_steps": 39.64,
+          "intercepted_rate": 0.0,
+          "tackled_rate": 0.152,
+          "out_rate": 0.118,
+          "cleared_rate": 0.28,
+          "full_possession_rate": 0.45,
+          "mean_passes": 22.87,
+          "mean_possession": 39.09
+        }
+      }
+    },
+    {
+      "episode": 46000,
+      "variants": {
+        "default": {
+          "success_rate": 0.312,
+          "mean_return": 615.8,
+          "mean_discounted_return": 525.4334752261141,
+          "mean_steps": 34.224,
+          "intercepted_rate": 0.0,
+          "tackled_rate": 0.158,
+          "out_rate": 0.148,
+          "cleared_rate": 0.422,
+          "full_possession_rate": 0.272,
+          "mean_passes": 20.734,
+          "mean_possession": 33.496
+        }
+      }
+    },
+    {
+      "episode": 48000,
+      "variants": {
+        "default": {
+          "success_rate": 0.468,
+          "mean_return": 640.42,
+          "mean_discounted_return": 529.477209054256,
+          "mean_steps": 39.476,
+          "intercepted_rate": 0.0,
+          "tackled_rate": 0.174,
+          "out_rate": 0.11,
+          "cleared_rate": 0.276,
+          "full_possession_rate": 0.44,
+          "mean_passes": 21.558,
+          "mean_possession": 38.916
+        }
+      }
+    },
+    {
+      "episode": 50000,
+      "variants": {
+        "default": {
+          "success_rate": 0.474,
+          "mean_return": 682.76,
+          "mean_discounted_return": 568.4591513092179,
+          "mean_steps": 39.936,
+          "intercepted_rate": 0.002,
+          "tackled_rate": 0.144,
+          "out_rate": 0.136,
+          "cleared_rate": 0.26,
+          "full_possession_rate": 0.458,
+          "mean_passes": 22.95,
+          "mean_possession": 39.394
+        }
+      }
+    },
+    {
+      "episode": 52000,
+      "variants": {
+        "default": {
+          "success_rate": 0.338,
+          "mean_return": 640.52,
+          "mean_discounted_return": 536.716176078353,
+          "mean_steps": 37.662,
+          "intercepted_rate": 0.014,
+          "tackled_rate": 0.074,
+          "out_rate": 0.178,
+          "cleared_rate": 0.426,
+          "full_possession_rate": 0.308,
+          "mean_passes": 21.498,
+          "mean_possession": 36.97
+        }
+      }
+    },
+    {
+      "episode": 54000,
+      "variants": {
+        "default": {
+          "success_rate": 0.474,
+          "mean_return": 610.26,
+          "mean_discounted_return": 517.977482164346,
+          "mean_steps": 40.156,
+          "intercepted_rate": 0.006,
+          "tackled_rate": 0.16,
+          "out_rate": 0.198,
+          "cleared_rate": 0.198,
+          "full_possession_rate": 0.438,
+          "mean_passes": 20.574,
+          "mean_possession": 39.594
+        }
+      }
+    },
+    {
+      "episode": 56000,
+      "variants": {
+        "default": {
+          "success_rate": 0.168,
+          "mean_return": 566.42,
+          "mean_discounted_return": 493.94426805074085,
+          "mean_steps": 30.386,
+          "intercepted_rate": 0.07,
+          "tackled_rate": 0.166,
+          "out_rate": 0.382,
+          "cleared_rate": 0.252,
+          "full_possession_rate": 0.13,
+          "mean_passes": 19.244,
+          "mean_possession": 29.516
+        }
+      }
+    },
+    {
+      "episode": 58000,
+      "variants": {
+        "default": {
+          "success_rate": 0.356,
+          "mean_return": 623.46,
+          "mean_discounted_return": 530.7471532800128,
+          "mean_steps": 35.574,
+          "intercepted_rate": 0.0,
+          "tackled_rate": 0.168,
+          "out_rate": 0.192,
+          "cleared_rate": 0.31,
+          "full_possession_rate": 0.33,
+          "mean_passes": 21.014,
+          "mean_possession": 34.904
+        }
+      }
+    },
+    {
+      "episode": 60000,
+      "variants": {
+        "default": {
+          "success_rate": 0.442,
+          "mean_return": 664.4,
+          "mean_discounted_return": 554.2873392051058,
+          "mean_steps": 38.568,
+          "intercepted_rate": 0.0,
+          "tackled_rate": 0.162,
+          "out_rate": 0.202,
+          "cleared_rate": 0.218,
+          "full_possession_rate": 0.418,
+          "mean_passes": 22.376,
+          "mean_possession": 37.986
+        }
+      }
+    }
+  ],
+  "final_eval": {
+    "episode": 60000,
+    "variants": {
+      "default": {
+        "success_rate": 0.442,
+        "mean_return": 664.4,
+        "mean_discounted_return": 554.2873392051058,
+        "mean_steps": 38.568,
+        "intercepted_rate": 0.0,
+        "tackled_rate": 0.162,
+        "out_rate": 0.202,
+        "cleared_rate": 0.218,
+        "full_possession_rate": 0.418,
+        "mean_passes": 22.376,
+        "mean_possession": 37.986
+      }
+    }
+  },
+  "train_seconds": 28.54578423500061
+}

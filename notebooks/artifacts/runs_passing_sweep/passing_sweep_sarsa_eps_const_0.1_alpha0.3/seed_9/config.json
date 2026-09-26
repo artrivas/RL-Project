@@ -1,0 +1,143 @@
+{
+  "name": "passing_sweep_sarsa_eps_const_0.1_alpha0.3",
+  "task": "passing",
+  "algorithm": "sarsa",
+  "n_episodes": 60000,
+  "alpha": 0.3,
+  "gamma": 0.99,
+  "schedule": {
+    "kind": "constant",
+    "eps": 0.1
+  },
+  "q_init": 0.0,
+  "representation": "default",
+  "seeds": [
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "t_max": null,
+  "env_kwargs": {},
+  "eval_every": 2000,
+  "eval_episodes": 500,
+  "eval_seed": 12345,
+  "snapshot_episodes": [],
+  "seed": 9,
+  "actions": [
+    "PASE",
+    "DRIBLE",
+    "GIRAR",
+    "DESPEJE"
+  ],
+  "n_states": 324,
+  "representation_detail": {
+    "features": [
+      {
+        "key": "d_comp",
+        "kind": "bins",
+        "edges": [
+          5.0,
+          10.0
+        ],
+        "labels": [
+          "< 5 m",
+          "5\u201310 m",
+          "\u2265 10 m"
+        ],
+        "split": [],
+        "none_label": null,
+        "right_closed": false
+      },
+      {
+        "key": "theta_comp",
+        "kind": "angle",
+        "edges": [
+          45.0,
+          135.0,
+          180.0
+        ],
+        "labels": [
+          "frente",
+          "lado",
+          "atr\u00e1s"
+        ],
+        "split": [
+          false,
+          false,
+          false
+        ],
+        "none_label": null,
+        "right_closed": false
+      },
+      {
+        "key": "d_def",
+        "kind": "bins",
+        "edges": [
+          2.0,
+          5.0
+        ],
+        "labels": [
+          "< 2 m",
+          "2\u20135 m",
+          "\u2265 5 m"
+        ],
+        "split": [],
+        "none_label": null,
+        "right_closed": false
+      },
+      {
+        "key": "theta_def",
+        "kind": "angle",
+        "edges": [
+          45.0,
+          135.0,
+          180.0
+        ],
+        "labels": [
+          "frente",
+          "lado",
+          "atr\u00e1s"
+        ],
+        "split": [
+          false,
+          false,
+          false
+        ],
+        "none_label": null,
+        "right_closed": false
+      },
+      {
+        "key": "blocked",
+        "kind": "bins",
+        "edges": [
+          0.5
+        ],
+        "labels": [
+          "libre",
+          "bloqueada"
+        ],
+        "split": [],
+        "none_label": null,
+        "right_closed": false
+      },
+      {
+        "key": "edge",
+        "kind": "bins",
+        "edges": [
+          3.0
+        ],
+        "labels": [
+          "banda",
+          "centro"
+        ],
+        "split": [],
+        "none_label": null,
+        "right_closed": false
+      }
+    ]
+  },
+  "git_commit": "7191fcfd45f61eacf93dfac34e5fccf456081aa8",
+  "source_sha256": "86be96f4b2e4d91e0f5d25a8808b923687186d81b5d7d46fa3a7a2df2188c235"
+}

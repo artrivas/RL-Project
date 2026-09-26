@@ -1,14 +1,15 @@
-# Proyecto RL — Persecución e Intercepción de Balón (RoboCup 2D)
+# Proyecto RL — Tareas acotadas de RoboCup 2D con métodos tabulares
 
 **Curso:** DS5345 · Aprendizaje por Refuerzo (UTEC, 2026-II) · **Docente:** Percy W. Lovon Ramos
-**Entrega:** P1, baseline tabular. **Tarea:** *Ball Pursuit*. **Algoritmo:** Q-Learning tabular, con ablación
-ε constante vs. ε decreciente geométrico. **Entorno principal:** el del *starter kit* del curso
-(`src/kit_env.py`); `rcssserver` se usa para validar la transferencia.
+**Entrega:** P1, baseline tabular. **Tareas:** las cuatro del catálogo — persecución e intercepción (*Ball
+Pursuit*), tiro a puerta, conducción y cooperación 2v1 — con la cinemática del *starter kit* (desplazamientos
+exactos, sin física, observación completa). **Algoritmos:** Q-Learning, SARSA y Monte Carlo first-visit (promedios
+y α constante), cada uno con ε constante vs. ε decreciente geométrico, 5 semillas. `rcssserver` se usa para
+verificar la ejecución de cada política con el cliente.
 
-El agente aprende a orientarse y acelerar hacia un balón situado a d₀ ∈ [5, 40] m y capturarlo
-(d ≤ 0.8 m) con 4 macro-acciones: `DASH 100`, `DASH 50`, `TURN +35`, `TURN −35`. Se entrena en un
-simulador rápido construido con los parámetros físicos reales del servidor, y se valida conectándolo
-a `rcssserver`.
+La persecución fue la primera tarea (notebooks 01–07, también con la física real del servidor). Las otras tres y la
+comparación de métodos entre tareas están en los notebooks 10–13; su plan y sus decisiones, en
+`informe/plan_otras_tareas.md`.
 
 ---
 
@@ -71,6 +72,14 @@ en `notebooks/artifacts/server_params.json`, y el simulador los usa.
 │   ├── sensitivity.py        # sensibilidad de una política fija a los supuestos de evaluación
 │   ├── feasibility.py        # estimaciones de factibilidad del presupuesto de 40 pasos
 │   ├── live_check.py         # verificación rápida de la conexión
+│   ├── task_discretizer.py   # discretizador genérico por producto de variables (tareas nuevas)
+│   ├── task_train.py         # entrenamiento genérico: registro de tareas, matriz método × exploración, barrido de α, diagnósticos
+│   ├── task_analysis.py      # resúmenes con IC bootstrap sobre semillas (JSON)
+│   ├── shooting_env.py       # tiro a puerta
+│   ├── shooting_optimal.py   # tiro: probabilidades exactas, óptimo verdadero y de la representación, calibración
+│   ├── dribbling_env.py      # conducción (y controlador guionado: cota constructiva)
+│   ├── passing_env.py        # cooperación 2v1 (y heurística de referencia)
+│   ├── live_tasks.py         # verificación en rcssserver de tiro, conducción y 2v1
 │   ├── plots.py              # figuras de los notebooks
 │   └── tests/                # pruebas offline (incluye un servidor falso de punta a punta)
 └── notebooks/
@@ -81,7 +90,11 @@ en `notebooks/artifacts/server_params.json`, y el simulador los usa.
     ├── 05_sensitivity_analysis.ipynb # misma política bajo otros supuestos de evaluación (d₀, ciclos, información)
     ├── 06_alternative_interpretations.ipynb # lecturas alternativas del criterio, medidas en el servidor
     ├── 07_starter_kit_baseline.ipynb # RESULTADO PRINCIPAL: entorno del kit, ablación y transferencia
-    ├── 08_formulacion_otras_tareas.ipynb # MDP propuesto de conducción, tiro a puerta y 2v1 (no implementado)
+    ├── 08_formulacion_otras_tareas.ipynb # formulación inicial de las otras tres tareas (la implementada está en 10–12)
+    ├── 10_tiro_a_puerta.ipynb      # tiro: calibración, óptimo exacto, ablación, métodos, diagnósticos, servidor
+    ├── 11_conduccion.ipynb         # conducción: cota guionada, ablación, oscilación, métodos, diagnósticos, servidor
+    ├── 12_pase_2v1.ipynb           # 2v1: referencias, ablación, métodos, diagnósticos, servidor
+    ├── 13_comparacion_algoritmos.ipynb # los cuatro métodos en las cuatro tareas
     └── artifacts/                  # corridas guardadas (Q-tables, historiales, configs), figuras, JSON
 ```
 
@@ -117,6 +130,23 @@ Todos los comandos corren dentro del contenedor (`docker compose exec rl-agent .
 | Secuencias fijas: simulador vs. servidor | `python -m src.sim_vs_live --repeats 5` | 1 min |
 | Notebooks | abrir en Jupyter Lab y ejecutar; o bien `jupyter nbconvert --execute --inplace --to notebook notebooks/0*.ipynb` | 1 min |
 
+**Tareas nuevas** (`src/task_train.py`; α se elige en semillas 5–9 y se reporta en 0–4). Usa como mucho
+~8 procesos en total: en una laptop de 8 núcleos, lanzar más solo hace cada corrida más lenta.
+
+| paso | comando | duración aprox. |
+|---|---|---|
+| Tiro: calibración y óptimo exacto | `python -m src.shooting_optimal --calibrate notebooks/artifacts/shooting_calibration.json` y `python -m src.shooting_optimal --p-keeper-out 0.02 --out notebooks/artifacts/shooting_optimal.json` | 3 min |
+| Tiro: barrido de α (solo ε decreciente) | `python -m src.task_train --task shooting --preset alpha_sweep --decay-only-sweep --episodes 50000 --eval-every 2000 --out notebooks/artifacts/runs_shooting_sweep`; luego `pick_alphas` → `shooting_alphas.json` (ver notebook 10) | 1 min |
+| Tiro: matriz y diagnósticos | `python -m src.task_train --task shooting --preset matrix --alphas notebooks/artifacts/shooting_alphas.json --episodes 50000 --eval-every 2000 --snapshots 0 500 2000 10000 50000 --out notebooks/artifacts/runs_shooting`; `--preset diagnostics --out notebooks/artifacts/runs_shooting_diag` | 2 min |
+| Conducción: barrido, matriz, diagnósticos | `--task dribbling --preset alpha_sweep --episodes 60000 --eval-every 2000 --out notebooks/artifacts/runs_dribbling_sweep`; `--preset matrix --alphas notebooks/artifacts/dribbling_alphas.json --episodes 60000 --eval-every 2000 --snapshots 0 2000 10000 30000 60000 --out notebooks/artifacts/runs_dribbling`; `--preset diagnostics --alphas ... --episodes 60000 --out notebooks/artifacts/runs_dribbling_diag` | ≈ 25 min con 5 procesos |
+| 2v1: barrido, matriz, diagnósticos | igual que conducción con `--task passing` y carpetas `runs_passing*` | ≈ 30 min con 5 procesos |
+| Resúmenes con IC | `python -m src.task_analysis --runs notebooks/artifacts/runs_<tarea> notebooks/artifacts/runs_<tarea>_diag --out notebooks/artifacts/<tarea>_summary.json` (el tiro añade `--optimal notebooks/artifacts/shooting_optimal.json`) | segundos |
+| Verificación en el servidor | `docker compose restart rcssserver`, luego `python -m src.live_tasks shooting --episodes 20 --out notebooks/artifacts/live_shooting.json` (ídem `dribbling`/`passing` con `--episodes 10`), **reiniciando el servidor antes de cada una** | 1 min c/u |
+| Notebooks 10–13 | `jupyter nbconvert --execute --inplace --to notebook notebooks/1[0-3]_*.ipynb` (leen los artefactos) | 1 min |
+
+`python -m src.task_train` acepta `--task {pursuit_kit,shooting,dribbling,passing}`; `pursuit_kit` reproduce
+exactamente las corridas de `train.py` en el entorno del kit (prueba de regresión).
+
 Cada corrida de entrenamiento guarda en `notebooks/artifacts/runs/<condición>/seed_<k>/`:
 - `q.npy`;
 - `history.npz`, con retorno, pasos, captura y ε por episodio;
@@ -124,7 +154,8 @@ Cada corrida de entrenamiento guarda en `notebooks/artifacts/runs/<condición>/s
 - `config.json`, con bins, acciones, hiperparámetros, semilla, parámetros físicos, huella SHA-256 del código
   de `src/` (`source_sha256`) y commit de git si hay repositorio (dentro del contenedor es `null`, porque
   `.git` no se monta). Las corridas incluidas en `notebooks/artifacts/` se generaron antes de registrar la
-  huella; con las mismas semillas se reproducen exactamente (verificado para Q-Learning).
+  huella; con las mismas semillas se reproducen exactamente (verificado para Q-Learning). La huella cubre todos
+  los `src/*.py`, así que agregar un módulo cambia la huella de corridas nuevas aunque el código que usan no cambie.
 
 Los notebooks cargan esos artefactos; `RETRAIN = True` / `RUN_LIVE_EVAL = True` los regeneran.
 
@@ -183,6 +214,28 @@ inicios prevista. Detalles en `src/SPEC.md` §11 y `notebooks/01_mdp_formulation
 
 ---
 
+**Tareas nuevas y comparación de métodos** (notebooks 10–13; media de 5 semillas, IC 95 % bootstrap, Q-Learning
+con ε decreciente salvo que se indique):
+
+| tarea | resultado | referencia | criterio |
+|---|---|---|---|
+| Tiro, sin arquero | 100 % de goles | óptimo 100 % | > 75 % ✔ |
+| Tiro, con arquero | 92.3 % [91.8, 92.6] | óptimo exacto 95.2 %; óptimo con 36 estados 93.3 % | > 50 % ✔ |
+| Conducción (36 estados) | 97.7 % [96.3, 99.0] (media de las últimas 5 evaluaciones) | controlador guionado 100 % | > 80 % ✔ |
+| Cooperación 2v1 (324 estados) | 64.8 % [61.3, 68.1] de episodios con posesión > 50 pasos y ≥ 3 pases | heurística 10.8 % | — (no hay cota) |
+
+- **Ningún método gana en todas las tareas.** MC con promedios aprende antes en el tiro (episodios de un paso) y
+  falla en la 2v1; Q-Learning es el mejor en la 2v1 y el más rápido en la conducción; en la persecución los tres
+  empatan al final. MC con α constante falla en las tres tareas de episodios largos.
+- **Hallazgos con diagnóstico:** en el tiro, la desventaja de ε constante es velocidad (Q₀ = 0 con α pequeño), no la
+  solución final; en la conducción, la política greedy oscila por la agregación de estados (con 245 estados, 100 %
+  estable); en la 2v1, SARSA no es más prudente que Q-Learning pese al riesgo de quite.
+- **Servidor real** (verificación de ejecución, 0 ciclos perdidos): tiro 20/20 y 20/20 goles (error angular medido
+  1.75° frente a 4° del modelo); conducción 10/10 (un `KICK 25` real rueda ≈ 13.6 m, no 2 m); 2v1 0/10 (un pase
+  real tarda varios ciclos).
+
+---
+
 ## 5. Problemas conocidos
 
 - **`rcssserver rejected the player: ... 11 uniform numbers`.** El servidor no reutiliza los dorsales
@@ -195,3 +248,6 @@ inicios prevista. Detalles en `src/SPEC.md` §11 y `notebooks/01_mdp_formulation
 - **`no trainer reply ... coach=true`.** El servidor no se levantó con la configuración de `docker/`.
   Revisa `docker compose ps` y vuelve a ejecutar `docker compose up -d`.
 - **No ejecutes dos evaluaciones en vivo a la vez.** Ambas moverían jugadores en la misma cancha.
+- **`trainer init rejected: (error already_have_offline_coach)`.** El entrenador offline no se libera con `(bye)`:
+  cada sesión del servidor admite un solo entrenador. Reinicia `rcssserver` antes de cada corrida de
+  `src.live_tasks`.

@@ -302,3 +302,33 @@ epsilon ablation. For dribbling and 2v1, sweep alpha per (method, schedule) on s
 - Plot change: task curves now use min–max bands (mean ± std went outside [0, 1]); notebooks 10 and 11 re-run.
 - Provenance note: the dribbling sweep runs were saved while `src/` gained additive code (the fine representation,
   diagnostics, plots), so their `source_sha256` is that of the later code; sweep behavior was not changed.
+
+### M3 — 2v1 passing (all but the live check)
+- Env `src/passing_env.py`, tests (10), heuristic reference, a 1 944-state representation for the diagnostic.
+- **Design flaw found and fixed before training:** GIRAR ("turn away from the defender") flipped sides every step
+  when the defender was already behind (|theta| near 180), trapping the holder at the zone edge. Now GIRAR turns
+  toward the zone centre in that case. Testing agent-controlled turns and a faster teammate did not raise the
+  heuristic's success (3–11%), so neither was adopted.
+- Chosen details not fixed by the plan: teammate support point at 8 m and +/-60 deg from the
+  defender-to-holder direction; success means at least 51 possession steps and at least 3 passes.
+- Per-schedule alpha sweep: 0.03 for every method and schedule (the grid edge). Matrix and diagnostics in
+  `runs_passing*`, summary `passing_summary.json`, heuristic references `passing_references.json`; notebook 12.
+- Results: Q-learning 64.8–65.5% (heuristic 10.8%), SARSA 54.2%, MC 7.8–26.1%. Sample-average MC with decaying
+  epsilon ends 75% of greedy episodes with a DESPEJE. The epsilon ablation shows no final difference, but constant
+  epsilon learns sooner.
+- **H2 (risk) contradicted:** SARSA suffers more tackles than Q-learning while exploring (13.8 vs 8.7%), and the gap
+  does not grow with the tackle probability.
+- **The finer representation is worse** at the same budget (62.4 vs 67.9%) and does not reduce leaving the zone.
+- Report: 2v1 subsection and figure, rows in tables 4 and 5, still 8 pages. Notebook 13 now includes 2v1.
+- Pipeline ran sequentially with 5 workers (29 min for 42 configs); the wait loop watched the PID, not pgrep.
+
+### M5 — rcssserver execution checks (done) and M6 (report, README, SPEC)
+- `src/live_tasks.py` (plus `RoboCupPlayer.kick`): greedy Q-learning policies on the real server; the state comes
+  from the trainer's ground truth (full observation, as in the kit-style MDPs). Execution checks, not transfer claims.
+- Found: the offline trainer is not released after `(bye)`, so each run uses one server session, restarted before
+  each run.
+- Results (0 missed cycles everywhere): shooting 20/20 and 20/20 (idle keeper client, not the 2 m diving model
+  keeper), measured angular error 1.75 deg vs 4 deg; dribbling 10/10, literal kick 25 travels about 13.6 m vs 2 m;
+  2v1 0/10 (passes take several cycles on the server).
+- Notebooks 10–12 gained a live-verification section; report updated (still 8 pages); README and SPEC evidence rows
+  added.

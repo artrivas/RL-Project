@@ -470,3 +470,36 @@ def plot_dribbling_episodes(records: Sequence[Dict], ax=None, title: str = "",
     ax.legend(frameon=False, fontsize=8, loc="lower left")
     ax.figure.set_facecolor(SURFACE)
     return ax
+
+
+PASS_OUTCOME_COLORS = {0: "#1baf7a", 1: "#eb6834", 2: "#eb6834", 3: "#eda100", 4: "#8a8984"}
+
+
+def plot_passing_episode(record: Dict, ax=None, title: str = "",
+                         outcome_names: Optional[Dict[int, str]] = None):
+    """One 2v1 episode in the 30 x 20 m zone: ball path (passes are straight jumps) coloured by
+    the outcome, pass receptions as dots, defender path dashed gray. +y downward, as on the
+    monitor."""
+    from src import passing_env as pe
+    ax = ax or plt.subplots(figsize=(5, 3.6))[1]
+    ax.set_facecolor(SURFACE)
+    ax.plot([-pe.HALF_X, pe.HALF_X, pe.HALF_X, -pe.HALF_X, -pe.HALF_X],
+            [-pe.HALF_Y, -pe.HALF_Y, pe.HALF_Y, pe.HALF_Y, -pe.HALF_Y], color=GRID, linewidth=1.2)
+    traj = record["trajectory"]
+    outcome = traj[-1]["outcome"]
+    color = PASS_OUTCOME_COLORS[outcome]
+    hx = [t["holder"][0] for t in traj]
+    hy = [t["holder"][1] for t in traj]
+    ax.plot([t["defender"][0] for t in traj], [t["defender"][1] for t in traj], color=REF,
+            linewidth=1.2, linestyle="--", label="defensor")
+    ax.plot(hx, hy, color=color, linewidth=1.6,
+            label=f"balón: {(outcome_names or pe.OUTCOME_NAMES)[outcome]}")
+    passes = [i for i, t in enumerate(traj) if t.get("event") == "pase"]
+    ax.plot([hx[i] for i in passes], [hy[i] for i in passes], "o", color=color, markersize=3.5)
+    ax.plot(hx[0], hy[0], "o", color=TEXT_2, markerfacecolor="none", markersize=7)
+    ax.set_xlim(-pe.HALF_X - 1, pe.HALF_X + 1)
+    ax.set_ylim(pe.HALF_Y + 1, -pe.HALF_Y - 1)
+    ax.set_aspect("equal")
+    style(ax, title, "x (m)", "y (m)")
+    ax.legend(frameon=False, fontsize=7, loc="lower left")
+    return ax

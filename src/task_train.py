@@ -85,9 +85,15 @@ def _dribbling_spec() -> TaskSpec:
     return de.task_spec(TaskSpec)
 
 
+def _passing_spec() -> TaskSpec:
+    from src import passing_env as pe
+    return pe.task_spec(TaskSpec)
+
+
 TASKS: Dict[str, Callable[[], TaskSpec]] = {"pursuit_kit": _pursuit_kit_spec,
                                             "shooting": _shooting_spec,
-                                            "dribbling": _dribbling_spec}
+                                            "dribbling": _dribbling_spec,
+                                            "passing": _passing_spec}
 
 
 def get_task(name: str) -> TaskSpec:
@@ -393,7 +399,35 @@ def dribbling_diagnostic_configs(n_episodes: int, alphas: Optional[Dict[str, flo
     return out
 
 
-DIAGNOSTICS = {"shooting": shooting_diagnostic_configs, "dribbling": dribbling_diagnostic_configs}
+def passing_diagnostic_configs(n_episodes: int, alphas: Optional[Dict[str, float]] = None
+                               ) -> List[TaskConfig]:
+    """2v1 diagnostics (seeds 0-4, same starts, alphas from the per-schedule sweep).
+
+    * representation: the 1 944-state ``fine`` representation (adds the bearing to the zone centre)
+      vs the 324-state ``default``, both at 2x the budget, decaying epsilon, every method;
+    * risk: tackle probability 0.2 and 0.8 (default 0.5), constant epsilon, every method (does the
+      gap between on-policy and off-policy behaviour while exploring grow with the risk?).
+    """
+    alphas = alphas or {}
+    decay2 = decay_schedule(2 * n_episodes)
+    const = {"kind": "constant", "eps": 0.1}
+    out = []
+    for m in METHODS:
+        a_decay = alphas.get(alpha_key(m, decay_schedule(n_episodes)), 0.1)
+        a_const = alphas.get(alpha_key(m, const), 0.1)
+        for rep in ("default", "fine"):
+            out.append(TaskConfig(name=f"passing_diag_rep_{rep}_{m}", task="passing", algorithm=m,
+                                  n_episodes=2 * n_episodes, alpha=a_decay, schedule=decay2,
+                                  representation=rep, eval_every=4000))
+        for p in (0.2, 0.8):
+            out.append(TaskConfig(name=f"passing_diag_tackle{p:g}_{m}", task="passing", algorithm=m,
+                                  n_episodes=n_episodes, alpha=a_const, schedule=const,
+                                  env_kwargs={"p_tackle": p}, eval_every=2000))
+    return out
+
+
+DIAGNOSTICS = {"shooting": shooting_diagnostic_configs, "dribbling": dribbling_diagnostic_configs,
+               "passing": passing_diagnostic_configs}
 
 
 def main() -> None:
