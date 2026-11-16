@@ -3,6 +3,8 @@ import argparse
 import json
 from pathlib import Path
 import random
+import math
+import time
 from .config import RetailConfig
 from .data import load_m5, fingerprint
 from .env import RetailEnv
@@ -22,10 +24,14 @@ def main(argv=None):
     parser.add_argument("--horizon",type=int,default=28)
     parser.add_argument("--alpha",type=float,default=0.1)
     parser.add_argument("--gamma",type=float,default=0.99)
+    parser.add_argument("--reward-scale",type=float,default=100.0)
+    parser.add_argument("--eval-every",type=int,default=10)
     parser.add_argument("--output",type=Path,required=True)
     args=parser.parse_args(argv)
     if args.episodes<1 or not 1<=args.horizon<=1183 or not 0<args.alpha<=1 or not 0<=args.gamma<=1:
         parser.error("invalid episodes, horizon, alpha or gamma")
+    if not math.isfinite(args.reward_scale) or args.reward_scale<=0 or args.eval_every<=0:
+        parser.error("invalid reward scale or validation interval")
     if args.demo:
         if args.config:
             parser.error("--demo uses fixed synthetic assumptions")
@@ -42,10 +48,12 @@ def main(argv=None):
         parser.error("history plus horizon exceeds train interval")
     args.output.mkdir(parents=True,exist_ok=False)
     agent=CooperativeQLearning(config,args.seed,args.alpha,args.gamma)
-    rng=random.Random(args.seed)
+    rng=random.Random(args.seed+300)
     steps=0
+    history=[]
     with (args.output/"training.jsonl").open("w",encoding="utf-8") as log:
         for episode in range(args.episodes):
+            started=time.perf_counter()
             start=rng.randint(first_day,last_train-args.horizon+1)
             env=RetailEnv(data,config,start,start+args.horizon-1)
             obs=env.reset()
@@ -54,13 +62,24 @@ def main(argv=None):
             while obs is not None:
                 actions=agent.act(obs,epsilon)
                 nxt,reward,terminal,_,_=env.step(actions)
-                agent.observe(obs,actions,reward,nxt,terminal)
+                agent.observe(obs,actions,reward/args.reward_scale,nxt,terminal)
                 total+=reward
                 steps+=1
                 obs=nxt
-            log.write(json.dumps({"episode":episode,"start_day":start,"base_return":total,
-                                  "real_steps":steps,"epsilon":epsilon})+"\n")
+            record={"episode":episode+1,"start_day":start,"base_return":total,
+                    "real_steps":steps,"epsilon":epsilon,"synthetic_steps":0,
+                    "training_seconds":time.perf_counter()-started}
+            if (episode+1)%args.eval_every==0 or episode+1==args.episodes:
+                validation_env=RetailEnv(data,config,*validation)
+                validation_obs,validation_rows=validation_env.reset(),[]
+                while validation_obs is not None:
+                    validation_obs,_,_,_,info=validation_env.step(agent.act(validation_obs))
+                    validation_rows.append(info)
+                record["validation"]=summarize(validation_rows)
+            history.append(record)
+            log.write(json.dumps(record)+"\n")
             log.flush()
+    (args.output/"training.json").write_text(json.dumps(history,indent=2)+"\n",encoding="utf-8")
     agent.save(args.output/"q_tables.npz")
     env=RetailEnv(data,config,*validation)
     obs,rows=env.reset(),[]
@@ -69,12 +88,12 @@ def main(argv=None):
         rows.append(info)
     report={"schema_version":1,"algorithm":agent.name,"seed":args.seed,
             "episodes":args.episodes,"horizon":args.horizon,"alpha":args.alpha,"gamma":args.gamma,
-            "real_steps":steps,"config":config.as_dict(),"data":data.manifest,
-            "validation":summarize(rows),"test_evaluated":False,
+            "real_steps":steps,"reward_scale":args.reward_scale,"config":config.as_dict(),"data":data.manifest,
+            "validation":summarize(rows),"validation_range":validation,"test_evaluated":False,
             "training_reward":"regional_unshaped_profit_proxy",
             "epsilon_schedule":"linear_1.0_to_0.05_over_episodes",
             "finite_horizon_terminal":True,
-            "code_sha256":{str(p.relative_to(Path(__file__).parents[1])):fingerprint(p)
+            "code_sha256":{p.relative_to(Path(__file__).parents[1]).as_posix():fingerprint(p)
                            for p in [*sorted(Path(__file__).parent.glob("*.py")),
                                      Path(__file__).parents[1]/"agents.py"]}}
     (args.output/"manifest.json").write_text(json.dumps(report,indent=2)+"\n",encoding="utf-8")

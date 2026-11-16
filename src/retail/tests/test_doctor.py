@@ -53,8 +53,8 @@ class DataPreflightTests(unittest.TestCase):
         self.assertTrue(report["data_headers_ready"])
         self.assertFalse(report["full_data_audit_completed"])
         self.assertTrue(report["retail_training_implemented"])
-        self.assertFalse(report["retail_deep_training_implemented"])
-        self.assertEqual(report["retail_training_algorithms"], ["qlearning"])
+        self.assertTrue(report["retail_deep_training_implemented"])
+        self.assertEqual(report["retail_training_algorithms"], ["qlearning", "ddqn", "ppo"])
         self.assertEqual(json.loads((self.root / "report.json").read_text(encoding="utf-8")), report)
 
     def test_shorter_sales_history_rejected(self):

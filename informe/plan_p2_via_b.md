@@ -1,3 +1,5 @@
+> Segundo incremento: DDQN/PPO, PBRS, bono ingenuo, Dyna de un paso, checkpoints profundos y análisis implementados. La validación numérica con PyTorch/CUDA queda pendiente; consultar src/retail/README.md. Los supuestos de M5 siguen sin calibrarse.
+
 > Actualización de implementación (16-11-2026): entorno, carga M5, H0 y T0 disponibles en src/retail. El texto inferior conserva el diseño original; las referencias a módulos pendientes se deben contrastar con src/retail/README.md. No hay resultados M5. Rama basada en main 79c1b32; los archivos adicionales de dimael mencionados abajo no están integrados.
 
 # P1 → P2: Vía B — Walmart M5, tres tiendas y un inventario regional

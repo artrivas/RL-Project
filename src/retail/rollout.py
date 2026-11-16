@@ -42,7 +42,10 @@ def main(argv=None):
     if not args.demo and args.config is None:
         parser.error("M5 requires explicit simulator assumptions in --config")
     if args.demo:
-        data, config, bounds = demo_data(), demo_config(), (29, 90)
+        if args.split == "test":
+            parser.error("synthetic demo has no held-out test split")
+        data, config = demo_data(), demo_config()
+        bounds = (29, 60) if args.split == "train" else (61, 90)
     else:
         config = RetailConfig(**json.loads(args.config.read_text(encoding="utf-8")))
         data = load_m5(args.data_dir, args.item_id)

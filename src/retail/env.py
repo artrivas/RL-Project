@@ -72,6 +72,19 @@ class RetailEnv:
         c = self.config
         if len(actions) != 3 or any(type(a) is not int or not 0 <= a < len(c.actions) for a in actions):
             raise ValueError("exactly three valid integer actions required")
+        demand = tuple(int(math.floor(self.data.sales[i][self.day-1]*c.actions[a][0]**(-c.elasticities[i]) + 0.5))
+                       for i, a in enumerate(actions))
+        return self.step_model(actions, demand)
+
+    def step_model(self, actions, demand):
+        """Exact accounting with supplied demand; used only for synthetic Dyna transitions."""
+        if self.done:
+            raise RuntimeError("cannot step a terminal state")
+        c = self.config
+        if len(actions) != 3 or any(type(a) is not int or not 0 <= a < len(c.actions) for a in actions):
+            raise ValueError("exactly three valid integer actions required")
+        if len(demand) != 3 or any(type(d) is not int or d < 0 for d in demand):
+            raise ValueError("model demand must be three nonnegative integers")
         obs = self.observation()
         before, regional_before = tuple(self.stock), self.regional
         decisions = [c.actions[a] for a in actions]
@@ -80,8 +93,6 @@ class RetailEnv:
                          for i, (_, target) in enumerate(decisions))
         dispatched = allocate(requests, self.regional)
         self.regional -= sum(dispatched)
-        demand = tuple(int(math.floor(self.data.sales[i][self.day-1]*price**(-c.elasticities[i]) + 0.5))
-                       for i, (price, _) in enumerate(decisions))
         sold = tuple(min(self.stock[i], demand[i]) for i in range(3))
         lost = tuple(demand[i]-sold[i] for i in range(3))
         self.stock = [self.stock[i]-sold[i] for i in range(3)]
@@ -102,3 +113,21 @@ class RetailEnv:
         if not self.done:
             self._arrive()
         return self.observation(), sum(rewards), self.done, False, info
+
+    def snapshot(self):
+        if self.done:
+            raise RuntimeError("terminal state has no decision snapshot")
+        return {"day": self.day, "start_day": self.start_day, "end_day": self.end_day,
+                "stock": list(self.stock), "transit": list(self.transit), "regional": self.regional,
+                "history": [list(h) for h in self.history], "received": list(self.received),
+                "external": self.external}
+
+    @classmethod
+    def from_snapshot(cls, data, config, state):
+        env = cls(data, config, state["start_day"], state["end_day"])
+        env.day, env.done = state["day"], False
+        env.stock, env.transit = list(state["stock"]), list(state["transit"])
+        env.regional = state["regional"]
+        env.history = [deque(h, maxlen=config.history_days) for h in state["history"]]
+        env.received, env.external = tuple(state["received"]), state["external"]
+        return env

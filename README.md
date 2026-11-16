@@ -1,14 +1,11 @@
 # P2 — Vía B: Walmart M5
 
-El desarrollo P2 vive en `src/retail/`, separado de P1. Ya incluye carga y auditoría
-del SKU M5, un simulador de tres tiendas con inventario regional compartido,
-baseline H0 y adaptación tabular T0. **Todavía no hay resultados M5 ni Pod desplegado.**
+La implementación P2 en src/retail incluye entorno, H0/T0, DDQN/PPO, PBRS, Dyna,
+checkpoints profundos, evaluación congelada y análisis multisemilla. La validación
+numérica de PyTorch/CUDA está pendiente; todavía no hay resultados M5 ni Pod conectado.
 
-Consultar [implementación, comandos y límites](src/retail/README.md) y
-[protocolo propuesto](informe/plan_p2_via_b.md).
-Las pruebas pueden ejecutarse con `python -m unittest discover -s src/retail/tests -v`.
-La receta opcional Docker está en `docker/docker-compose.p2.yml`; el entorno
-remoto y los entrenamientos se prepararán en la siguiente etapa.
+Ver [comandos, contratos y límites](src/retail/README.md). Antes de entrenar, ejecutar
+python -m src.retail.preflight y la prueba pequeña src.retail.smoke_deep.
 
 El resto de este README documenta P1 y se conserva desde la base de `main`.
 

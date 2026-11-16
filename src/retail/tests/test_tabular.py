@@ -51,3 +51,16 @@ class TabularTests(unittest.TestCase):
             self.assertFalse(report["test_evaluated"])
             self.assertTrue((output/"q_tables.npz").is_file())
             self.assertEqual(len((output/"training.jsonl").read_text().splitlines()),2)
+
+    def test_frozen_table_evaluation_matches_training_report(self):
+        import json
+        from src.retail.train_tabular import main as train
+        from src.retail.evaluate_tabular import main as evaluate
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            train(["--demo","--seed","3","--episodes","1","--horizon","2","--output",str(root/"run")])
+            evaluate(["--run",str(root/"run"),"--split","validation","--output",str(root/"eval")])
+            trained=json.loads((root/"run/manifest.json").read_text())
+            evaluated=json.loads((root/"eval/evaluation.json").read_text())
+            self.assertEqual(trained["validation"],evaluated["metrics"])
+            self.assertEqual(evaluated["learning_updates"],0)

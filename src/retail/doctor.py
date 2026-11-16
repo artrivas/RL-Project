@@ -157,8 +157,9 @@ def main(argv=None):
         "data_headers_ready": all(entry["status"] == "ok" for entry in data),
         "full_data_audit_completed": False,
         "retail_training_implemented": True,
-        "retail_training_algorithms": ["qlearning"],
-        "retail_deep_training_implemented": False,
+        "retail_training_algorithms": ["qlearning", "ddqn", "ppo"],
+        "retail_deep_training_implemented": True,
+        "retail_deep_numerical_validation": "run_preflight_required",
         "smoke": smoke,
     }
     serialized = json.dumps(report, indent=2, ensure_ascii=False)
