@@ -36,6 +36,20 @@ Un estado launch_pending sin directorio significa que el resultado del lanzamien
 es incierto: inspeccionar el Pod antes de lanzar otra validación.
 Para una validación nueva deliberada, usar otro --state-file; no se borran trabajos.
 
-Errores: 401 clave no aceptada; 403 permisos insuficientes; 404 Pod no accesible
+Para comprobar autorización sin iniciar la validación ni escribir estado local:
+
+```bash
+python3 scripts/runpod_validate.py --env-file .env --check-exec
+```
+
+Un HTTP 403 significa que la operación está prohibida. El cliente muestra los
+campos de error del servidor cuando existen, ocultando la clave. Consultar un
+Pod y ejecutar comandos son operaciones distintas; no inferir el permiso exacto
+solo del código HTTP. Revisar los permisos de la clave en la consola de Runpod.
+Los rechazos 401/403 al lanzar quedan como launch_rejected. Tras corregir el
+acceso, usar otro --state-file; no usar --resume para un lanzamiento rechazado.
+Los errores de red, timeouts y fallos ambiguos conservan launch_pending.
+
+Errores: 401 autenticación rechazada; 403 operación prohibida; 404 Pod no accesible
 con esa clave; 409 Pod no encendido; 503 host posiblemente sin soporte de exec.
 Un fallo de preflight/smoke queda registrado y debe resolverse antes de M5.

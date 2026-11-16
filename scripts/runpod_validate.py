@@ -76,6 +76,30 @@ def credentials(path):
         raise ValueError(".env must contain nonempty id and api_key")
     return pod_id,key
 
+class APIError(RuntimeError):
+    def __init__(self,status,message):
+        self.status=status
+        super().__init__(message)
+
+
+def error_detail(error,key):
+    # Only show documented-style error fields, never headers or request payloads.
+    try:
+        body=json.loads(error.read(8192))
+    except (ValueError,OSError):
+        return ""
+    if not isinstance(body,dict):
+        return ""
+    fields=[]
+    for name in ("title","detail","message","error","code"):
+        value=body.get(name)
+        if isinstance(value,(str,int)):
+            value=str(value).replace(key,"[redacted]")
+            value=re.sub(r"(?i)Bearer\s+\S+","Bearer [redacted]",value)
+            fields.append(name+"="+value[:1000])
+    return "; ".join(fields)
+
+
 class Client:
     def __init__(self,pod_id,key):
         self.pod_id,self.key=pod_id,key
@@ -89,10 +113,14 @@ class Client:
             with urlopen(request,timeout=40) as response:
                 return json.load(response)
         except HTTPError as error:
-            hints={401:"API key not accepted",403:"key lacks permission for this operation",
+            hints={401:"authentication rejected",403:"operation forbidden",
                    404:"Pod not found for this key",409:"Pod not running",
                    503:"Pod host may not support API exec yet"}
-            raise RuntimeError(f"HTTP {error.code}: {hints.get(error.code,error.reason)}") from None
+            detail=error_detail(error,self.key)
+            message=f"HTTP {error.code}: {hints.get(error.code,error.reason)}"
+            if detail:
+                message+="; server: "+detail
+            raise APIError(error.code,message) from None
         except URLError as error:
             raise RuntimeError("Network error: "+str(error.reason).replace(self.key,"[redacted]")) from None
 
@@ -134,13 +162,20 @@ def main(argv=None):
     parser.add_argument("--env-file",type=Path,default=Path(".env"))
     parser.add_argument("--state-file",type=Path,default=Path("notebooks/artifacts/p2_via_b/setup/runpod-validation.json"))
     parser.add_argument("--resume",action="store_true",help="poll an existing job, never launch another")
+    parser.add_argument("--check-exec",action="store_true",help="check exec access with a harmless Python command; do not launch validation")
     args=parser.parse_args(argv)
+    if args.check_exec and args.resume:
+        parser.error("--check-exec and --resume cannot be combined")
     pod_id,key=credentials(args.env_file)
     client=Client(pod_id,key)
     pod=client.request()
     print(json.dumps({k:pod.get(k) for k in ("id","name","status","image","gpu")},indent=2))
     if pod.get("status")!="RUNNING":
         raise RuntimeError("Pod must already be RUNNING; this script will not start it")
+    if args.check_exec:
+        result=client.execute("import json,sys; print(json.dumps({'exec_access': True, 'python': sys.version.split()[0]}))")
+        print(json.dumps(result,indent=2))
+        return 0
     if args.resume:
         state=json.loads(args.state_file.read_text())
         if state["pod_id"]!=pod_id:
@@ -152,9 +187,17 @@ def main(argv=None):
         args.state_file.parent.mkdir(parents=True,exist_ok=True)
         with args.state_file.open("x",encoding="utf-8") as handle:
             json.dump({"pod_id":pod_id,"status":"launch_pending"},handle)
-        state=client.execute(launcher())
+        try:
+            state=client.execute(launcher())
+        except APIError as error:
+            if error.status in (401,403):
+                args.state_file.write_text(json.dumps({"pod_id":pod_id,"status":"launch_rejected",
+                    "http_status":error.status},indent=2)+"\n",encoding="utf-8")
+            raise
         state.update(pod_id=pod_id,commit=COMMIT)
         args.state_file.write_text(json.dumps(state,indent=2)+"\n",encoding="utf-8")
+    if state.get("status")=="launch_rejected":
+        raise RuntimeError("launch was rejected: correct authorization, then use a new --state-file")
     if "directory" not in state:
         raise RuntimeError("launch outcome was not recorded; inspect the Pod before starting a new job")
     print("Remote validation directory:",state["directory"],flush=True)
