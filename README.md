@@ -1,13 +1,36 @@
 # P2 — Vía B: Walmart M5
 
-La implementación P2 en src/retail incluye entorno, H0/T0, DDQN/PPO, PBRS, Dyna,
-checkpoints profundos, evaluación congelada y análisis multisemilla. La validación
-numérica de PyTorch/CUDA está pendiente; todavía no hay resultados M5 ni Pod conectado.
+Implementación: Q-Learning tabular, DDQN/PPO, PBRS, Dyna y control egoísta,
+con tres tiendas e inventario regional compartido. El usuario ha confirmado
+53 tests en el Pod GPU y una matriz de desarrollo completa: H0 + 24 políticas,
+semillas 3/4/5, 109500 pasos por política. El resumen compartido corresponde
+a validación, no a test.
 
-Ver [comandos, contratos y límites](src/retail/README.md). Antes de entrenar, ejecutar
-python -m src.retail.preflight y la prueba pequeña src.retail.smoke_deep.
+## Cerrar la matriz existente (CPU, sin reentrenar)
 
-El resto de este README documenta P1 y se conserva desde la base de `main`.
+```bash
+bash scripts/launch_m5_final.sh /workspace/rl-project-validation/m5-final-01
+```
+
+Desde el checkout del Pod, verifica los artefactos de m5-night-01,
+congela el protocolo, evalúa el último año y genera informe IEEE/PDF,
+tablas, figuras, notebook, demo HTML y ZIP. Prepara dependencias ausentes
+y ejecuta pruebas antes de test. Consulte [cierre y limitaciones](docker/M5_FINAL.md).
+
+El cierre usa descriptivamente las tres semillas de desarrollo; no se presenta
+como una campaña independiente con las semillas 0/1/2 propuestas inicialmente.
+Elasticidad, inventarios y costes son supuestos. Las metas contra Walmart
+histórico no son identificables en estos datos; se evalúan proxies explícitos.
+Completar el cómputo no implica cumplir la meta del 30%.
+
+Para **reentrenar desde cero**, una operación distinta y costosa:
+`bash scripts/reproduce_m5.sh RAW_DATA_DIR NEW_OUTPUT_DIR cpu`.
+Los [contratos del simulador](src/retail/README.md), el
+[plan original y enmienda](informe/plan_p2_via_b.md) y los protocolos
+[piloto](docker/M5_PILOT.md), [nocturno](docker/M5_OVERNIGHT.md) y
+[recuperación](docker/M5_RECOVERY.md) conservan la trazabilidad.
+
+El resto de este README documenta P1 y se conserva desde la base de main.
 
 ---
 
