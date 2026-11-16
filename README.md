@@ -1,3 +1,19 @@
+# P2 — Vía B: Walmart M5
+
+El desarrollo P2 vive en `src/retail/`, separado de P1. Ya incluye carga y auditoría
+del SKU M5, un simulador de tres tiendas con inventario regional compartido,
+baseline H0 y adaptación tabular T0. **Todavía no hay resultados M5 ni Pod desplegado.**
+
+Consultar [implementación, comandos y límites](src/retail/README.md) y
+[protocolo propuesto](informe/plan_p2_via_b.md).
+Las pruebas pueden ejecutarse con `python -m unittest discover -s src/retail/tests -v`.
+La receta opcional Docker está en `docker/docker-compose.p2.yml`; el entorno
+remoto y los entrenamientos se prepararán en la siguiente etapa.
+
+El resto de este README documenta P1 y se conserva desde la base de `main`.
+
+---
+
 # Proyecto RL — Persecución e Intercepción de Balón (RoboCup 2D)
 
 **Curso:** DS5345 · Aprendizaje por Refuerzo (UTEC, 2026-II) · **Docente:** Percy W. Lovon Ramos
