@@ -1,8 +1,8 @@
 # P2 — Vía B: implementación y validación
 
 La rama contiene carga M5, simulador regional, H0, T0, DDQN, PPO, PBRS,
-bono ingenuo, Dyna de un paso y análisis multisemilla. **El código profundo
-todavía requiere validación numérica con PyTorch; no hay resultados M5.**
+bono ingenuo, Dyna de un paso y análisis multisemilla. **Validación numérica completada en el Pod según la salida recibida: 53 pruebas
+sin omisiones y smoke CUDA correcto. M5 descargado y SKU auditado; piloto pendiente.**
 
 P1 se conserva sin cambios. T0 importa `src.agents.QLearningAgent` y crea
 tres tablas nuevas. Esta rama parte de main; no integra commits de dimael.
@@ -17,9 +17,9 @@ actualización de redes, separación de datos Dyna, evaluación congelada y equi
 entre reanudar y entrenar sin interrupción. Se omiten cuando falta PyTorch.
 **Una suite con omisiones no certifica el código profundo.**
 
-En el entorno de implementación falta PyTorch y su instalación falló por resolución
-de red. Docker y CUDA no se han probado aquí. El siguiente paso es ejecutar el
-preflight y el smoke pequeños en un entorno con PyTorch, antes de cualquier campaña.
+El entorno local sigue sin PyTorch. El usuario completó preflight y smoke en
+el Pod con PyTorch 2.8.0+cu129 y RTX 5080. Ver [piloto M5](../../docker/M5_PILOT.md)
+para la procedencia de la validación, datos y siguiente ejecución de desarrollo.
 
 ## Dependencias y primer chequeo remoto
 
@@ -184,9 +184,10 @@ semillas es descriptiva y no constituye por sí sola una prueba de significancia
 
 ## Trabajo pendiente antes de resultados
 
-1. Ejecutar todos los tests numéricos y el smoke en PyTorch/CUDA y corregir sus fallos.
+1. Completado: 53 tests y smoke con PyTorch/CUDA, según salida recibida del Pod.
 2. Obtener/auditar M5 y congelar SKU, supuestos, presupuesto y referencia de eficiencia.
 3. Piloto remoto, entrenamiento multisemilla y evaluación final separada.
 4. Agregar resultados, discutir hipótesis, elaborar informe y presentación.
 
-El Pod no ha sido creado ni conectado. La implementación publicada sigue en un PR borrador.
+El usuario accede al Pod por SSH; el conector no tiene acceso a ese Pod.
+La implementación publicada sigue en un PR borrador.
