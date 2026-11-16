@@ -284,6 +284,7 @@ def main():
 
 def finish(args, out):
     import torch
+    import numpy as np
     from m5_delivery import deliver
     torch.set_num_threads(1)
     torch.use_deterministic_algorithms(True)
@@ -304,6 +305,7 @@ def finish(args, out):
                 "amendment":"close descriptively with development seeds 3,4,5; new confirmatory seeds 0,1,2 not run",
                 "inference":"three optimization seeds on one shared temporal test year, not three independent datasets",
                 "evaluation_device":"cpu", "torch_version":str(torch.__version__),
+                "python_version":sys.version, "numpy_version":str(np.__version__),
                 "threshold_reference":reference, "threshold_rule":"80% of empirical maximum validation return, including H0",
                 "threshold_status":"post-hoc descriptive definition fixed before test; not an optimum estimate",
                 "demo_rule":"P0_seed3 predetermined from validation family choice and smallest seed",
@@ -328,6 +330,8 @@ def finish(args, out):
             continue
         payload = load_checkpoint(suite/r["name"]/"checkpoint.pt","cpu")
         verify_checkpoint(payload,r["manifest"])
+        if canonical(payload["history"]) != canonical(read(suite/r["name"]/"training.json")):
+            raise ValueError("Training history differs from its authoritative checkpoint.")
         del payload
         gc.collect()
     save(out/"validation_summary.json",validation)

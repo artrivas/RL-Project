@@ -18,13 +18,13 @@ fi
 if ! python3 -c 'import numpy, matplotlib, pypdf' >/dev/null 2>&1; then
   python3 -m pip install --no-cache-dir 'numpy>=1.26,<3' matplotlib==3.10.7 pypdf==6.1.3
 fi
-if ! command -v pdflatex >/dev/null 2>&1 || ! kpsewhich IEEEtran.cls >/dev/null 2>&1 || ! kpsewhich spanish.ldf >/dev/null 2>&1; then
+if ! command -v pdflatex >/dev/null 2>&1 || ! kpsewhich IEEEtran.cls >/dev/null 2>&1 || ! kpsewhich spanish.ldf >/dev/null 2>&1 || ! kpsewhich ptmr8t.tfm >/dev/null 2>&1; then
   if [ "$(id -u)" != 0 ]; then
-    echo "Falta LaTeX. Instala texlive-latex-recommended texlive-publishers texlive-lang-spanish y repite."
+    echo "Falta LaTeX. Instala texlive-latex-recommended texlive-publishers texlive-lang-spanish texlive-fonts-recommended y repite."
     exit 1
   fi
   apt-get update -qq
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends texlive-latex-recommended texlive-publishers texlive-lang-spanish
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends texlive-latex-recommended texlive-publishers texlive-lang-spanish texlive-fonts-recommended
 fi
 python3 -m unittest discover -s src/retail/tests -v
 python3 -m unittest discover -s scripts -p 'test_finalize_m5.py' -v
