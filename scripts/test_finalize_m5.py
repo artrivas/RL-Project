@@ -145,6 +145,9 @@ class ClosureTests(unittest.TestCase):
         config=assumptions(data_fixture).as_dict()
         self.assertIs(type(config["price_multipliers"][2]),float)
         code={p.name:fingerprint(p) for p in (ROOT/"src/retail").glob("*.py")}
+        # Match train_tabular: paths relative to src, including its P1 dependency.
+        tabular_code={p.relative_to(ROOT/"src").as_posix():fingerprint(p)
+                      for p in [*sorted((ROOT/"src/retail").glob("*.py")), ROOT/"src/agents.py"]}
         data={"source":"M5","item_id":"FOODS_3_090","sha256":{"fixture":"hash"}}
         metrics={"base_return":1,"stockout_rate":.1,"fill_rate":.9,"lost_units":2}
         with tempfile.TemporaryDirectory() as d:
@@ -157,7 +160,8 @@ class ClosureTests(unittest.TestCase):
                     jobs.append({"id":name,"seed":seed})
                     folder=suite/run
                     folder.mkdir()
-                    manifest={"config":config,"data":data,"code_sha256":code,"range":[1212,1576]}
+                    manifest={"config":config,"data":data,
+                              "code_sha256":tabular_code if name=="T0" else code,"range":[1212,1576]}
                     if name=="H0":
                         manifest["metrics"]=metrics
                     else:
@@ -174,6 +178,20 @@ class ClosureTests(unittest.TestCase):
             records,report,curves=audit(suite)
             self.assertEqual(len(records),25)
             self.assertTrue(report["complete"])
+            # A hash mismatch or missing dependency must still fail closed.
+            tabular_manifest=suite/"T0_seed3"/"manifest.json"
+            original_tabular=json.loads(tabular_manifest.read_text())
+            for key,digest,message in (
+                ("agents.py","0"*64,"Code fingerprint mismatch: T0_seed3: agents.py"),
+                ("missing.py","0"*64,"Missing fingerprinted source: T0_seed3: missing.py"),
+            ):
+                changed=copy.deepcopy(original_tabular)
+                changed["code_sha256"][key]=digest
+                tabular_manifest.write_text(json.dumps(changed))
+                with self.subTest(source=key):
+                    with self.assertRaisesRegex(ValueError,message):
+                        audit(suite)
+            tabular_manifest.write_text(json.dumps(original_tabular))
             bad=suite/"V3_seed5"/"manifest.json"
             original=json.loads(bad.read_text())
             changed=copy.deepcopy(original)

@@ -98,7 +98,12 @@ def audit(suite):
         if manifest["data"].get("source") != "M5":
             raise ValueError("Final report requires audited M5, not fixtures.")
         for relative, digest in manifest["code_sha256"].items():
-            code = ROOT / "src" / relative if "/" in relative else ROOT / "src/retail" / relative
+            # T0 records paths relative to src (including bare agents.py).
+            # H0 and deep runners record basenames relative to src/retail.
+            source_root = ROOT / ("src" if job["id"] == "T0" else "src/retail")
+            code = source_root / relative
+            if not code.is_file():
+                raise ValueError(f"Missing fingerprinted source: {name}: {relative} -> {code}")
             if fingerprint(code) != digest:
                 raise ValueError(f"Code fingerprint mismatch: {name}: {relative}")
         record = {"id":job["id"], "seed":job["seed"], "name":name,
