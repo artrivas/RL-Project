@@ -51,6 +51,32 @@ def csv_rows(path, rows):
 def run_name(job):
     return job["id"] if job["seed"] is None else f'{job["id"]}_seed{job["seed"]}'
 
+def validate_report_config(actual, expected, run):
+    """Compare validated simulator values, not JSON spellings such as 1/1.0.
+
+    No tolerance is applied: any genuinely different numeric value or action
+    ordering remains an error. The frozen inputs are never rewritten.
+    """
+    def contains_bool(value):
+        if isinstance(value, dict):
+            return any(contains_bool(v) for v in value.values())
+        if isinstance(value, (list, tuple)):
+            return any(contains_bool(v) for v in value)
+        return isinstance(value, bool)
+
+    if contains_bool(actual) or contains_bool(expected):
+        raise ValueError(f"{run}: boolean values are not simulator parameters")
+    try:
+        observed = RetailConfig(**actual).as_dict()
+        reference = RetailConfig(**expected).as_dict()
+    except (TypeError, ValueError) as error:
+        raise ValueError(f"{run}: invalid simulator configuration: {error}") from error
+    changed = {key:{"observed":observed[key], "expected":reference[key]}
+               for key in reference if observed[key] != reference[key]}
+    if changed:
+        raise ValueError(f"{run}: simulator assumptions differ from the frozen report: "
+                         + canonical(changed))
+
 def audit(suite):
     plan = read(suite / "suite.json")
     expected = {"H0"} | {f"{name}_seed{seed}" for name in NAMES[1:] for seed in SEEDS}
@@ -66,8 +92,7 @@ def audit(suite):
         folder = suite / name
         manifest = read(folder / "manifest.json")
         config = manifest.get("retail_config", manifest.get("config"))
-        if canonical(config) != canonical(read(ROOT/"docker/m5_final_assumptions.json")):
-            raise ValueError("Simulator assumptions differ from the frozen report.")
+        validate_report_config(config, read(ROOT/"docker/m5_final_assumptions.json"), name)
         if manifest.get("validation_range",manifest.get("range")) != [1212,1576]:
             raise ValueError("Unexpected validation interval.")
         if manifest["data"].get("source") != "M5":

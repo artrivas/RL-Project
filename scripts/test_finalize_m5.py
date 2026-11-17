@@ -97,11 +97,53 @@ class ClosureTests(unittest.TestCase):
             self.assertEqual(rows[0]["budget"],109500)
 
 
+    def test_report_config_accepts_numeric_equivalence_without_rewriting(self):
+        from finalize_m5 import ROOT,validate_report_config
+        expected=json.loads((ROOT/"docker/m5_final_assumptions.json").read_text())
+        expected["price_multipliers"][2]=1
+        actual=copy.deepcopy(expected)
+        actual["price_multipliers"]=[.9,.95,1.0,1.05,1.1]
+        actual["target_days"]=(0.0,3.0,7.0)
+        before=copy.deepcopy(actual)
+        self.assertNotEqual(json.dumps(actual),json.dumps(expected))
+        validate_report_config(actual,expected,"H0")
+        self.assertEqual(actual,before)
+        self.assertIs(type(actual["price_multipliers"][2]),float)
+
+    def test_report_config_rejects_real_changes_and_invalid_types(self):
+        from finalize_m5 import ROOT,validate_report_config
+        expected=json.loads((ROOT/"docker/m5_final_assumptions.json").read_text())
+        for field,value in (
+            ("holding_cost",expected["holding_cost"]+1e-12),
+            ("store_capacity",expected["store_capacity"]+1),
+            ("price_multipliers",[.95,.9,1.,1.05,1.1]),
+            ("elasticities",[1.4,1.5,1.5]),
+        ):
+            actual=copy.deepcopy(expected)
+            actual[field]=value
+            with self.subTest(field=field):
+                with self.assertRaisesRegex(ValueError,"H0:.*"+field):
+                    validate_report_config(actual,expected,"H0")
+        for field,value in (("store_capacity",1050.0),("holding_cost","0.0128"),
+                            ("holding_cost",float("nan")),("price_multipliers",[.9,.95,True,1.05,1.1])):
+            actual=copy.deepcopy(expected)
+            actual[field]=value
+            with self.subTest(field=field,value=value):
+                with self.assertRaises(ValueError):
+                    validate_report_config(actual,expected,"H0")
+
     def test_full_audit_rejects_changed_budget_and_assumptions(self):
         from finalize_m5 import ROOT,canonical
         from src.retail.data import fingerprint
         from src.retail.deep_config import DeepConfig
-        config=json.loads((ROOT/"docker/m5_final_assumptions.json").read_text())
+        from types import SimpleNamespace
+        from m5_pilot import assumptions
+        # Use the actual pilot constructor, not a copy of the report JSON.
+        means=(73.31709331131296,29.26094137076796,149.88521882741537)
+        data_fixture=SimpleNamespace(sales=tuple((v,)*1211 for v in means),
+                                     prices=((1.28,)*1211,)*3)
+        config=assumptions(data_fixture).as_dict()
+        self.assertIs(type(config["price_multipliers"][2]),float)
         code={p.name:fingerprint(p) for p in (ROOT/"src/retail").glob("*.py")}
         data={"source":"M5","item_id":"FOODS_3_090","sha256":{"fixture":"hash"}}
         metrics={"base_return":1,"stockout_rate":.1,"fill_rate":.9,"lost_units":2}
