@@ -1,0 +1,13 @@
+# Direct dependencies pinned for P2. The setup saves the resolved pip freeze.
+# Install torch from the CPU index first (Dockerfile.p2).
+torch==2.8.0
+gymnasium==1.2.0
+stable-baselines3==2.7.0
+numpy==2.2.6
+scipy==1.15.3
+pandas==2.3.2
+matplotlib==3.10.6
+scikit-learn==1.7.2
+pyarrow==21.0.0
+jupyterlab==4.4.7
+pytest==8.4.2

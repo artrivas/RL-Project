@@ -1,0 +1,224 @@
+\documentclass[conference]{IEEEtran}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-tabla,es-nodecimaldot]{babel}
+\usepackage{amsmath,amssymb,booktabs,graphicx}
+\usepackage[hidelinks]{hyperref}
+\title{Control colaborativo de precios e inventario con aprendizaje por refuerzo: evaluación sobre M5}
+\author{\IEEEauthorblockN{Leonardo Candio y Dimael Rivas}
+\IEEEauthorblockA{Universidad de Ingeniería y Tecnología\\DS5345: Aprendizaje por Refuerzo, 2026-II\\
+Grupo 1 --- Fase 2, Vía B}}
+\begin{document}
+\maketitle
+\begin{abstract}
+Comparamos Q-Learning tabular, Double DQN y PPO en un simulador de tres tiendas de California con inventario regional compartido construido sobre M5. Estudiamos recompensa regional frente a egoísta, shaping potencial frente a un bono ingenuo y un modelo híbrido de demanda con actualizaciones Dyna. Cada condición aprende durante 109\,500 interacciones por semilla, usando tres semillas de desarrollo; el último año queda reservado para evaluación congelada. La condición con mayor retorno medio de validación es P0; en test obtiene 96\,590.3 frente a 98\,915.5 de una referencia de precio histórico y base-stock. Se reportan resultados favorables y desfavorables, dispersión, eficiencia descriptiva y error del modelo. Las ventas y precios son observados; inventarios, costes y elasticidad son supuestos. Las métricas caracterizan el simulador y no acreditan mejoras sobre el beneficio o los quiebres históricos reales de Walmart.
+\end{abstract}
+
+\section{Modelado matemático y datos}
+\subsection{Transición desde P1 y alcance}
+Se reutiliza Q-Learning de P1 con tablas nuevas para retail. Las políticas de RoboCup y sus métricas no se transfieren. La comparación estudia si aproximación neuronal, coordinación y experiencia sintética mejoran el control con idéntico espacio de acciones. El enunciado exige una familia de valor, otra de política/Actor-Crítico, PBRS y un módulo de aceleración, con al menos tres semillas.
+
+Se emplean ventas diarias, precios semanales y calendario de M5~\cite{m5}. FOODS\_3\_090 se selecciona por ventas de entrenamiento agregadas, con desempate por identificador, para CA\_1, CA\_2 y CA\_3. No se selecciona por test. Las uniones por día, semana, producto y tienda verifican unicidad, finitud y disponibilidad de precios. Los hashes identifican los tres archivos crudos.
+
+Entrenamiento: d1--d1211; validación: d1212--d1576; test: d1577--d1941, los últimos 365 días de ventas. Las ventanas de entrenamiento duran 365 días y comienzan después de 28 días de historial. La política nunca recibe ventas futuras. Al iniciar evaluación, el historial procede de días anteriores; después se actualiza con ventas realizadas en la propia trayectoria.
+
+M5 no aporta aquí inventarios, pedidos, faltantes ni costes de adquisición históricos. Cero ventas no demuestra un quiebre. Las ventas son un proxy de demanda y la elasticidad de 1.5 por tienda es \emph{supuesta}, no estimada. Esta brecha respecto al enunciado se conserva explícita.
+
+\subsection{Estado y decisiones}
+El estado conjunto incluye día, existencias locales y regionales, tránsito e historial. La observación local contiene horizonte restante, inventario, pronóstico de 28 días, precio de referencia, calendario y existencias regionales. Esta proyección no garantiza Markovianidad perfecta: el control descentralizado tiene observabilidad parcial.
+
+Cada agente selecciona una de 15 acciones:
+\[
+a_i=(m_i,k_i),\quad m_i\in\{.9,.95,1,1.05,1.1\},\
+k_i\in\{0,3,7\}.
+\]
+El precio es $p_{i,t}=m_{i,t}p^{M5}_{i,t}$; el pedido busca $k_i$ días de cobertura y respeta capacidad local. Las solicitudes simultáneas se racionan proporcionalmente en unidades enteras, con desempate CA\_1, CA\_2, CA\_3. Los despachos llegan al día siguiente: no satisfacen demanda del día de decisión.
+
+Las capacidades son 1050 unidades por tienda y 1768 regionales; el suministro diario máximo es 253. El inventario inicial es 450 por tienda y 758 regionales. Estas cantidades usan estadísticas de entrenamiento. Capacidad igual no significa cobertura igual cuando las ventas medias difieren.
+
+\subsection{Transición y recompensa}
+La demanda contrafactual es
+\[
+d_{i,t}=\operatorname{round}_{1/2\uparrow}
+(y^{M5}_{i,t}m_{i,t}^{-1.5}),\quad
+q_{i,t}=\min(I^{\rm disponible}_{i,t},d_{i,t}).
+\]
+Se conserva inventario en las transferencias. La recompensa base es
+\[
+R_t=\sum_i[p_{i,t}q_{i,t}-.0128 I^{\rm final}_{i,t}
+-1.28(d_{i,t}-q_{i,t})].
+\]
+Es beneficio operativo \emph{proxy}: no incluye costes de compra desconocidos ni valor de rescate al terminar. Las métricas económicas excluyen shaping.
+
+\section{Escalera de aproximación}
+H0 usa precio histórico y base-stock; es una referencia reconstruida, no una política histórica observada. T0 usa tres Q-Learning discretizados. V0 implementa tres DDQN con redes locales, replay de transiciones conjuntas, pérdida Huber y red objetivo~\cite{ddqn}:
+\[
+Y_t=r_t+\gamma(1-z_t)
+Q_{\theta^-}(o_{t+1},\arg\max_a Q_\theta(o_{t+1},a)).
+\]
+P0 usa actores y críticos independientes con PPO, clipping .2 y GAE con $\lambda=.95$~\cite{ppo}. En evaluación PPO elige la acción de mayor probabilidad; DDQN y tabular usan acciones greedy.
+
+Las capas ocultas tienen 64 unidades; Adam usa tasa $3\,10^{-4}$ y $\gamma=.99$. La recompensa se divide por 100 durante aprendizaje. DDQN usa minibatch 64, replay de 20\,000 transiciones y actualización objetivo cada 100 actualizaciones. Su exploración decae de 1 a .05 en 50\,000 pasos; T0 lo hace por episodio. PPO usa rollouts de hasta 128 pasos, cuatro épocas y entropía .01. Igual presupuesto de interacciones no implica igual cómputo ni número de actualizaciones.
+
+\begin{table}[t]
+\caption{Matriz de condiciones. Sólo S0 recibe recompensa local.}
+\centering\small
+\begin{tabular}{ll}
+\toprule ID & Método\\\midrule
+H0 & Precio histórico + base-stock (proxy)\\
+T0 & Q-Learning tabular\\
+V0 & DDQN cooperativo\\
+P0 & PPO cooperativo\\
+S0 & DDQN egoísta\\
+V1 & DDQN + PBRS\\
+V2 & DDQN + Dyna\\
+V3 & DDQN + PBRS + Dyna\\
+N0 & DDQN + bono ingenuo\\\bottomrule
+\end{tabular}
+\end{table}
+
+\section{PBRS y módulo de aceleración}
+\subsection{Potencial e invariancia}
+Sea $c_i=\min(14,(I_i+T_i)/\max(1,\widehat d_i))$ y $\bar c$ su media. El potencial implementado es
+\[
+\Phi(s)=-\left[\frac{\sum_i(c_i-\bar c)^2}{3\cdot196}
++\frac{1}{3}\sum_i\frac{\max(0,3-c_i)}{3}\right].
+\]
+Penaliza desequilibrio y cobertura inferior a tres días. En terminal verdadero se impone $\Phi(s_T)=0$. Con peso 1, $F_t=\gamma\Phi(s_{t+1})-\Phi(s_t)$. Entonces
+\[
+\begin{aligned}
+G'&=\sum_{t=0}^{T-1}\gamma^t(R_t+F_t)\\
+ &=G-\Phi(s_0)+\gamma^T\Phi(s_T)=G-\Phi(s_0).
+\end{aligned}
+\]
+La diferencia no depende de las decisiones futuras dado el estado inicial. Por tanto $Q_{R+F}^*(s,a)=Q_R^*(s,a)-\Phi(s)$ y se preservan los argmáximos~\cite{pbrs}. El escalamiento positivo por 100 tampoco altera el orden. La identidad por trayectoria no garantiza mejor optimización con redes, observaciones parciales o agentes independientes. Un corte de rollout no es un terminal real.
+
+N0 añade cobertura positiva cada día, sin diferencia potencial. Un contraejemplo controlado de dos pasos, incluido en el paquete, compara servir (retorno base .99) con acaparar (.891). El bono ingenuo añade .99 a la segunda trayectoria e invierte la preferencia; PBRS conserva el orden. Es un experimento sintético sobre cambio de objetivo, no evidencia de hacking de N0 en M5. Las diferencias empíricas de N0 se reportan por separado.
+
+\subsection{Modelo híbrido}
+El modelo aprende $\log(1+d)$ a partir de observación, acción e identidad de tienda, con salida softplus. Utiliza sólo transiciones reales de entrenamiento y demanda simulada posterior a la acción: un diagnóstico privilegiado que la política no recibe antes de decidir. Inventarios, racionamiento y recompensa siguen ecuaciones exactas del simulador.
+
+Después de 256 transiciones de calentamiento, Dyna genera una transición sintética por paso elegible que actualiza DDQN. No se introduce esa transición en replay real ni en el ajuste del modelo. El modelo no formula la recompensa: predice demanda para un objetivo definido previamente. Esta arquitectura no es Dreamer ni un modelo latente recurrente.
+
+Se mide MAE y RMSE de demanda en test, frente al pronóstico de 28 días ajustado por multiplicador y elasticidad. Ambos predicen antes de observar la demanda del día y no se reajustan. Sus errores se miden en trayectorias propias de cada política; no constituyen un benchmark idéntico entre V2 y V3 ni prueban fidelidad de rollouts largos.
+
+\section{Resultados experimentales y ablación}
+\subsection{Protocolo congelado}
+Cada condición entrenable usa semillas 3, 4 y 5, 300 episodios y 109\,500 pasos reales del simulador. H0 es determinista. Se evalúa en validación cada diez episodios.
+
+\textbf{Enmienda de alcance.} El plan reservaba semillas 0--2 para confirmación. El cierre usa las tres semillas de desarrollo completadas, sin afirmar una campaña confirmatoria independiente. Se congelan todos los checkpoints finales y los supuestos antes de abrir test; no se seleccionan semillas por su resultado. Los hashes figuran en el protocolo. Las semillas representan variación de optimización sobre el mismo año, no tres muestras independientes de tiendas.
+
+La condición con mayor retorno medio de validación es P0. Su retorno de test es 96\,590.3 y su diferencia respecto a H0 es -2\,325.2. Se publican todas las condiciones. Las barras son desviaciones estándar muestrales, no intervalos de confianza.
+
+\begin{table}[t]
+\caption{Retorno base en validación y test. $\sigma$: retorno de test; quiebres y fill rate: porcentajes medios de test. H0 no tiene dispersión entre semillas.}
+\centering\scriptsize
+\begin{tabular}{lrrrrr}
+\toprule ID & Val. & Test & $\sigma$ & Quiebres & Fill\\\midrule
+H0 & 88\,129.7 & 98\,915.5 & -- & 1.26 & 99.16 \\
+T0 & 85\,477.3 & 98\,649.1 & 634.7 & 2.21 & 98.78 \\
+V0 & 84\,938.5 & 97\,144.3 & 1\,496.2 & 4.77 & 97.66 \\
+P0 & 86\,091.7 & 96\,590.3 & 535.9 & 1.33 & 99.24 \\
+S0 & 71\,697.6 & 74\,439.5 & 42\,056.1 & 10.06 & 86.07 \\
+V1 & 83\,149.1 & 96\,795.5 & 4\,584.5 & 4.63 & 97.53 \\
+V2 & 76\,522.2 & 90\,552.7 & 11\,667.8 & 8.80 & 94.21 \\
+V3 & 81\,905.9 & 94\,290.1 & 2\,288.3 & 5.12 & 96.13 \\
+N0 & 84\,217.8 & 97\,658.1 & 3\,365.7 & 3.89 & 98.12 \\
+\bottomrule
+\end{tabular}
+\end{table}
+\begin{figure}[t]
+\centering\includegraphics[width=\columnwidth]{test_results.png}
+\caption{Test congelado: media $\pm1\sigma$. H0 es determinista.}
+\end{figure}
+\begin{figure}[t]
+\centering\includegraphics[width=\columnwidth,height=.43\textheight,keepaspectratio]{validation_returns.png}
+\caption{Validación por familia y ablación, con tres semillas. El eje horizontal cuenta sólo pasos reales del simulador.}
+\end{figure}
+
+\subsection{Eficiencia y estabilidad}
+Se registra el primer punto que alcanza 72\,143.5, el 80\% del máximo retorno empírico de validación incluyendo H0. La definición se fija después del desarrollo y antes de test: es descriptiva, no un óptimo demostrado. Los cruces se observan cada 3650 pasos; las corridas que no llegan se censuran a 109\,500. La mediana se calcula entre quienes alcanzan el umbral y se acompaña de su número.
+
+La estabilidad usa la desviación de los últimos 30 retornos de entrenamiento y de las últimas diez evaluaciones en validación. La primera mezcla exploración y distintas ventanas; la segunda evalúa siempre el mismo año. Se reporta retorno final a presupuesto finito, no convergencia asintótica.
+
+\begin{table}[t]
+\caption{Eficiencia descriptiva y estabilidad. Las dos $\sigma$ son medias entre semillas de dispersión dentro de cada cola.}
+\centering\scriptsize
+\begin{tabular}{lrrrr}
+\toprule ID & Alcanzan & Med. pasos & $\sigma_{\rm train}$ & $\sigma_{\rm val}$\\\midrule
+T0 & 3/3 & 14\,600.0 & 19\,076.8 & 573.3 \\
+V0 & 3/3 & 3\,650.0 & 20\,170.4 & 3\,300.7 \\
+P0 & 3/3 & 18\,250.0 & 20\,365.7 & 794.1 \\
+S0 & 3/3 & 3\,650.0 & 20\,310.3 & 4\,986.5 \\
+V1 & 3/3 & 3\,650.0 & 20\,018.4 & 5\,560.3 \\
+V2 & 3/3 & 3\,650.0 & 20\,027.3 & 4\,903.7 \\
+V3 & 3/3 & 3\,650.0 & 20\,564.2 & 7\,600.4 \\
+N0 & 3/3 & 3\,650.0 & 19\,881.3 & 4\,466.4 \\
+\bottomrule
+\end{tabular}
+\end{table}
+Los logs de entrenamiento guardan sumas no descontadas, no $G_0$ descontado. En test se guarda además $G_0=\sum_t.99^tR_t$. Las curvas de retorno de entrenamiento y todas las pérdidas con media $\pm1\sigma$ se incluyen en el paquete; pérdidas con escalas distintas no se comparan como calidad común.
+
+\begin{figure}[t]
+\centering\includegraphics[width=\columnwidth]{training_returns.png}
+\caption{Retorno de entrenamiento sin descuento, media $\pm1\sigma$. Las ventanas anuales varían por episodio y semilla.}
+\end{figure}
+\begin{figure}[t]
+\centering\includegraphics[width=\columnwidth]{losses_summary.png}
+\caption{Pérdidas por familia, media $\pm1\sigma$. El MSE de ajuste del modelo no sustituye su evaluación en test.}
+\end{figure}
+\subsection{Hipótesis y diferencias emparejadas}
+Se estudia si aproximación neuronal mejora al tabular, compartir recompensa reduce quiebres, PBRS acelera y Dyna mejora eficiencia a igual experiencia real. Las diferencias emparejadas describen efectos, incluidos los negativos. Con tres semillas se evita afirmar superioridad estadística general.
+
+\begin{table}[t]
+\caption{Diferencias de retorno base en test entre condiciones emparejadas por semilla. $+$ cuenta diferencias positivas.}
+\centering\scriptsize
+\begin{tabular}{lrrr}
+\toprule Contraste & Media & $\sigma$ & $+$\\\midrule
+V0 - T0 & -1\,504.9 & 1\,863.4 & 1/3 \\
+P0 - V0 & -554.0 & 963.2 & 1/3 \\
+V1 - V0 & -348.7 & 4\,384.4 & 2/3 \\
+V2 - V0 & -6\,591.5 & 10\,325.1 & 1/3 \\
+V3 - V1 & -2\,505.4 & 2\,745.5 & 1/3 \\
+V3 - V2 & 3\,737.4 & 13\,093.9 & 1/3 \\
+V0 - S0 & 22\,704.8 & 41\,828.7 & 1/3 \\
+N0 - V1 & 862.5 & 1\,534.1 & 2/3 \\
+\bottomrule
+\end{tabular}
+\end{table}
+\begin{table}[t]
+\caption{Errores de demanda en test, promediados sobre semillas. Hist.: pronóstico reciente ajustado por precio.}
+\centering\small
+\begin{tabular}{lrrr}
+\toprule Método & MAE & RMSE & MAE hist.\\\midrule
+V2 & 28.32 & 43.75 & 29.07 \\
+V3 & 26.27 & 42.68 & 28.19 \\
+\bottomrule
+\end{tabular}
+\end{table}
+Dyna requiere evaluar beneficio frente a cómputo adicional, sin asumir que un modelo acelera. El error de ajuste no reemplaza el error fuera de muestra. Las curvas permiten examinar mejora temprana o deterioro; el retorno final por sí solo no demuestra eficiencia muestral.
+
+\section{Especialización retail y meta del 30\%}
+La tasa de quiebres es la fracción de tienda-días con demanda positiva y alguna unidad perdida. El fill rate mide unidades vendidas sobre demanda total. Como ésta depende del precio, menos faltantes puede significar demanda suprimida; por ello se publican precios, demanda, ventas, ingresos y costes.
+
+La reducción relativa es $1-q_{\rm agente}/q_{\rm referencia}$ frente a H0 y a S0 de la misma semilla. Si la referencia no tiene quiebres, el porcentaje es indefinido. Valores negativos significan más quiebres. Se exige reducción de al menos 30\% frente a ambas referencias y retorno mayor que H0. En test 0 de 24 corridas cumplen conjuntamente el criterio entre \emph{proxies}; el detalle por semilla figura en las tablas exportadas.
+
+Estas referencias no identifican la política histórica de Walmart. Aun alcanzando el umbral simulado no se acredita superar su beneficio neto histórico. Se mantiene esa brecha respecto al enunciado y no se sustituye por una afirmación comercial.
+
+\section{Discusión crítica y reproducibilidad}
+Una heurística puede ganar por incorporar conocimiento de reposición y evitar errores de exploración y aproximación. La flexibilidad neuronal no garantiza superioridad con presupuesto limitado. PBRS preserva el objetivo descontado, pero su peso 1 puede aportar una señal débil frente a recompensas económicas grandes. Dyna añade sesgo y cómputo; sus efectos deben verse en las ablaciones.
+
+El alcance es un SKU, tres tiendas y un año compartido. Costes y elasticidad supuestos limitan validez externa; no se realizó sensibilidad ni estimación causal de precios. La recompensa económica no es dispersa: la utilidad de PBRS debe medirse y no presuponerse.
+
+Los manifiestos registran entrenamiento profundo en CUDA con PyTorch 2.8.0+cu129; el cierre usa CPU, sin actualizaciones. En 0 corridas el retorno de validación cambia más de .01 entre hardware; se documenta sin seleccionar otra política. No se afirma que GPU fuera necesaria ni se comparan tiempos entre hardware sin benchmark equivalente.
+
+El código de cierre corresponde a \texttt{4644eb088135}; conserva hashes del entrenamiento. El script verifica entradas, evalúa políticas y genera tablas, figuras, informe y demo. El paquete contiene notebook y trazas; el replay usa PPO semilla 3, elegida antes de test. La reproducción del entrenamiento se documenta por separado.
+
+Finalizar el proceso no equivale a cumplir las metas. Se mantienen explícitos los resultados desfavorables, la omisión de nuevas semillas confirmatorias y los supuestos históricos. Antes de entregar se requiere revisar visualmente el PDF, confirmar autores y preparar la sustentación de 20 minutos.
+\begin{thebibliography}{4}
+\bibitem{m5} University of Nicosia, M5 dataset, Zenodo, DOI: 10.5281/zenodo.10203108.
+\bibitem{ddqn} H. van Hasselt, A. Guez y D. Silver, Deep Reinforcement Learning with Double Q-learning, AAAI, 2016. arXiv:1509.06461.
+\bibitem{ppo} J. Schulman et al., Proximal Policy Optimization Algorithms, 2017. arXiv:1707.06347.
+\bibitem{pbrs} A. Y. Ng, D. Harada y S. Russell, Policy Invariance Under Reward Transformations: Theory and Application to Reward Shaping, ICML, 1999, pp. 278--287.
+\end{thebibliography}
+\end{document}

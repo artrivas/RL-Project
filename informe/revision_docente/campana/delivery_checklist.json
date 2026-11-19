@@ -1,0 +1,27 @@
+{
+  "evaluation_complete": true,
+  "n_learned_policies": 24,
+  "n_deterministic_references": 1,
+  "training_seeds": [
+    3,
+    4,
+    5
+  ],
+  "independent_confirmatory_training": false,
+  "held_out_test_range": [
+    1577,
+    1941
+  ],
+  "new_training_steps": 0,
+  "proxy_joint_target_runs": 0,
+  "historical_target": "not identifiable in M5 inputs",
+  "elasticity": "assumed 1.5, not estimated; requirement gap",
+  "hacking_evidence": "two-step synthetic counterexample; N0 empirical outcome is separate",
+  "asymptotic_convergence": "not demonstrated; report final finite-budget returns",
+  "training_discounted_G0": "not logged; training curves are undiscounted; test includes discounted G0",
+  "three_seed_dispersion": "sample standard deviation, not confidence intervals",
+  "pdf_visual_review": "required after generation",
+  "authors": "copied from P1: Leonardo Candio and Dimael Rivas; confirm before submission",
+  "oral_presentation": "20-minute outline and demo supplied; presentation itself pending",
+  "external_teacher_clarifications": "historical proxy, one-SKU scope and P1 tabular transfer not approved by evidence"
+}

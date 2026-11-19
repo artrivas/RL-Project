@@ -1,0 +1,21 @@
+FROM python:3.11-slim-bookworm
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PYTHONPATH=/workspace \
+    MPLBACKEND=Agg \
+    MPLCONFIGDIR=/tmp/matplotlib \
+    JUPYTER_RUNTIME_DIR=/tmp/jupyter-runtime \
+    IPYTHONDIR=/tmp/ipython \
+    OMP_NUM_THREADS=1 \
+    MKL_NUM_THREADS=1
+
+WORKDIR /workspace
+COPY requirements.p2.txt /tmp/requirements.p2.txt
+RUN python -m pip install --no-cache-dir torch==2.8.0 --index-url https://download.pytorch.org/whl/cpu \
+    && python -m pip install --no-cache-dir -r /tmp/requirements.p2.txt \
+    && python -m pip check
+
+EXPOSE 8888
+CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--ServerApp.root_dir=/workspace/notebooks"]

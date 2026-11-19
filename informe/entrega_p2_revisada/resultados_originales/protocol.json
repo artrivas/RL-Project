@@ -1,0 +1,3697 @@
+{
+  "schema_version": 1,
+  "source_commit": "4644eb088135060cffba499490b75986f701d29d",
+  "data": {
+    "source": "M5",
+    "item_id": "FOODS_3_090",
+    "stores": [
+      "CA_1",
+      "CA_2",
+      "CA_3"
+    ],
+    "selection": "explicit",
+    "splits": {
+      "train": [
+        1,
+        1211
+      ],
+      "validation": [
+        1212,
+        1576
+      ],
+      "test": [
+        1577,
+        1941
+      ]
+    },
+    "audit_scope": "selected_sku_all_days",
+    "sha256": {
+      "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+      "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+      "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+    },
+    "historical_inventory_observed": false,
+    "reward": "simulated_operating_profit_proxy"
+  },
+  "seeds": [
+    3,
+    4,
+    5
+  ],
+  "test_range": [
+    1577,
+    1941
+  ],
+  "checkpoint_rule": "last completed episode 300; no selection or training on test",
+  "amendment": "close descriptively with development seeds 3,4,5; new confirmatory seeds 0,1,2 not run",
+  "inference": "three optimization seeds on one shared temporal test year, not three independent datasets",
+  "evaluation_device": "cpu",
+  "torch_version": "2.8.0+cu129",
+  "python_version": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "numpy_version": "2.5.4",
+  "threshold_reference": 90179.371,
+  "threshold_rule": "80% of empirical maximum validation return, including H0",
+  "threshold_status": "post-hoc descriptive definition fixed before test; not an optimum estimate",
+  "demo_rule": "P0_seed3 predetermined from validation family choice and smallest seed",
+  "stability_rule": "last 30 training episodes and last 10 fixed-window validation checkpoints",
+  "closure_sources_sha256": {
+    "finalize_m5.py": "bf6299e5ee4c117a801d578ec6321a999c857defdab448172a240e5aff804966",
+    "m5_delivery.py": "f26f54c4d7b78d50f78b42bf5bf241aca27ea9064669a7b8a3281dde2c5aca07",
+    "p2_ieee_template.tex": "f231b0ba488dfa9bdde4d2981720f47abc3a3ba90a9000aafa15cf8f529143ee"
+  },
+  "runs": [
+    {
+      "id": "H0",
+      "seed": null,
+      "name": "H0",
+      "manifest": {
+        "schema_version": 1,
+        "policy": "H0_historical_price_base_stock_proxy",
+        "seed": 3,
+        "evaluation_only": true,
+        "training_implemented": false,
+        "split": "validation",
+        "range": [
+          1212,
+          1576
+        ],
+        "config": {
+          "store_capacity": 1050,
+          "regional_capacity": 1768,
+          "regional_supply": 253,
+          "initial_store_stock": 450,
+          "initial_regional_stock": 758,
+          "holding_cost": 0.0128,
+          "shortage_cost": 1.28,
+          "elasticities": [
+            1.5,
+            1.5,
+            1.5
+          ],
+          "price_multipliers": [
+            0.9,
+            0.95,
+            1.0,
+            1.05,
+            1.1
+          ],
+          "target_days": [
+            0,
+            3,
+            7
+          ],
+          "history_days": 28
+        },
+        "data": {
+          "source": "M5",
+          "item_id": "FOODS_3_090",
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "CA_3"
+          ],
+          "selection": "explicit",
+          "splits": {
+            "train": [
+              1,
+              1211
+            ],
+            "validation": [
+              1212,
+              1576
+            ],
+            "test": [
+              1577,
+              1941
+            ]
+          },
+          "audit_scope": "selected_sku_all_days",
+          "sha256": {
+            "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+            "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+            "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+          },
+          "historical_inventory_observed": false,
+          "reward": "simulated_operating_profit_proxy"
+        },
+        "code_sha256": {
+          "__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+          "analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+          "baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+          "checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+          "config.py": "35aa6a9a7c033626c1cc2e6c1582fb63f89e03b8210d1fbeb081270acc3d71a4",
+          "data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+          "deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+          "deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+          "doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+          "env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+          "evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+          "evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+          "features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+          "metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+          "preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+          "rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+          "shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+          "smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+          "suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+          "tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+          "train_deep.py": "604682ad8f4998e2849158799bfdd737a010e8d01e3d6dac95555df3f6290b97",
+          "train_tabular.py": "737136b04f9656cc8f456a365c64677ba9fa5777a762719de421794c495f4e50",
+          "world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922"
+        },
+        "metrics": {
+          "days": 365,
+          "base_return": 88129.7128,
+          "demand_units": 65738,
+          "sold_units": 64848,
+          "lost_units": 890,
+          "eligible_store_days": 853,
+          "stockout_store_days": 18,
+          "stockout_rate": 0.021101992966002344,
+          "fill_rate": 0.9864614074051538
+        },
+        "run_fingerprint": "2e2b8a83ce31f4d9843aba844b17b7af1d48e2dbca037c5174152fafc2991997"
+      },
+      "manifest_sha256": "77b4cadfa30733b275c809304227541a40c74011a8951f70424e4ad29149e961"
+    },
+    {
+      "id": "T0",
+      "seed": 3,
+      "name": "T0_seed3",
+      "manifest": {
+        "schema_version": 1,
+        "algorithm": "T0_cooperative_qlearning",
+        "seed": 3,
+        "episodes": 300,
+        "horizon": 365,
+        "alpha": 0.1,
+        "gamma": 0.99,
+        "real_steps": 109500,
+        "reward_scale": 100.0,
+        "config": {
+          "store_capacity": 1050,
+          "regional_capacity": 1768,
+          "regional_supply": 253,
+          "initial_store_stock": 450,
+          "initial_regional_stock": 758,
+          "holding_cost": 0.0128,
+          "shortage_cost": 1.28,
+          "elasticities": [
+            1.5,
+            1.5,
+            1.5
+          ],
+          "price_multipliers": [
+            0.9,
+            0.95,
+            1.0,
+            1.05,
+            1.1
+          ],
+          "target_days": [
+            0,
+            3,
+            7
+          ],
+          "history_days": 28
+        },
+        "data": {
+          "source": "M5",
+          "item_id": "FOODS_3_090",
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "CA_3"
+          ],
+          "selection": "explicit",
+          "splits": {
+            "train": [
+              1,
+              1211
+            ],
+            "validation": [
+              1212,
+              1576
+            ],
+            "test": [
+              1577,
+              1941
+            ]
+          },
+          "audit_scope": "selected_sku_all_days",
+          "sha256": {
+            "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+            "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+            "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+          },
+          "historical_inventory_observed": false,
+          "reward": "simulated_operating_profit_proxy"
+        },
+        "validation": {
+          "days": 365,
+          "base_return": 86419.9115,
+          "demand_units": 67243,
+          "sold_units": 65389,
+          "lost_units": 1854,
+          "eligible_store_days": 853,
+          "stockout_store_days": 39,
+          "stockout_rate": 0.04572098475967175,
+          "fill_rate": 0.9724283568549886
+        },
+        "validation_range": [
+          1212,
+          1576
+        ],
+        "test_evaluated": false,
+        "training_reward": "regional_unshaped_profit_proxy",
+        "epsilon_schedule": "linear_1.0_to_0.05_over_episodes",
+        "finite_horizon_terminal": true,
+        "code_sha256": {
+          "retail/__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+          "retail/analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+          "retail/baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+          "retail/checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+          "retail/config.py": "35aa6a9a7c033626c1cc2e6c1582fb63f89e03b8210d1fbeb081270acc3d71a4",
+          "retail/data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+          "retail/deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+          "retail/deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+          "retail/doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+          "retail/env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+          "retail/evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+          "retail/evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+          "retail/features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+          "retail/metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+          "retail/preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+          "retail/rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+          "retail/shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+          "retail/smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+          "retail/suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+          "retail/tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+          "retail/train_deep.py": "604682ad8f4998e2849158799bfdd737a010e8d01e3d6dac95555df3f6290b97",
+          "retail/train_tabular.py": "737136b04f9656cc8f456a365c64677ba9fa5777a762719de421794c495f4e50",
+          "retail/world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922",
+          "agents.py": "1eb08561579a26b15b8972d8b6ee4d88a047157468da79cc367be587ec913ca4"
+        }
+      },
+      "manifest_sha256": "e31d23258ea8ec65efc5c60a217f6e0503c7a34f9aa00f84fced79d806345c3b",
+      "history_sha256": "c2988759b42905300f0d335242ab6fb9c5882f658b9613fc8b7e016ed2f515c5",
+      "checkpoint_sha256": "5a22c4b4b2f6edb623c858d45a4030eb2de68d0d0001cea9e5c19387b15271b2"
+    },
+    {
+      "id": "V0",
+      "seed": 3,
+      "name": "V0_seed3",
+      "manifest": {
+        "schema_version": 1,
+        "settings": {
+          "algorithm": "ddqn",
+          "seed": 3,
+          "horizon": 365,
+          "hidden": 64,
+          "gamma": 0.99,
+          "learning_rate": 0.0003,
+          "reward_scale": 100.0,
+          "reward_mode": "regional",
+          "shaping": "none",
+          "shaping_weight": 1.0,
+          "batch_size": 64,
+          "replay_capacity": 20000,
+          "warmup_steps": 128,
+          "target_interval": 100,
+          "epsilon_decay_steps": 50000,
+          "epsilon_final": 0.05,
+          "rollout_steps": 128,
+          "ppo_epochs": 4,
+          "gae_lambda": 0.95,
+          "clip_epsilon": 0.2,
+          "entropy_coefficient": 0.01,
+          "value_coefficient": 0.5,
+          "max_grad_norm": 0.5,
+          "dyna_steps": 0,
+          "model_warmup": 256
+        },
+        "retail_config": {
+          "store_capacity": 1050,
+          "regional_capacity": 1768,
+          "regional_supply": 253,
+          "initial_store_stock": 450,
+          "initial_regional_stock": 758,
+          "holding_cost": 0.0128,
+          "shortage_cost": 1.28,
+          "elasticities": [
+            1.5,
+            1.5,
+            1.5
+          ],
+          "price_multipliers": [
+            0.9,
+            0.95,
+            1.0,
+            1.05,
+            1.1
+          ],
+          "target_days": [
+            0,
+            3,
+            7
+          ],
+          "history_days": 28
+        },
+        "encoder": {
+          "version": 1,
+          "price_scale": 1.48,
+          "size": 40
+        },
+        "data": {
+          "source": "M5",
+          "item_id": "FOODS_3_090",
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "CA_3"
+          ],
+          "selection": "explicit",
+          "splits": {
+            "train": [
+              1,
+              1211
+            ],
+            "validation": [
+              1212,
+              1576
+            ],
+            "test": [
+              1577,
+              1941
+            ]
+          },
+          "audit_scope": "selected_sku_all_days",
+          "sha256": {
+            "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+            "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+            "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+          },
+          "historical_inventory_observed": false,
+          "reward": "simulated_operating_profit_proxy"
+        },
+        "train_end": 1211,
+        "validation_range": [
+          1212,
+          1576
+        ],
+        "code_sha256": {
+          "__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+          "analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+          "baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+          "checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+          "config.py": "35aa6a9a7c033626c1cc2e6c1582fb63f89e03b8210d1fbeb081270acc3d71a4",
+          "data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+          "deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+          "deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+          "doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+          "env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+          "evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+          "evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+          "features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+          "metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+          "preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+          "rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+          "shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+          "smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+          "suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+          "tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+          "train_deep.py": "604682ad8f4998e2849158799bfdd737a010e8d01e3d6dac95555df3f6290b97",
+          "train_tabular.py": "737136b04f9656cc8f456a365c64677ba9fa5777a762719de421794c495f4e50",
+          "world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922"
+        },
+        "device": "cuda",
+        "torch_version": "2.8.0+cu129",
+        "completed_episodes": 300,
+        "real_steps": 109500,
+        "synthetic_steps": 0,
+        "test_evaluated": false,
+        "validation": {
+          "days": 365,
+          "base_return": 82015.3511,
+          "demand_units": 69088,
+          "sold_units": 65242,
+          "lost_units": 3846,
+          "eligible_store_days": 853,
+          "stockout_store_days": 77,
+          "stockout_rate": 0.09026963657678781,
+          "fill_rate": 0.9443318666049096
+        },
+        "training_seconds": 791.3114996614167
+      },
+      "manifest_sha256": "6af964d844416c9223c71a7681d85679906e3cb59d7a36df2d83f1bfb8f20089",
+      "history_sha256": "cc6b6a29526fd74053a5d372fc5c806dc2bf2b6fa20fc50c7c1e3c9bfff4c03b",
+      "checkpoint_sha256": "d6a979d0e464d45b65edaf392a8d06bc91118f1d13895cc8a4c2e0cf8b8c2279"
+    },
+    {
+      "id": "P0",
+      "seed": 3,
+      "name": "P0_seed3",
+      "manifest": {
+        "schema_version": 1,
+        "settings": {
+          "algorithm": "ppo",
+          "seed": 3,
+          "horizon": 365,
+          "hidden": 64,
+          "gamma": 0.99,
+          "learning_rate": 0.0003,
+          "reward_scale": 100.0,
+          "reward_mode": "regional",
+          "shaping": "none",
+          "shaping_weight": 1.0,
+          "batch_size": 64,
+          "replay_capacity": 20000,
+          "warmup_steps": 128,
+          "target_interval": 100,
+          "epsilon_decay_steps": 50000,
+          "epsilon_final": 0.05,
+          "rollout_steps": 128,
+          "ppo_epochs": 4,
+          "gae_lambda": 0.95,
+          "clip_epsilon": 0.2,
+          "entropy_coefficient": 0.01,
+          "value_coefficient": 0.5,
+          "max_grad_norm": 0.5,
+          "dyna_steps": 0,
+          "model_warmup": 256
+        },
+        "retail_config": {
+          "store_capacity": 1050,
+          "regional_capacity": 1768,
+          "regional_supply": 253,
+          "initial_store_stock": 450,
+          "initial_regional_stock": 758,
+          "holding_cost": 0.0128,
+          "shortage_cost": 1.28,
+          "elasticities": [
+            1.5,
+            1.5,
+            1.5
+          ],
+          "price_multipliers": [
+            0.9,
+            0.95,
+            1.0,
+            1.05,
+            1.1
+          ],
+          "target_days": [
+            0,
+            3,
+            7
+          ],
+          "history_days": 28
+        },
+        "encoder": {
+          "version": 1,
+          "price_scale": 1.48,
+          "size": 40
+        },
+        "data": {
+          "source": "M5",
+          "item_id": "FOODS_3_090",
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "CA_3"
+          ],
+          "selection": "explicit",
+          "splits": {
+            "train": [
+              1,
+              1211
+            ],
+            "validation": [
+              1212,
+              1576
+            ],
+            "test": [
+              1577,
+              1941
+            ]
+          },
+          "audit_scope": "selected_sku_all_days",
+          "sha256": {
+            "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+            "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+            "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+          },
+          "historical_inventory_observed": false,
+          "reward": "simulated_operating_profit_proxy"
+        },
+        "train_end": 1211,
+        "validation_range": [
+          1212,
+          1576
+        ],
+        "code_sha256": {
+          "__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+          "analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+          "baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+          "checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+          "config.py": "35aa6a9a7c033626c1cc2e6c1582fb63f89e03b8210d1fbeb081270acc3d71a4",
+          "data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+          "deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+          "deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+          "doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+          "env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+          "evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+          "evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+          "features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+          "metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+          "preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+          "rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+          "shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+          "smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+          "suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+          "tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+          "train_deep.py": "604682ad8f4998e2849158799bfdd737a010e8d01e3d6dac95555df3f6290b97",
+          "train_tabular.py": "737136b04f9656cc8f456a365c64677ba9fa5777a762719de421794c495f4e50",
+          "world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922"
+        },
+        "device": "cuda",
+        "torch_version": "2.8.0+cu129",
+        "completed_episodes": 300,
+        "real_steps": 109500,
+        "synthetic_steps": 0,
+        "test_evaluated": false,
+        "validation": {
+          "days": 365,
+          "base_return": 86526.6868,
+          "demand_units": 61677,
+          "sold_units": 60889,
+          "lost_units": 788,
+          "eligible_store_days": 853,
+          "stockout_store_days": 19,
+          "stockout_rate": 0.022274325908558032,
+          "fill_rate": 0.9872237625046614
+        },
+        "training_seconds": 296.71972482383717
+      },
+      "manifest_sha256": "e4bbb501df3c510b59d65c246cab3d278ba8b265eec823e13b79453697095bea",
+      "history_sha256": "acb6058c1b8ab275b9a826d5e1a68926dd0a65e7492284ccad2d7d8d20d1d990",
+      "checkpoint_sha256": "5c76a520a0294d2747ae562f771ee09084af188a0372a1374663f891d2f693a1"
+    },
+    {
+      "id": "S0",
+      "seed": 3,
+      "name": "S0_seed3",
+      "manifest": {
+        "schema_version": 1,
+        "settings": {
+          "algorithm": "ddqn",
+          "seed": 3,
+          "horizon": 365,
+          "hidden": 64,
+          "gamma": 0.99,
+          "learning_rate": 0.0003,
+          "reward_scale": 100.0,
+          "reward_mode": "local",
+          "shaping": "none",
+          "shaping_weight": 1.0,
+          "batch_size": 64,
+          "replay_capacity": 20000,
+          "warmup_steps": 128,
+          "target_interval": 100,
+          "epsilon_decay_steps": 50000,
+          "epsilon_final": 0.05,
+          "rollout_steps": 128,
+          "ppo_epochs": 4,
+          "gae_lambda": 0.95,
+          "clip_epsilon": 0.2,
+          "entropy_coefficient": 0.01,
+          "value_coefficient": 0.5,
+          "max_grad_norm": 0.5,
+          "dyna_steps": 0,
+          "model_warmup": 256
+        },
+        "retail_config": {
+          "store_capacity": 1050,
+          "regional_capacity": 1768,
+          "regional_supply": 253,
+          "initial_store_stock": 450,
+          "initial_regional_stock": 758,
+          "holding_cost": 0.0128,
+          "shortage_cost": 1.28,
+          "elasticities": [
+            1.5,
+            1.5,
+            1.5
+          ],
+          "price_multipliers": [
+            0.9,
+            0.95,
+            1.0,
+            1.05,
+            1.1
+          ],
+          "target_days": [
+            0,
+            3,
+            7
+          ],
+          "history_days": 28
+        },
+        "encoder": {
+          "version": 1,
+          "price_scale": 1.48,
+          "size": 40
+        },
+        "data": {
+          "source": "M5",
+          "item_id": "FOODS_3_090",
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "CA_3"
+          ],
+          "selection": "explicit",
+          "splits": {
+            "train": [
+              1,
+              1211
+            ],
+            "validation": [
+              1212,
+              1576
+            ],
+            "test": [
+              1577,
+              1941
+            ]
+          },
+          "audit_scope": "selected_sku_all_days",
+          "sha256": {
+            "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+            "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+            "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+          },
+          "historical_inventory_observed": false,
+          "reward": "simulated_operating_profit_proxy"
+        },
+        "train_end": 1211,
+        "validation_range": [
+          1212,
+          1576
+        ],
+        "code_sha256": {
+          "__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+          "analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+          "baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+          "checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+          "config.py": "35aa6a9a7c033626c1cc2e6c1582fb63f89e03b8210d1fbeb081270acc3d71a4",
+          "data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+          "deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+          "deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+          "doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+          "env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+          "evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+          "evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+          "features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+          "metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+          "preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+          "rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+          "shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+          "smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+          "suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+          "tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+          "train_deep.py": "604682ad8f4998e2849158799bfdd737a010e8d01e3d6dac95555df3f6290b97",
+          "train_tabular.py": "737136b04f9656cc8f456a365c64677ba9fa5777a762719de421794c495f4e50",
+          "world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922"
+        },
+        "device": "cuda",
+        "torch_version": "2.8.0+cu129",
+        "completed_episodes": 300,
+        "real_steps": 109500,
+        "synthetic_steps": 0,
+        "test_evaluated": false,
+        "validation": {
+          "days": 365,
+          "base_return": 43704.1751,
+          "demand_units": 67061,
+          "sold_units": 48838,
+          "lost_units": 18223,
+          "eligible_store_days": 853,
+          "stockout_store_days": 173,
+          "stockout_rate": 0.20281359906213364,
+          "fill_rate": 0.7282623283279402
+        },
+        "training_seconds": 795.7052241006168
+      },
+      "manifest_sha256": "1e0d9993a8fddc939800983b642db90000cf8d8e57092f67a74f369e24ef8172",
+      "history_sha256": "bfa5d20d1d07d42359da21c18360ce79a1034404e1f1c7a9879d7bbd4127d213",
+      "checkpoint_sha256": "c7a0a0fcb9dc8cfde85bb4fab0ab61fe374e595c7737ada3a403bb37d44b69dd"
+    },
+    {
+      "id": "V1",
+      "seed": 3,
+      "name": "V1_seed3",
+      "manifest": {
+        "schema_version": 1,
+        "settings": {
+          "algorithm": "ddqn",
+          "seed": 3,
+          "horizon": 365,
+          "hidden": 64,
+          "gamma": 0.99,
+          "learning_rate": 0.0003,
+          "reward_scale": 100.0,
+          "reward_mode": "regional",
+          "shaping": "pbrs",
+          "shaping_weight": 1.0,
+          "batch_size": 64,
+          "replay_capacity": 20000,
+          "warmup_steps": 128,
+          "target_interval": 100,
+          "epsilon_decay_steps": 50000,
+          "epsilon_final": 0.05,
+          "rollout_steps": 128,
+          "ppo_epochs": 4,
+          "gae_lambda": 0.95,
+          "clip_epsilon": 0.2,
+          "entropy_coefficient": 0.01,
+          "value_coefficient": 0.5,
+          "max_grad_norm": 0.5,
+          "dyna_steps": 0,
+          "model_warmup": 256
+        },
+        "retail_config": {
+          "store_capacity": 1050,
+          "regional_capacity": 1768,
+          "regional_supply": 253,
+          "initial_store_stock": 450,
+          "initial_regional_stock": 758,
+          "holding_cost": 0.0128,
+          "shortage_cost": 1.28,
+          "elasticities": [
+            1.5,
+            1.5,
+            1.5
+          ],
+          "price_multipliers": [
+            0.9,
+            0.95,
+            1.0,
+            1.05,
+            1.1
+          ],
+          "target_days": [
+            0,
+            3,
+            7
+          ],
+          "history_days": 28
+        },
+        "encoder": {
+          "version": 1,
+          "price_scale": 1.48,
+          "size": 40
+        },
+        "data": {
+          "source": "M5",
+          "item_id": "FOODS_3_090",
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "CA_3"
+          ],
+          "selection": "explicit",
+          "splits": {
+            "train": [
+              1,
+              1211
+            ],
+            "validation": [
+              1212,
+              1576
+            ],
+            "test": [
+              1577,
+              1941
+            ]
+          },
+          "audit_scope": "selected_sku_all_days",
+          "sha256": {
+            "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+            "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+            "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+          },
+          "historical_inventory_observed": false,
+          "reward": "simulated_operating_profit_proxy"
+        },
+        "train_end": 1211,
+        "validation_range": [
+          1212,
+          1576
+        ],
+        "code_sha256": {
+          "__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+          "analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+          "baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+          "checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+          "config.py": "35aa6a9a7c033626c1cc2e6c1582fb63f89e03b8210d1fbeb081270acc3d71a4",
+          "data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+          "deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+          "deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+          "doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+          "env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+          "evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+          "evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+          "features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+          "metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+          "preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+          "rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+          "shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+          "smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+          "suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+          "tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+          "train_deep.py": "604682ad8f4998e2849158799bfdd737a010e8d01e3d6dac95555df3f6290b97",
+          "train_tabular.py": "737136b04f9656cc8f456a365c64677ba9fa5777a762719de421794c495f4e50",
+          "world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922"
+        },
+        "device": "cuda",
+        "torch_version": "2.8.0+cu129",
+        "completed_episodes": 300,
+        "real_steps": 109500,
+        "synthetic_steps": 0,
+        "test_evaluated": false,
+        "validation": {
+          "days": 365,
+          "base_return": 75510.9916,
+          "demand_units": 65159,
+          "sold_units": 59609,
+          "lost_units": 5550,
+          "eligible_store_days": 853,
+          "stockout_store_days": 100,
+          "stockout_rate": 0.11723329425556858,
+          "fill_rate": 0.9148237388541874
+        },
+        "training_seconds": 800.3253948399797
+      },
+      "manifest_sha256": "cf6fca6b42187b6d79492a6f8a021221329c93e505e4c65e7765bf9a6a39c798",
+      "history_sha256": "8f6a395e8ddaa08d1b2b7eb3affa67e9080f9536d6c00d02a3f6c051c4177b9f",
+      "checkpoint_sha256": "76ca5a11ca3ffe7114df4ecd7115a664ce834aa02ac6d7ae475fb23074b8d432"
+    },
+    {
+      "id": "V2",
+      "seed": 3,
+      "name": "V2_seed3",
+      "manifest": {
+        "schema_version": 1,
+        "settings": {
+          "algorithm": "ddqn",
+          "seed": 3,
+          "horizon": 365,
+          "hidden": 64,
+          "gamma": 0.99,
+          "learning_rate": 0.0003,
+          "reward_scale": 100.0,
+          "reward_mode": "regional",
+          "shaping": "none",
+          "shaping_weight": 1.0,
+          "batch_size": 64,
+          "replay_capacity": 20000,
+          "warmup_steps": 128,
+          "target_interval": 100,
+          "epsilon_decay_steps": 50000,
+          "epsilon_final": 0.05,
+          "rollout_steps": 128,
+          "ppo_epochs": 4,
+          "gae_lambda": 0.95,
+          "clip_epsilon": 0.2,
+          "entropy_coefficient": 0.01,
+          "value_coefficient": 0.5,
+          "max_grad_norm": 0.5,
+          "dyna_steps": 1,
+          "model_warmup": 256
+        },
+        "retail_config": {
+          "store_capacity": 1050,
+          "regional_capacity": 1768,
+          "regional_supply": 253,
+          "initial_store_stock": 450,
+          "initial_regional_stock": 758,
+          "holding_cost": 0.0128,
+          "shortage_cost": 1.28,
+          "elasticities": [
+            1.5,
+            1.5,
+            1.5
+          ],
+          "price_multipliers": [
+            0.9,
+            0.95,
+            1.0,
+            1.05,
+            1.1
+          ],
+          "target_days": [
+            0,
+            3,
+            7
+          ],
+          "history_days": 28
+        },
+        "encoder": {
+          "version": 1,
+          "price_scale": 1.48,
+          "size": 40
+        },
+        "data": {
+          "source": "M5",
+          "item_id": "FOODS_3_090",
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "CA_3"
+          ],
+          "selection": "explicit",
+          "splits": {
+            "train": [
+              1,
+              1211
+            ],
+            "validation": [
+              1212,
+              1576
+            ],
+            "test": [
+              1577,
+              1941
+            ]
+          },
+          "audit_scope": "selected_sku_all_days",
+          "sha256": {
+            "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+            "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+            "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+          },
+          "historical_inventory_observed": false,
+          "reward": "simulated_operating_profit_proxy"
+        },
+        "train_end": 1211,
+        "validation_range": [
+          1212,
+          1576
+        ],
+        "code_sha256": {
+          "__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+          "analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+          "baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+          "checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+          "config.py": "35aa6a9a7c033626c1cc2e6c1582fb63f89e03b8210d1fbeb081270acc3d71a4",
+          "data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+          "deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+          "deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+          "doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+          "env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+          "evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+          "evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+          "features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+          "metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+          "preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+          "rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+          "shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+          "smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+          "suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+          "tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+          "train_deep.py": "604682ad8f4998e2849158799bfdd737a010e8d01e3d6dac95555df3f6290b97",
+          "train_tabular.py": "737136b04f9656cc8f456a365c64677ba9fa5777a762719de421794c495f4e50",
+          "world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922"
+        },
+        "device": "cuda",
+        "torch_version": "2.8.0+cu129",
+        "completed_episodes": 300,
+        "real_steps": 109500,
+        "synthetic_steps": 109245,
+        "test_evaluated": false,
+        "validation": {
+          "days": 365,
+          "base_return": 78301.5284,
+          "demand_units": 62936,
+          "sold_units": 58558,
+          "lost_units": 4378,
+          "eligible_store_days": 853,
+          "stockout_store_days": 79,
+          "stockout_rate": 0.09261430246189918,
+          "fill_rate": 0.9304372696072201
+        },
+        "training_seconds": 1920.069983655354
+      },
+      "manifest_sha256": "34273e21f0f9dba290c6c662073656743925e7f362d8894365aa788b991b5a40",
+      "history_sha256": "9c1190dc02138cf1533b7a5d01a9d7cb45af2197c3eca30027f7bf016ff0f8ae",
+      "checkpoint_sha256": "c516cd95d6e1905c23a4db638d53b1c1c958bc139a1175cca5b703ea20114854"
+    },
+    {
+      "id": "V3",
+      "seed": 3,
+      "name": "V3_seed3",
+      "manifest": {
+        "schema_version": 1,
+        "settings": {
+          "algorithm": "ddqn",
+          "seed": 3,
+          "horizon": 365,
+          "hidden": 64,
+          "gamma": 0.99,
+          "learning_rate": 0.0003,
+          "reward_scale": 100.0,
+          "reward_mode": "regional",
+          "shaping": "pbrs",
+          "shaping_weight": 1.0,
+          "batch_size": 64,
+          "replay_capacity": 20000,
+          "warmup_steps": 128,
+          "target_interval": 100,
+          "epsilon_decay_steps": 50000,
+          "epsilon_final": 0.05,
+          "rollout_steps": 128,
+          "ppo_epochs": 4,
+          "gae_lambda": 0.95,
+          "clip_epsilon": 0.2,
+          "entropy_coefficient": 0.01,
+          "value_coefficient": 0.5,
+          "max_grad_norm": 0.5,
+          "dyna_steps": 1,
+          "model_warmup": 256
+        },
+        "retail_config": {
+          "store_capacity": 1050,
+          "regional_capacity": 1768,
+          "regional_supply": 253,
+          "initial_store_stock": 450,
+          "initial_regional_stock": 758,
+          "holding_cost": 0.0128,
+          "shortage_cost": 1.28,
+          "elasticities": [
+            1.5,
+            1.5,
+            1.5
+          ],
+          "price_multipliers": [
+            0.9,
+            0.95,
+            1.0,
+            1.05,
+            1.1
+          ],
+          "target_days": [
+            0,
+            3,
+            7
+          ],
+          "history_days": 28
+        },
+        "encoder": {
+          "version": 1,
+          "price_scale": 1.48,
+          "size": 40
+        },
+        "data": {
+          "source": "M5",
+          "item_id": "FOODS_3_090",
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "CA_3"
+          ],
+          "selection": "explicit",
+          "splits": {
+            "train": [
+              1,
+              1211
+            ],
+            "validation": [
+              1212,
+              1576
+            ],
+            "test": [
+              1577,
+              1941
+            ]
+          },
+          "audit_scope": "selected_sku_all_days",
+          "sha256": {
+            "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+            "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+            "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+          },
+          "historical_inventory_observed": false,
+          "reward": "simulated_operating_profit_proxy"
+        },
+        "train_end": 1211,
+        "validation_range": [
+          1212,
+          1576
+        ],
+        "code_sha256": {
+          "__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+          "analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+          "baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+          "checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+          "config.py": "35aa6a9a7c033626c1cc2e6c1582fb63f89e03b8210d1fbeb081270acc3d71a4",
+          "data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+          "deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+          "deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+          "doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+          "env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+          "evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+          "evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+          "features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+          "metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+          "preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+          "rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+          "shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+          "smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+          "suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+          "tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+          "train_deep.py": "604682ad8f4998e2849158799bfdd737a010e8d01e3d6dac95555df3f6290b97",
+          "train_tabular.py": "737136b04f9656cc8f456a365c64677ba9fa5777a762719de421794c495f4e50",
+          "world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922"
+        },
+        "device": "cuda",
+        "torch_version": "2.8.0+cu129",
+        "completed_episodes": 300,
+        "real_steps": 109500,
+        "synthetic_steps": 109245,
+        "test_evaluated": false,
+        "validation": {
+          "days": 365,
+          "base_return": 80538.5478,
+          "demand_units": 62703,
+          "sold_units": 59296,
+          "lost_units": 3407,
+          "eligible_store_days": 853,
+          "stockout_store_days": 66,
+          "stockout_rate": 0.07737397420867527,
+          "fill_rate": 0.945664481763233
+        },
+        "training_seconds": 1921.6745509566972
+      },
+      "manifest_sha256": "b477f7fedbf541cd8421cac8b6d585e403a4d7d1cb66e29bdec4f8f4cc78a245",
+      "history_sha256": "fe623359978ed5f43d8b62009a2f399ec370a41c690339f63a994c6b84fd1cbb",
+      "checkpoint_sha256": "1766a580e0ffb2e01f564952eda358808b4792af47098246a9dbb5564cfdded7"
+    },
+    {
+      "id": "N0",
+      "seed": 3,
+      "name": "N0_seed3",
+      "manifest": {
+        "schema_version": 1,
+        "settings": {
+          "algorithm": "ddqn",
+          "seed": 3,
+          "horizon": 365,
+          "hidden": 64,
+          "gamma": 0.99,
+          "learning_rate": 0.0003,
+          "reward_scale": 100.0,
+          "reward_mode": "regional",
+          "shaping": "naive",
+          "shaping_weight": 1.0,
+          "batch_size": 64,
+          "replay_capacity": 20000,
+          "warmup_steps": 128,
+          "target_interval": 100,
+          "epsilon_decay_steps": 50000,
+          "epsilon_final": 0.05,
+          "rollout_steps": 128,
+          "ppo_epochs": 4,
+          "gae_lambda": 0.95,
+          "clip_epsilon": 0.2,
+          "entropy_coefficient": 0.01,
+          "value_coefficient": 0.5,
+          "max_grad_norm": 0.5,
+          "dyna_steps": 0,
+          "model_warmup": 256
+        },
+        "retail_config": {
+          "store_capacity": 1050,
+          "regional_capacity": 1768,
+          "regional_supply": 253,
+          "initial_store_stock": 450,
+          "initial_regional_stock": 758,
+          "holding_cost": 0.0128,
+          "shortage_cost": 1.28,
+          "elasticities": [
+            1.5,
+            1.5,
+            1.5
+          ],
+          "price_multipliers": [
+            0.9,
+            0.95,
+            1.0,
+            1.05,
+            1.1
+          ],
+          "target_days": [
+            0,
+            3,
+            7
+          ],
+          "history_days": 28
+        },
+        "encoder": {
+          "version": 1,
+          "price_scale": 1.48,
+          "size": 40
+        },
+        "data": {
+          "source": "M5",
+          "item_id": "FOODS_3_090",
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "CA_3"
+          ],
+          "selection": "explicit",
+          "splits": {
+            "train": [
+              1,
+              1211
+            ],
+            "validation": [
+              1212,
+              1576
+            ],
+            "test": [
+              1577,
+              1941
+            ]
+          },
+          "audit_scope": "selected_sku_all_days",
+          "sha256": {
+            "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+            "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+            "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+          },
+          "historical_inventory_observed": false,
+          "reward": "simulated_operating_profit_proxy"
+        },
+        "train_end": 1211,
+        "validation_range": [
+          1212,
+          1576
+        ],
+        "code_sha256": {
+          "__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+          "analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+          "baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+          "checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+          "config.py": "35aa6a9a7c033626c1cc2e6c1582fb63f89e03b8210d1fbeb081270acc3d71a4",
+          "data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+          "deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+          "deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+          "doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+          "env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+          "evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+          "evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+          "features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+          "metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+          "preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+          "rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+          "shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+          "smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+          "suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+          "tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+          "train_deep.py": "604682ad8f4998e2849158799bfdd737a010e8d01e3d6dac95555df3f6290b97",
+          "train_tabular.py": "737136b04f9656cc8f456a365c64677ba9fa5777a762719de421794c495f4e50",
+          "world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922"
+        },
+        "device": "cuda",
+        "torch_version": "2.8.0+cu129",
+        "completed_episodes": 300,
+        "real_steps": 109500,
+        "synthetic_steps": 0,
+        "test_evaluated": false,
+        "validation": {
+          "days": 365,
+          "base_return": 77005.2686,
+          "demand_units": 63253,
+          "sold_units": 58390,
+          "lost_units": 4863,
+          "eligible_store_days": 853,
+          "stockout_store_days": 93,
+          "stockout_rate": 0.10902696365767878,
+          "fill_rate": 0.9231182710701469
+        },
+        "training_seconds": 855.3766968444688
+      },
+      "manifest_sha256": "e5c9afd7a419fde9f9df23b7c21c48796073c749a399d29117d12a1a19d7c74f",
+      "history_sha256": "aa7e9666f46d9e367166374164518eddeb2d750c1d371e7e61a85f2f6be16cc1",
+      "checkpoint_sha256": "c9e16013e8d1cf0eece88f67d7f95261696020b8a3dd63358c96a405eb828beb"
+    },
+    {
+      "id": "T0",
+      "seed": 4,
+      "name": "T0_seed4",
+      "manifest": {
+        "schema_version": 1,
+        "algorithm": "T0_cooperative_qlearning",
+        "seed": 4,
+        "episodes": 300,
+        "horizon": 365,
+        "alpha": 0.1,
+        "gamma": 0.99,
+        "real_steps": 109500,
+        "reward_scale": 100.0,
+        "config": {
+          "store_capacity": 1050,
+          "regional_capacity": 1768,
+          "regional_supply": 253,
+          "initial_store_stock": 450,
+          "initial_regional_stock": 758,
+          "holding_cost": 0.0128,
+          "shortage_cost": 1.28,
+          "elasticities": [
+            1.5,
+            1.5,
+            1.5
+          ],
+          "price_multipliers": [
+            0.9,
+            0.95,
+            1.0,
+            1.05,
+            1.1
+          ],
+          "target_days": [
+            0,
+            3,
+            7
+          ],
+          "history_days": 28
+        },
+        "data": {
+          "source": "M5",
+          "item_id": "FOODS_3_090",
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "CA_3"
+          ],
+          "selection": "explicit",
+          "splits": {
+            "train": [
+              1,
+              1211
+            ],
+            "validation": [
+              1212,
+              1576
+            ],
+            "test": [
+              1577,
+              1941
+            ]
+          },
+          "audit_scope": "selected_sku_all_days",
+          "sha256": {
+            "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+            "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+            "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+          },
+          "historical_inventory_observed": false,
+          "reward": "simulated_operating_profit_proxy"
+        },
+        "validation": {
+          "days": 365,
+          "base_return": 84846.45449999999,
+          "demand_units": 67175,
+          "sold_units": 64720,
+          "lost_units": 2455,
+          "eligible_store_days": 853,
+          "stockout_store_days": 56,
+          "stockout_rate": 0.06565064478311841,
+          "fill_rate": 0.9634536657982881
+        },
+        "validation_range": [
+          1212,
+          1576
+        ],
+        "test_evaluated": false,
+        "training_reward": "regional_unshaped_profit_proxy",
+        "epsilon_schedule": "linear_1.0_to_0.05_over_episodes",
+        "finite_horizon_terminal": true,
+        "code_sha256": {
+          "retail/__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+          "retail/analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+          "retail/baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+          "retail/checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+          "retail/config.py": "35aa6a9a7c033626c1cc2e6c1582fb63f89e03b8210d1fbeb081270acc3d71a4",
+          "retail/data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+          "retail/deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+          "retail/deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+          "retail/doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+          "retail/env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+          "retail/evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+          "retail/evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+          "retail/features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+          "retail/metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+          "retail/preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+          "retail/rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+          "retail/shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+          "retail/smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+          "retail/suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+          "retail/tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+          "retail/train_deep.py": "604682ad8f4998e2849158799bfdd737a010e8d01e3d6dac95555df3f6290b97",
+          "retail/train_tabular.py": "737136b04f9656cc8f456a365c64677ba9fa5777a762719de421794c495f4e50",
+          "retail/world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922",
+          "agents.py": "1eb08561579a26b15b8972d8b6ee4d88a047157468da79cc367be587ec913ca4"
+        }
+      },
+      "manifest_sha256": "14a5b195e835cbd1a10eb64f2e3db697606408783898597c5dcf9db5c3b7d9b6",
+      "history_sha256": "bbde4883f5a95c584e1de8dc3f1b1329a4475c38e20a8cda6aa1b25c51b9caf7",
+      "checkpoint_sha256": "f99e50b3ba9c034eb9efbb6320818503cb669e0d4c83b6ae90a3b5786a6f9a71"
+    },
+    {
+      "id": "V0",
+      "seed": 4,
+      "name": "V0_seed4",
+      "manifest": {
+        "schema_version": 1,
+        "settings": {
+          "algorithm": "ddqn",
+          "seed": 4,
+          "horizon": 365,
+          "hidden": 64,
+          "gamma": 0.99,
+          "learning_rate": 0.0003,
+          "reward_scale": 100.0,
+          "reward_mode": "regional",
+          "shaping": "none",
+          "shaping_weight": 1.0,
+          "batch_size": 64,
+          "replay_capacity": 20000,
+          "warmup_steps": 128,
+          "target_interval": 100,
+          "epsilon_decay_steps": 50000,
+          "epsilon_final": 0.05,
+          "rollout_steps": 128,
+          "ppo_epochs": 4,
+          "gae_lambda": 0.95,
+          "clip_epsilon": 0.2,
+          "entropy_coefficient": 0.01,
+          "value_coefficient": 0.5,
+          "max_grad_norm": 0.5,
+          "dyna_steps": 0,
+          "model_warmup": 256
+        },
+        "retail_config": {
+          "store_capacity": 1050,
+          "regional_capacity": 1768,
+          "regional_supply": 253,
+          "initial_store_stock": 450,
+          "initial_regional_stock": 758,
+          "holding_cost": 0.0128,
+          "shortage_cost": 1.28,
+          "elasticities": [
+            1.5,
+            1.5,
+            1.5
+          ],
+          "price_multipliers": [
+            0.9,
+            0.95,
+            1.0,
+            1.05,
+            1.1
+          ],
+          "target_days": [
+            0,
+            3,
+            7
+          ],
+          "history_days": 28
+        },
+        "encoder": {
+          "version": 1,
+          "price_scale": 1.48,
+          "size": 40
+        },
+        "data": {
+          "source": "M5",
+          "item_id": "FOODS_3_090",
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "CA_3"
+          ],
+          "selection": "explicit",
+          "splits": {
+            "train": [
+              1,
+              1211
+            ],
+            "validation": [
+              1212,
+              1576
+            ],
+            "test": [
+              1577,
+              1941
+            ]
+          },
+          "audit_scope": "selected_sku_all_days",
+          "sha256": {
+            "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+            "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+            "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+          },
+          "historical_inventory_observed": false,
+          "reward": "simulated_operating_profit_proxy"
+        },
+        "train_end": 1211,
+        "validation_range": [
+          1212,
+          1576
+        ],
+        "code_sha256": {
+          "__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+          "analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+          "baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+          "checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+          "config.py": "35aa6a9a7c033626c1cc2e6c1582fb63f89e03b8210d1fbeb081270acc3d71a4",
+          "data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+          "deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+          "deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+          "doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+          "env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+          "evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+          "evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+          "features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+          "metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+          "preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+          "rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+          "shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+          "smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+          "suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+          "tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+          "train_deep.py": "604682ad8f4998e2849158799bfdd737a010e8d01e3d6dac95555df3f6290b97",
+          "train_tabular.py": "737136b04f9656cc8f456a365c64677ba9fa5777a762719de421794c495f4e50",
+          "world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922"
+        },
+        "device": "cuda",
+        "torch_version": "2.8.0+cu129",
+        "completed_episodes": 300,
+        "real_steps": 109500,
+        "synthetic_steps": 0,
+        "test_evaluated": false,
+        "validation": {
+          "days": 365,
+          "base_return": 86569.5707,
+          "demand_units": 63115,
+          "sold_units": 62038,
+          "lost_units": 1077,
+          "eligible_store_days": 853,
+          "stockout_store_days": 29,
+          "stockout_rate": 0.03399765533411489,
+          "fill_rate": 0.9829359106393092
+        },
+        "training_seconds": 847.6420887922868
+      },
+      "manifest_sha256": "4cf982c1281c5d70a3a7d15adaf3ddd5017bdefbcbeea6ccc26886eb084249b5",
+      "history_sha256": "a36a026f1ebcf5b019c508847717db1e41ae3dd1bbe118463bd22fda5e96a762",
+      "checkpoint_sha256": "09fa76ca8dce6c499aa8eeb8833519a0dc54db7a2f46292a37d573bc9ddaee65"
+    },
+    {
+      "id": "P0",
+      "seed": 4,
+      "name": "P0_seed4",
+      "manifest": {
+        "schema_version": 1,
+        "settings": {
+          "algorithm": "ppo",
+          "seed": 4,
+          "horizon": 365,
+          "hidden": 64,
+          "gamma": 0.99,
+          "learning_rate": 0.0003,
+          "reward_scale": 100.0,
+          "reward_mode": "regional",
+          "shaping": "none",
+          "shaping_weight": 1.0,
+          "batch_size": 64,
+          "replay_capacity": 20000,
+          "warmup_steps": 128,
+          "target_interval": 100,
+          "epsilon_decay_steps": 50000,
+          "epsilon_final": 0.05,
+          "rollout_steps": 128,
+          "ppo_epochs": 4,
+          "gae_lambda": 0.95,
+          "clip_epsilon": 0.2,
+          "entropy_coefficient": 0.01,
+          "value_coefficient": 0.5,
+          "max_grad_norm": 0.5,
+          "dyna_steps": 0,
+          "model_warmup": 256
+        },
+        "retail_config": {
+          "store_capacity": 1050,
+          "regional_capacity": 1768,
+          "regional_supply": 253,
+          "initial_store_stock": 450,
+          "initial_regional_stock": 758,
+          "holding_cost": 0.0128,
+          "shortage_cost": 1.28,
+          "elasticities": [
+            1.5,
+            1.5,
+            1.5
+          ],
+          "price_multipliers": [
+            0.9,
+            0.95,
+            1.0,
+            1.05,
+            1.1
+          ],
+          "target_days": [
+            0,
+            3,
+            7
+          ],
+          "history_days": 28
+        },
+        "encoder": {
+          "version": 1,
+          "price_scale": 1.48,
+          "size": 40
+        },
+        "data": {
+          "source": "M5",
+          "item_id": "FOODS_3_090",
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "CA_3"
+          ],
+          "selection": "explicit",
+          "splits": {
+            "train": [
+              1,
+              1211
+            ],
+            "validation": [
+              1212,
+              1576
+            ],
+            "test": [
+              1577,
+              1941
+            ]
+          },
+          "audit_scope": "selected_sku_all_days",
+          "sha256": {
+            "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+            "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+            "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+          },
+          "historical_inventory_observed": false,
+          "reward": "simulated_operating_profit_proxy"
+        },
+        "train_end": 1211,
+        "validation_range": [
+          1212,
+          1576
+        ],
+        "code_sha256": {
+          "__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+          "analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+          "baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+          "checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+          "config.py": "35aa6a9a7c033626c1cc2e6c1582fb63f89e03b8210d1fbeb081270acc3d71a4",
+          "data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+          "deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+          "deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+          "doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+          "env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+          "evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+          "evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+          "features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+          "metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+          "preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+          "rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+          "shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+          "smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+          "suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+          "tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+          "train_deep.py": "604682ad8f4998e2849158799bfdd737a010e8d01e3d6dac95555df3f6290b97",
+          "train_tabular.py": "737136b04f9656cc8f456a365c64677ba9fa5777a762719de421794c495f4e50",
+          "world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922"
+        },
+        "device": "cuda",
+        "torch_version": "2.8.0+cu129",
+        "completed_episodes": 300,
+        "real_steps": 109500,
+        "synthetic_steps": 0,
+        "test_evaluated": false,
+        "validation": {
+          "days": 365,
+          "base_return": 85894.224,
+          "demand_units": 59975,
+          "sold_units": 59218,
+          "lost_units": 757,
+          "eligible_store_days": 853,
+          "stockout_store_days": 17,
+          "stockout_rate": 0.01992966002344666,
+          "fill_rate": 0.9873780741975823
+        },
+        "training_seconds": 306.9061869258294
+      },
+      "manifest_sha256": "06c22d08876922bb266c18493275ece5cbba9922140233545b675682eb92a56c",
+      "history_sha256": "93bc043a062e2aab24b86a9ae183d8a5bbf8c8f99efa48ce552e5f75fc46be7e",
+      "checkpoint_sha256": "af7226f6f96b202a22de03734183b99944e416b5b52152b8f7b4f069a1b3d572"
+    },
+    {
+      "id": "S0",
+      "seed": 4,
+      "name": "S0_seed4",
+      "manifest": {
+        "schema_version": 1,
+        "settings": {
+          "algorithm": "ddqn",
+          "seed": 4,
+          "horizon": 365,
+          "hidden": 64,
+          "gamma": 0.99,
+          "learning_rate": 0.0003,
+          "reward_scale": 100.0,
+          "reward_mode": "local",
+          "shaping": "none",
+          "shaping_weight": 1.0,
+          "batch_size": 64,
+          "replay_capacity": 20000,
+          "warmup_steps": 128,
+          "target_interval": 100,
+          "epsilon_decay_steps": 50000,
+          "epsilon_final": 0.05,
+          "rollout_steps": 128,
+          "ppo_epochs": 4,
+          "gae_lambda": 0.95,
+          "clip_epsilon": 0.2,
+          "entropy_coefficient": 0.01,
+          "value_coefficient": 0.5,
+          "max_grad_norm": 0.5,
+          "dyna_steps": 0,
+          "model_warmup": 256
+        },
+        "retail_config": {
+          "store_capacity": 1050,
+          "regional_capacity": 1768,
+          "regional_supply": 253,
+          "initial_store_stock": 450,
+          "initial_regional_stock": 758,
+          "holding_cost": 0.0128,
+          "shortage_cost": 1.28,
+          "elasticities": [
+            1.5,
+            1.5,
+            1.5
+          ],
+          "price_multipliers": [
+            0.9,
+            0.95,
+            1.0,
+            1.05,
+            1.1
+          ],
+          "target_days": [
+            0,
+            3,
+            7
+          ],
+          "history_days": 28
+        },
+        "encoder": {
+          "version": 1,
+          "price_scale": 1.48,
+          "size": 40
+        },
+        "data": {
+          "source": "M5",
+          "item_id": "FOODS_3_090",
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "CA_3"
+          ],
+          "selection": "explicit",
+          "splits": {
+            "train": [
+              1,
+              1211
+            ],
+            "validation": [
+              1212,
+              1576
+            ],
+            "test": [
+              1577,
+              1941
+            ]
+          },
+          "audit_scope": "selected_sku_all_days",
+          "sha256": {
+            "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+            "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+            "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+          },
+          "historical_inventory_observed": false,
+          "reward": "simulated_operating_profit_proxy"
+        },
+        "train_end": 1211,
+        "validation_range": [
+          1212,
+          1576
+        ],
+        "code_sha256": {
+          "__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+          "analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+          "baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+          "checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+          "config.py": "35aa6a9a7c033626c1cc2e6c1582fb63f89e03b8210d1fbeb081270acc3d71a4",
+          "data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+          "deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+          "deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+          "doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+          "env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+          "evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+          "evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+          "features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+          "metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+          "preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+          "rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+          "shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+          "smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+          "suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+          "tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+          "train_deep.py": "604682ad8f4998e2849158799bfdd737a010e8d01e3d6dac95555df3f6290b97",
+          "train_tabular.py": "737136b04f9656cc8f456a365c64677ba9fa5777a762719de421794c495f4e50",
+          "world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922"
+        },
+        "device": "cuda",
+        "torch_version": "2.8.0+cu129",
+        "completed_episodes": 300,
+        "real_steps": 109500,
+        "synthetic_steps": 0,
+        "test_evaluated": false,
+        "validation": {
+          "days": 365,
+          "base_return": 85579.9621,
+          "demand_units": 66089,
+          "sold_units": 64106,
+          "lost_units": 1983,
+          "eligible_store_days": 853,
+          "stockout_store_days": 41,
+          "stockout_rate": 0.04806565064478312,
+          "fill_rate": 0.9699950067333444
+        },
+        "training_seconds": 866.2140229571378
+      },
+      "manifest_sha256": "4a3575d0d137048b6a0d1615a894d7796968529b6895d68cea9084ff723e2be6",
+      "history_sha256": "f682f480139b2097eb1e56e53615519a2c9c60527c1a990ef98cff1bc6a8e912",
+      "checkpoint_sha256": "cd8ef7b619f902e3c3edc9ec6033be6466438dcb59c774c0b180ed1e1e9d0ac7"
+    },
+    {
+      "id": "V1",
+      "seed": 4,
+      "name": "V1_seed4",
+      "manifest": {
+        "schema_version": 1,
+        "settings": {
+          "algorithm": "ddqn",
+          "seed": 4,
+          "horizon": 365,
+          "hidden": 64,
+          "gamma": 0.99,
+          "learning_rate": 0.0003,
+          "reward_scale": 100.0,
+          "reward_mode": "regional",
+          "shaping": "pbrs",
+          "shaping_weight": 1.0,
+          "batch_size": 64,
+          "replay_capacity": 20000,
+          "warmup_steps": 128,
+          "target_interval": 100,
+          "epsilon_decay_steps": 50000,
+          "epsilon_final": 0.05,
+          "rollout_steps": 128,
+          "ppo_epochs": 4,
+          "gae_lambda": 0.95,
+          "clip_epsilon": 0.2,
+          "entropy_coefficient": 0.01,
+          "value_coefficient": 0.5,
+          "max_grad_norm": 0.5,
+          "dyna_steps": 0,
+          "model_warmup": 256
+        },
+        "retail_config": {
+          "store_capacity": 1050,
+          "regional_capacity": 1768,
+          "regional_supply": 253,
+          "initial_store_stock": 450,
+          "initial_regional_stock": 758,
+          "holding_cost": 0.0128,
+          "shortage_cost": 1.28,
+          "elasticities": [
+            1.5,
+            1.5,
+            1.5
+          ],
+          "price_multipliers": [
+            0.9,
+            0.95,
+            1.0,
+            1.05,
+            1.1
+          ],
+          "target_days": [
+            0,
+            3,
+            7
+          ],
+          "history_days": 28
+        },
+        "encoder": {
+          "version": 1,
+          "price_scale": 1.48,
+          "size": 40
+        },
+        "data": {
+          "source": "M5",
+          "item_id": "FOODS_3_090",
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "CA_3"
+          ],
+          "selection": "explicit",
+          "splits": {
+            "train": [
+              1,
+              1211
+            ],
+            "validation": [
+              1212,
+              1576
+            ],
+            "test": [
+              1577,
+              1941
+            ]
+          },
+          "audit_scope": "selected_sku_all_days",
+          "sha256": {
+            "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+            "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+            "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+          },
+          "historical_inventory_observed": false,
+          "reward": "simulated_operating_profit_proxy"
+        },
+        "train_end": 1211,
+        "validation_range": [
+          1212,
+          1576
+        ],
+        "code_sha256": {
+          "__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+          "analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+          "baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+          "checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+          "config.py": "35aa6a9a7c033626c1cc2e6c1582fb63f89e03b8210d1fbeb081270acc3d71a4",
+          "data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+          "deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+          "deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+          "doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+          "env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+          "evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+          "evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+          "features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+          "metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+          "preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+          "rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+          "shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+          "smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+          "suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+          "tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+          "train_deep.py": "604682ad8f4998e2849158799bfdd737a010e8d01e3d6dac95555df3f6290b97",
+          "train_tabular.py": "737136b04f9656cc8f456a365c64677ba9fa5777a762719de421794c495f4e50",
+          "world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922"
+        },
+        "device": "cuda",
+        "torch_version": "2.8.0+cu129",
+        "completed_episodes": 300,
+        "real_steps": 109500,
+        "synthetic_steps": 0,
+        "test_evaluated": false,
+        "validation": {
+          "days": 365,
+          "base_return": 86526.4641,
+          "demand_units": 65377,
+          "sold_units": 63928,
+          "lost_units": 1449,
+          "eligible_store_days": 853,
+          "stockout_store_days": 24,
+          "stockout_rate": 0.02813599062133646,
+          "fill_rate": 0.9778362421034921
+        },
+        "training_seconds": 853.1158480971353
+      },
+      "manifest_sha256": "e6afcb8e6c43ab8612fcd044a76bddbcc67ae2b1afa46e30bd29b1de8ed81832",
+      "history_sha256": "cb79674f3a2cf60cf378368f61019a30c4d2587a8c678bbb5e61e9952ad36074",
+      "checkpoint_sha256": "47e380d40d0fecbfaf2cb15a3f032bc34f6267800d27cb5a922ab3cea50eba73"
+    },
+    {
+      "id": "V2",
+      "seed": 4,
+      "name": "V2_seed4",
+      "manifest": {
+        "schema_version": 1,
+        "settings": {
+          "algorithm": "ddqn",
+          "seed": 4,
+          "horizon": 365,
+          "hidden": 64,
+          "gamma": 0.99,
+          "learning_rate": 0.0003,
+          "reward_scale": 100.0,
+          "reward_mode": "regional",
+          "shaping": "none",
+          "shaping_weight": 1.0,
+          "batch_size": 64,
+          "replay_capacity": 20000,
+          "warmup_steps": 128,
+          "target_interval": 100,
+          "epsilon_decay_steps": 50000,
+          "epsilon_final": 0.05,
+          "rollout_steps": 128,
+          "ppo_epochs": 4,
+          "gae_lambda": 0.95,
+          "clip_epsilon": 0.2,
+          "entropy_coefficient": 0.01,
+          "value_coefficient": 0.5,
+          "max_grad_norm": 0.5,
+          "dyna_steps": 1,
+          "model_warmup": 256
+        },
+        "retail_config": {
+          "store_capacity": 1050,
+          "regional_capacity": 1768,
+          "regional_supply": 253,
+          "initial_store_stock": 450,
+          "initial_regional_stock": 758,
+          "holding_cost": 0.0128,
+          "shortage_cost": 1.28,
+          "elasticities": [
+            1.5,
+            1.5,
+            1.5
+          ],
+          "price_multipliers": [
+            0.9,
+            0.95,
+            1.0,
+            1.05,
+            1.1
+          ],
+          "target_days": [
+            0,
+            3,
+            7
+          ],
+          "history_days": 28
+        },
+        "encoder": {
+          "version": 1,
+          "price_scale": 1.48,
+          "size": 40
+        },
+        "data": {
+          "source": "M5",
+          "item_id": "FOODS_3_090",
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "CA_3"
+          ],
+          "selection": "explicit",
+          "splits": {
+            "train": [
+              1,
+              1211
+            ],
+            "validation": [
+              1212,
+              1576
+            ],
+            "test": [
+              1577,
+              1941
+            ]
+          },
+          "audit_scope": "selected_sku_all_days",
+          "sha256": {
+            "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+            "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+            "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+          },
+          "historical_inventory_observed": false,
+          "reward": "simulated_operating_profit_proxy"
+        },
+        "train_end": 1211,
+        "validation_range": [
+          1212,
+          1576
+        ],
+        "code_sha256": {
+          "__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+          "analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+          "baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+          "checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+          "config.py": "35aa6a9a7c033626c1cc2e6c1582fb63f89e03b8210d1fbeb081270acc3d71a4",
+          "data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+          "deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+          "deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+          "doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+          "env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+          "evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+          "evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+          "features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+          "metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+          "preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+          "rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+          "shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+          "smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+          "suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+          "tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+          "train_deep.py": "604682ad8f4998e2849158799bfdd737a010e8d01e3d6dac95555df3f6290b97",
+          "train_tabular.py": "737136b04f9656cc8f456a365c64677ba9fa5777a762719de421794c495f4e50",
+          "world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922"
+        },
+        "device": "cuda",
+        "torch_version": "2.8.0+cu129",
+        "completed_episodes": 300,
+        "real_steps": 109500,
+        "synthetic_steps": 109245,
+        "test_evaluated": false,
+        "validation": {
+          "days": 365,
+          "base_return": 64354.8054,
+          "demand_units": 63833,
+          "sold_units": 54470,
+          "lost_units": 9363,
+          "eligible_store_days": 853,
+          "stockout_store_days": 145,
+          "stockout_rate": 0.16998827667057445,
+          "fill_rate": 0.853320382874062
+        },
+        "training_seconds": 1993.6157444738783
+      },
+      "manifest_sha256": "b2c86196abf09b692ed20fc52e16e6ae09a47d7750d7e76e3ea3732530b030a9",
+      "history_sha256": "7ac8450ec96f2907a86202ef0688862af6250333a1fabe811f9d24dc8c34fe1e",
+      "checkpoint_sha256": "d2165efafc7c5c9401d9a0b1e8c25adcff7d291b265c03f2519f42d06a7b74d9"
+    },
+    {
+      "id": "V3",
+      "seed": 4,
+      "name": "V3_seed4",
+      "manifest": {
+        "schema_version": 1,
+        "settings": {
+          "algorithm": "ddqn",
+          "seed": 4,
+          "horizon": 365,
+          "hidden": 64,
+          "gamma": 0.99,
+          "learning_rate": 0.0003,
+          "reward_scale": 100.0,
+          "reward_mode": "regional",
+          "shaping": "pbrs",
+          "shaping_weight": 1.0,
+          "batch_size": 64,
+          "replay_capacity": 20000,
+          "warmup_steps": 128,
+          "target_interval": 100,
+          "epsilon_decay_steps": 50000,
+          "epsilon_final": 0.05,
+          "rollout_steps": 128,
+          "ppo_epochs": 4,
+          "gae_lambda": 0.95,
+          "clip_epsilon": 0.2,
+          "entropy_coefficient": 0.01,
+          "value_coefficient": 0.5,
+          "max_grad_norm": 0.5,
+          "dyna_steps": 1,
+          "model_warmup": 256
+        },
+        "retail_config": {
+          "store_capacity": 1050,
+          "regional_capacity": 1768,
+          "regional_supply": 253,
+          "initial_store_stock": 450,
+          "initial_regional_stock": 758,
+          "holding_cost": 0.0128,
+          "shortage_cost": 1.28,
+          "elasticities": [
+            1.5,
+            1.5,
+            1.5
+          ],
+          "price_multipliers": [
+            0.9,
+            0.95,
+            1.0,
+            1.05,
+            1.1
+          ],
+          "target_days": [
+            0,
+            3,
+            7
+          ],
+          "history_days": 28
+        },
+        "encoder": {
+          "version": 1,
+          "price_scale": 1.48,
+          "size": 40
+        },
+        "data": {
+          "source": "M5",
+          "item_id": "FOODS_3_090",
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "CA_3"
+          ],
+          "selection": "explicit",
+          "splits": {
+            "train": [
+              1,
+              1211
+            ],
+            "validation": [
+              1212,
+              1576
+            ],
+            "test": [
+              1577,
+              1941
+            ]
+          },
+          "audit_scope": "selected_sku_all_days",
+          "sha256": {
+            "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+            "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+            "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+          },
+          "historical_inventory_observed": false,
+          "reward": "simulated_operating_profit_proxy"
+        },
+        "train_end": 1211,
+        "validation_range": [
+          1212,
+          1576
+        ],
+        "code_sha256": {
+          "__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+          "analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+          "baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+          "checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+          "config.py": "35aa6a9a7c033626c1cc2e6c1582fb63f89e03b8210d1fbeb081270acc3d71a4",
+          "data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+          "deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+          "deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+          "doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+          "env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+          "evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+          "evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+          "features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+          "metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+          "preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+          "rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+          "shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+          "smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+          "suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+          "tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+          "train_deep.py": "604682ad8f4998e2849158799bfdd737a010e8d01e3d6dac95555df3f6290b97",
+          "train_tabular.py": "737136b04f9656cc8f456a365c64677ba9fa5777a762719de421794c495f4e50",
+          "world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922"
+        },
+        "device": "cuda",
+        "torch_version": "2.8.0+cu129",
+        "completed_episodes": 300,
+        "real_steps": 109500,
+        "synthetic_steps": 109245,
+        "test_evaluated": false,
+        "validation": {
+          "days": 365,
+          "base_return": 83566.2798,
+          "demand_units": 65942,
+          "sold_units": 63181,
+          "lost_units": 2761,
+          "eligible_store_days": 853,
+          "stockout_store_days": 47,
+          "stockout_rate": 0.05509964830011723,
+          "fill_rate": 0.9581298717054381
+        },
+        "training_seconds": 2013.7794359799009
+      },
+      "manifest_sha256": "b62a27ec694e03582fedea00a4dc5783d9187719d6a7030094294e122a67bcdf",
+      "history_sha256": "add31ecd3266d68902445a442fde299eaaeda4af5ed36b0f04632dd9c95b5558",
+      "checkpoint_sha256": "f0475cd47b7abf1c67ac3a58c7da0217cb046db94cdda0fb9ec7d7a0c6d12b3f"
+    },
+    {
+      "id": "N0",
+      "seed": 4,
+      "name": "N0_seed4",
+      "manifest": {
+        "schema_version": 1,
+        "settings": {
+          "algorithm": "ddqn",
+          "seed": 4,
+          "horizon": 365,
+          "hidden": 64,
+          "gamma": 0.99,
+          "learning_rate": 0.0003,
+          "reward_scale": 100.0,
+          "reward_mode": "regional",
+          "shaping": "naive",
+          "shaping_weight": 1.0,
+          "batch_size": 64,
+          "replay_capacity": 20000,
+          "warmup_steps": 128,
+          "target_interval": 100,
+          "epsilon_decay_steps": 50000,
+          "epsilon_final": 0.05,
+          "rollout_steps": 128,
+          "ppo_epochs": 4,
+          "gae_lambda": 0.95,
+          "clip_epsilon": 0.2,
+          "entropy_coefficient": 0.01,
+          "value_coefficient": 0.5,
+          "max_grad_norm": 0.5,
+          "dyna_steps": 0,
+          "model_warmup": 256
+        },
+        "retail_config": {
+          "store_capacity": 1050,
+          "regional_capacity": 1768,
+          "regional_supply": 253,
+          "initial_store_stock": 450,
+          "initial_regional_stock": 758,
+          "holding_cost": 0.0128,
+          "shortage_cost": 1.28,
+          "elasticities": [
+            1.5,
+            1.5,
+            1.5
+          ],
+          "price_multipliers": [
+            0.9,
+            0.95,
+            1.0,
+            1.05,
+            1.1
+          ],
+          "target_days": [
+            0,
+            3,
+            7
+          ],
+          "history_days": 28
+        },
+        "encoder": {
+          "version": 1,
+          "price_scale": 1.48,
+          "size": 40
+        },
+        "data": {
+          "source": "M5",
+          "item_id": "FOODS_3_090",
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "CA_3"
+          ],
+          "selection": "explicit",
+          "splits": {
+            "train": [
+              1,
+              1211
+            ],
+            "validation": [
+              1212,
+              1576
+            ],
+            "test": [
+              1577,
+              1941
+            ]
+          },
+          "audit_scope": "selected_sku_all_days",
+          "sha256": {
+            "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+            "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+            "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+          },
+          "historical_inventory_observed": false,
+          "reward": "simulated_operating_profit_proxy"
+        },
+        "train_end": 1211,
+        "validation_range": [
+          1212,
+          1576
+        ],
+        "code_sha256": {
+          "__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+          "analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+          "baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+          "checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+          "config.py": "35aa6a9a7c033626c1cc2e6c1582fb63f89e03b8210d1fbeb081270acc3d71a4",
+          "data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+          "deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+          "deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+          "doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+          "env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+          "evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+          "evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+          "features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+          "metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+          "preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+          "rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+          "shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+          "smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+          "suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+          "tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+          "train_deep.py": "604682ad8f4998e2849158799bfdd737a010e8d01e3d6dac95555df3f6290b97",
+          "train_tabular.py": "737136b04f9656cc8f456a365c64677ba9fa5777a762719de421794c495f4e50",
+          "world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922"
+        },
+        "device": "cuda",
+        "torch_version": "2.8.0+cu129",
+        "completed_episodes": 300,
+        "real_steps": 109500,
+        "synthetic_steps": 0,
+        "test_evaluated": false,
+        "validation": {
+          "days": 365,
+          "base_return": 88445.5708,
+          "demand_units": 67224,
+          "sold_units": 66230,
+          "lost_units": 994,
+          "eligible_store_days": 853,
+          "stockout_store_days": 24,
+          "stockout_rate": 0.02813599062133646,
+          "fill_rate": 0.98521361418541
+        },
+        "training_seconds": 808.6641159001738
+      },
+      "manifest_sha256": "10cd132c05bbc174104161975e09d76bb126a71393aabc77304d41b4d9d83720",
+      "history_sha256": "9518ca69bf3037de4f876142a99bc1a6e594b42bb1a4fbccaddfeccaee515243",
+      "checkpoint_sha256": "4f10093b1a07f0304c02acd342eab772dd847fda6eb64c16689ae233ac091cd9"
+    },
+    {
+      "id": "T0",
+      "seed": 5,
+      "name": "T0_seed5",
+      "manifest": {
+        "schema_version": 1,
+        "algorithm": "T0_cooperative_qlearning",
+        "seed": 5,
+        "episodes": 300,
+        "horizon": 365,
+        "alpha": 0.1,
+        "gamma": 0.99,
+        "real_steps": 109500,
+        "reward_scale": 100.0,
+        "config": {
+          "store_capacity": 1050,
+          "regional_capacity": 1768,
+          "regional_supply": 253,
+          "initial_store_stock": 450,
+          "initial_regional_stock": 758,
+          "holding_cost": 0.0128,
+          "shortage_cost": 1.28,
+          "elasticities": [
+            1.5,
+            1.5,
+            1.5
+          ],
+          "price_multipliers": [
+            0.9,
+            0.95,
+            1.0,
+            1.05,
+            1.1
+          ],
+          "target_days": [
+            0,
+            3,
+            7
+          ],
+          "history_days": 28
+        },
+        "data": {
+          "source": "M5",
+          "item_id": "FOODS_3_090",
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "CA_3"
+          ],
+          "selection": "explicit",
+          "splits": {
+            "train": [
+              1,
+              1211
+            ],
+            "validation": [
+              1212,
+              1576
+            ],
+            "test": [
+              1577,
+              1941
+            ]
+          },
+          "audit_scope": "selected_sku_all_days",
+          "sha256": {
+            "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+            "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+            "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+          },
+          "historical_inventory_observed": false,
+          "reward": "simulated_operating_profit_proxy"
+        },
+        "validation": {
+          "days": 365,
+          "base_return": 85165.6397,
+          "demand_units": 66327,
+          "sold_units": 64090,
+          "lost_units": 2237,
+          "eligible_store_days": 853,
+          "stockout_store_days": 52,
+          "stockout_rate": 0.06096131301289566,
+          "fill_rate": 0.9662731617591629
+        },
+        "validation_range": [
+          1212,
+          1576
+        ],
+        "test_evaluated": false,
+        "training_reward": "regional_unshaped_profit_proxy",
+        "epsilon_schedule": "linear_1.0_to_0.05_over_episodes",
+        "finite_horizon_terminal": true,
+        "code_sha256": {
+          "retail/__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+          "retail/analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+          "retail/baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+          "retail/checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+          "retail/config.py": "35aa6a9a7c033626c1cc2e6c1582fb63f89e03b8210d1fbeb081270acc3d71a4",
+          "retail/data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+          "retail/deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+          "retail/deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+          "retail/doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+          "retail/env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+          "retail/evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+          "retail/evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+          "retail/features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+          "retail/metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+          "retail/preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+          "retail/rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+          "retail/shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+          "retail/smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+          "retail/suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+          "retail/tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+          "retail/train_deep.py": "604682ad8f4998e2849158799bfdd737a010e8d01e3d6dac95555df3f6290b97",
+          "retail/train_tabular.py": "737136b04f9656cc8f456a365c64677ba9fa5777a762719de421794c495f4e50",
+          "retail/world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922",
+          "agents.py": "1eb08561579a26b15b8972d8b6ee4d88a047157468da79cc367be587ec913ca4"
+        }
+      },
+      "manifest_sha256": "fa6df1a51bc57ea569dba9694b15a57541e7f051b2134b6780f61cf59646be10",
+      "history_sha256": "77918afbc1240b4cc86d626756ad66d63ea083fd7ce5dbda6539d1bd73ff811d",
+      "checkpoint_sha256": "3497db6148080c8768758d6e2cdfc528d3a78341b8800483cd7298ad4c54ad68"
+    },
+    {
+      "id": "V0",
+      "seed": 5,
+      "name": "V0_seed5",
+      "manifest": {
+        "schema_version": 1,
+        "settings": {
+          "algorithm": "ddqn",
+          "seed": 5,
+          "horizon": 365,
+          "hidden": 64,
+          "gamma": 0.99,
+          "learning_rate": 0.0003,
+          "reward_scale": 100.0,
+          "reward_mode": "regional",
+          "shaping": "none",
+          "shaping_weight": 1.0,
+          "batch_size": 64,
+          "replay_capacity": 20000,
+          "warmup_steps": 128,
+          "target_interval": 100,
+          "epsilon_decay_steps": 50000,
+          "epsilon_final": 0.05,
+          "rollout_steps": 128,
+          "ppo_epochs": 4,
+          "gae_lambda": 0.95,
+          "clip_epsilon": 0.2,
+          "entropy_coefficient": 0.01,
+          "value_coefficient": 0.5,
+          "max_grad_norm": 0.5,
+          "dyna_steps": 0,
+          "model_warmup": 256
+        },
+        "retail_config": {
+          "store_capacity": 1050,
+          "regional_capacity": 1768,
+          "regional_supply": 253,
+          "initial_store_stock": 450,
+          "initial_regional_stock": 758,
+          "holding_cost": 0.0128,
+          "shortage_cost": 1.28,
+          "elasticities": [
+            1.5,
+            1.5,
+            1.5
+          ],
+          "price_multipliers": [
+            0.9,
+            0.95,
+            1.0,
+            1.05,
+            1.1
+          ],
+          "target_days": [
+            0,
+            3,
+            7
+          ],
+          "history_days": 28
+        },
+        "encoder": {
+          "version": 1,
+          "price_scale": 1.48,
+          "size": 40
+        },
+        "data": {
+          "source": "M5",
+          "item_id": "FOODS_3_090",
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "CA_3"
+          ],
+          "selection": "explicit",
+          "splits": {
+            "train": [
+              1,
+              1211
+            ],
+            "validation": [
+              1212,
+              1576
+            ],
+            "test": [
+              1577,
+              1941
+            ]
+          },
+          "audit_scope": "selected_sku_all_days",
+          "sha256": {
+            "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+            "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+            "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+          },
+          "historical_inventory_observed": false,
+          "reward": "simulated_operating_profit_proxy"
+        },
+        "train_end": 1211,
+        "validation_range": [
+          1212,
+          1576
+        ],
+        "code_sha256": {
+          "__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+          "analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+          "baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+          "checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+          "config.py": "35aa6a9a7c033626c1cc2e6c1582fb63f89e03b8210d1fbeb081270acc3d71a4",
+          "data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+          "deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+          "deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+          "doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+          "env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+          "evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+          "evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+          "features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+          "metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+          "preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+          "rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+          "shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+          "smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+          "suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+          "tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+          "train_deep.py": "604682ad8f4998e2849158799bfdd737a010e8d01e3d6dac95555df3f6290b97",
+          "train_tabular.py": "737136b04f9656cc8f456a365c64677ba9fa5777a762719de421794c495f4e50",
+          "world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922"
+        },
+        "device": "cuda",
+        "torch_version": "2.8.0+cu129",
+        "completed_episodes": 300,
+        "real_steps": 109500,
+        "synthetic_steps": 0,
+        "test_evaluated": false,
+        "validation": {
+          "days": 365,
+          "base_return": 86230.5111,
+          "demand_units": 65852,
+          "sold_units": 64110,
+          "lost_units": 1742,
+          "eligible_store_days": 853,
+          "stockout_store_days": 32,
+          "stockout_rate": 0.03751465416178194,
+          "fill_rate": 0.9735467411771852
+        },
+        "training_seconds": 805.8230406076182
+      },
+      "manifest_sha256": "56d9c04ee0ce513737da50c7459440465deb793cd5ca9d2e36b7d36ba911faa4",
+      "history_sha256": "b253f3cfe47b3e55fb5cc185bbd9276ae1f9bf48ee7a90f5f3065bc08191bec6",
+      "checkpoint_sha256": "f31f3eec29d01b83d4645fe2a275367f6bf13b7e6fac52a48bb2259bc833f8af"
+    },
+    {
+      "id": "P0",
+      "seed": 5,
+      "name": "P0_seed5",
+      "manifest": {
+        "schema_version": 1,
+        "settings": {
+          "algorithm": "ppo",
+          "seed": 5,
+          "horizon": 365,
+          "hidden": 64,
+          "gamma": 0.99,
+          "learning_rate": 0.0003,
+          "reward_scale": 100.0,
+          "reward_mode": "regional",
+          "shaping": "none",
+          "shaping_weight": 1.0,
+          "batch_size": 64,
+          "replay_capacity": 20000,
+          "warmup_steps": 128,
+          "target_interval": 100,
+          "epsilon_decay_steps": 50000,
+          "epsilon_final": 0.05,
+          "rollout_steps": 128,
+          "ppo_epochs": 4,
+          "gae_lambda": 0.95,
+          "clip_epsilon": 0.2,
+          "entropy_coefficient": 0.01,
+          "value_coefficient": 0.5,
+          "max_grad_norm": 0.5,
+          "dyna_steps": 0,
+          "model_warmup": 256
+        },
+        "retail_config": {
+          "store_capacity": 1050,
+          "regional_capacity": 1768,
+          "regional_supply": 253,
+          "initial_store_stock": 450,
+          "initial_regional_stock": 758,
+          "holding_cost": 0.0128,
+          "shortage_cost": 1.28,
+          "elasticities": [
+            1.5,
+            1.5,
+            1.5
+          ],
+          "price_multipliers": [
+            0.9,
+            0.95,
+            1.0,
+            1.05,
+            1.1
+          ],
+          "target_days": [
+            0,
+            3,
+            7
+          ],
+          "history_days": 28
+        },
+        "encoder": {
+          "version": 1,
+          "price_scale": 1.48,
+          "size": 40
+        },
+        "data": {
+          "source": "M5",
+          "item_id": "FOODS_3_090",
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "CA_3"
+          ],
+          "selection": "explicit",
+          "splits": {
+            "train": [
+              1,
+              1211
+            ],
+            "validation": [
+              1212,
+              1576
+            ],
+            "test": [
+              1577,
+              1941
+            ]
+          },
+          "audit_scope": "selected_sku_all_days",
+          "sha256": {
+            "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+            "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+            "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+          },
+          "historical_inventory_observed": false,
+          "reward": "simulated_operating_profit_proxy"
+        },
+        "train_end": 1211,
+        "validation_range": [
+          1212,
+          1576
+        ],
+        "code_sha256": {
+          "__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+          "analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+          "baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+          "checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+          "config.py": "35aa6a9a7c033626c1cc2e6c1582fb63f89e03b8210d1fbeb081270acc3d71a4",
+          "data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+          "deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+          "deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+          "doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+          "env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+          "evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+          "evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+          "features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+          "metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+          "preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+          "rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+          "shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+          "smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+          "suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+          "tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+          "train_deep.py": "604682ad8f4998e2849158799bfdd737a010e8d01e3d6dac95555df3f6290b97",
+          "train_tabular.py": "737136b04f9656cc8f456a365c64677ba9fa5777a762719de421794c495f4e50",
+          "world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922"
+        },
+        "device": "cuda",
+        "torch_version": "2.8.0+cu129",
+        "completed_episodes": 300,
+        "real_steps": 109500,
+        "synthetic_steps": 0,
+        "test_evaluated": false,
+        "validation": {
+          "days": 365,
+          "base_return": 85854.2285,
+          "demand_units": 60666,
+          "sold_units": 59777,
+          "lost_units": 889,
+          "eligible_store_days": 853,
+          "stockout_store_days": 21,
+          "stockout_rate": 0.0246189917936694,
+          "fill_rate": 0.9853459928131079
+        },
+        "training_seconds": 296.83684086066205
+      },
+      "manifest_sha256": "ee0452686b75b28c5e1284f27e94ac6052ee8b4caaa66312069d954c4ec023c0",
+      "history_sha256": "e3519e6796594bf62838df14ae57b268473c779f8c82cad9b4700c7101efeec8",
+      "checkpoint_sha256": "279a76b181da73c06a5f2428671232f5699c13afa5d9c0afff5cb25e2d55f1b2"
+    },
+    {
+      "id": "S0",
+      "seed": 5,
+      "name": "S0_seed5",
+      "manifest": {
+        "schema_version": 1,
+        "settings": {
+          "algorithm": "ddqn",
+          "seed": 5,
+          "horizon": 365,
+          "hidden": 64,
+          "gamma": 0.99,
+          "learning_rate": 0.0003,
+          "reward_scale": 100.0,
+          "reward_mode": "local",
+          "shaping": "none",
+          "shaping_weight": 1.0,
+          "batch_size": 64,
+          "replay_capacity": 20000,
+          "warmup_steps": 128,
+          "target_interval": 100,
+          "epsilon_decay_steps": 50000,
+          "epsilon_final": 0.05,
+          "rollout_steps": 128,
+          "ppo_epochs": 4,
+          "gae_lambda": 0.95,
+          "clip_epsilon": 0.2,
+          "entropy_coefficient": 0.01,
+          "value_coefficient": 0.5,
+          "max_grad_norm": 0.5,
+          "dyna_steps": 0,
+          "model_warmup": 256
+        },
+        "retail_config": {
+          "store_capacity": 1050,
+          "regional_capacity": 1768,
+          "regional_supply": 253,
+          "initial_store_stock": 450,
+          "initial_regional_stock": 758,
+          "holding_cost": 0.0128,
+          "shortage_cost": 1.28,
+          "elasticities": [
+            1.5,
+            1.5,
+            1.5
+          ],
+          "price_multipliers": [
+            0.9,
+            0.95,
+            1.0,
+            1.05,
+            1.1
+          ],
+          "target_days": [
+            0,
+            3,
+            7
+          ],
+          "history_days": 28
+        },
+        "encoder": {
+          "version": 1,
+          "price_scale": 1.48,
+          "size": 40
+        },
+        "data": {
+          "source": "M5",
+          "item_id": "FOODS_3_090",
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "CA_3"
+          ],
+          "selection": "explicit",
+          "splits": {
+            "train": [
+              1,
+              1211
+            ],
+            "validation": [
+              1212,
+              1576
+            ],
+            "test": [
+              1577,
+              1941
+            ]
+          },
+          "audit_scope": "selected_sku_all_days",
+          "sha256": {
+            "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+            "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+            "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+          },
+          "historical_inventory_observed": false,
+          "reward": "simulated_operating_profit_proxy"
+        },
+        "train_end": 1211,
+        "validation_range": [
+          1212,
+          1576
+        ],
+        "code_sha256": {
+          "__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+          "analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+          "baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+          "checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+          "config.py": "35aa6a9a7c033626c1cc2e6c1582fb63f89e03b8210d1fbeb081270acc3d71a4",
+          "data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+          "deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+          "deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+          "doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+          "env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+          "evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+          "evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+          "features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+          "metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+          "preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+          "rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+          "shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+          "smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+          "suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+          "tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+          "train_deep.py": "604682ad8f4998e2849158799bfdd737a010e8d01e3d6dac95555df3f6290b97",
+          "train_tabular.py": "737136b04f9656cc8f456a365c64677ba9fa5777a762719de421794c495f4e50",
+          "world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922"
+        },
+        "device": "cuda",
+        "torch_version": "2.8.0+cu129",
+        "completed_episodes": 300,
+        "real_steps": 109500,
+        "synthetic_steps": 0,
+        "test_evaluated": false,
+        "validation": {
+          "days": 365,
+          "base_return": 85808.5489,
+          "demand_units": 63521,
+          "sold_units": 62153,
+          "lost_units": 1368,
+          "eligible_store_days": 853,
+          "stockout_store_days": 29,
+          "stockout_rate": 0.03399765533411489,
+          "fill_rate": 0.9784638151162608
+        },
+        "training_seconds": 792.8018816835247
+      },
+      "manifest_sha256": "cac7d943f248e94f9faf4d8a29cd9ea538a239168f46671f9cd5ee754b7e1112",
+      "history_sha256": "320bfa1a9a7fa5108cb13139129537aa77bbba59fdbc3a1b1c0d887a403cb03b",
+      "checkpoint_sha256": "68fc2d1a36fdd160a632c1cd4b1b1e51f933c348855a9710feb9e9f91d4ea0eb"
+    },
+    {
+      "id": "V1",
+      "seed": 5,
+      "name": "V1_seed5",
+      "manifest": {
+        "schema_version": 1,
+        "settings": {
+          "algorithm": "ddqn",
+          "seed": 5,
+          "horizon": 365,
+          "hidden": 64,
+          "gamma": 0.99,
+          "learning_rate": 0.0003,
+          "reward_scale": 100.0,
+          "reward_mode": "regional",
+          "shaping": "pbrs",
+          "shaping_weight": 1.0,
+          "batch_size": 64,
+          "replay_capacity": 20000,
+          "warmup_steps": 128,
+          "target_interval": 100,
+          "epsilon_decay_steps": 50000,
+          "epsilon_final": 0.05,
+          "rollout_steps": 128,
+          "ppo_epochs": 4,
+          "gae_lambda": 0.95,
+          "clip_epsilon": 0.2,
+          "entropy_coefficient": 0.01,
+          "value_coefficient": 0.5,
+          "max_grad_norm": 0.5,
+          "dyna_steps": 0,
+          "model_warmup": 256
+        },
+        "retail_config": {
+          "store_capacity": 1050,
+          "regional_capacity": 1768,
+          "regional_supply": 253,
+          "initial_store_stock": 450,
+          "initial_regional_stock": 758,
+          "holding_cost": 0.0128,
+          "shortage_cost": 1.28,
+          "elasticities": [
+            1.5,
+            1.5,
+            1.5
+          ],
+          "price_multipliers": [
+            0.9,
+            0.95,
+            1.0,
+            1.05,
+            1.1
+          ],
+          "target_days": [
+            0,
+            3,
+            7
+          ],
+          "history_days": 28
+        },
+        "encoder": {
+          "version": 1,
+          "price_scale": 1.48,
+          "size": 40
+        },
+        "data": {
+          "source": "M5",
+          "item_id": "FOODS_3_090",
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "CA_3"
+          ],
+          "selection": "explicit",
+          "splits": {
+            "train": [
+              1,
+              1211
+            ],
+            "validation": [
+              1212,
+              1576
+            ],
+            "test": [
+              1577,
+              1941
+            ]
+          },
+          "audit_scope": "selected_sku_all_days",
+          "sha256": {
+            "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+            "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+            "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+          },
+          "historical_inventory_observed": false,
+          "reward": "simulated_operating_profit_proxy"
+        },
+        "train_end": 1211,
+        "validation_range": [
+          1212,
+          1576
+        ],
+        "code_sha256": {
+          "__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+          "analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+          "baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+          "checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+          "config.py": "35aa6a9a7c033626c1cc2e6c1582fb63f89e03b8210d1fbeb081270acc3d71a4",
+          "data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+          "deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+          "deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+          "doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+          "env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+          "evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+          "evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+          "features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+          "metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+          "preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+          "rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+          "shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+          "smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+          "suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+          "tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+          "train_deep.py": "604682ad8f4998e2849158799bfdd737a010e8d01e3d6dac95555df3f6290b97",
+          "train_tabular.py": "737136b04f9656cc8f456a365c64677ba9fa5777a762719de421794c495f4e50",
+          "world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922"
+        },
+        "device": "cuda",
+        "torch_version": "2.8.0+cu129",
+        "completed_episodes": 300,
+        "real_steps": 109500,
+        "synthetic_steps": 0,
+        "test_evaluated": false,
+        "validation": {
+          "days": 365,
+          "base_return": 87409.7026,
+          "demand_units": 67531,
+          "sold_units": 66071,
+          "lost_units": 1460,
+          "eligible_store_days": 853,
+          "stockout_store_days": 26,
+          "stockout_rate": 0.03048065650644783,
+          "fill_rate": 0.978380299418045
+        },
+        "training_seconds": 800.522687420249
+      },
+      "manifest_sha256": "3e25f38a742f8d44424a8e2e4e7e715794ce6fa076d87bdaac0643b4f738e080",
+      "history_sha256": "2987772575b3ad15b745e85d9210f91f606f3c8254033d7f68ea50592f19de0e",
+      "checkpoint_sha256": "45fd37d510ff0e8e659b6013b537456988f59fdac97371c8928e1bf5bd1641e8"
+    },
+    {
+      "id": "V2",
+      "seed": 5,
+      "name": "V2_seed5",
+      "manifest": {
+        "schema_version": 1,
+        "settings": {
+          "algorithm": "ddqn",
+          "seed": 5,
+          "horizon": 365,
+          "hidden": 64,
+          "gamma": 0.99,
+          "learning_rate": 0.0003,
+          "reward_scale": 100.0,
+          "reward_mode": "regional",
+          "shaping": "none",
+          "shaping_weight": 1.0,
+          "batch_size": 64,
+          "replay_capacity": 20000,
+          "warmup_steps": 128,
+          "target_interval": 100,
+          "epsilon_decay_steps": 50000,
+          "epsilon_final": 0.05,
+          "rollout_steps": 128,
+          "ppo_epochs": 4,
+          "gae_lambda": 0.95,
+          "clip_epsilon": 0.2,
+          "entropy_coefficient": 0.01,
+          "value_coefficient": 0.5,
+          "max_grad_norm": 0.5,
+          "dyna_steps": 1,
+          "model_warmup": 256
+        },
+        "retail_config": {
+          "store_capacity": 1050,
+          "regional_capacity": 1768,
+          "regional_supply": 253,
+          "initial_store_stock": 450,
+          "initial_regional_stock": 758,
+          "holding_cost": 0.0128,
+          "shortage_cost": 1.28,
+          "elasticities": [
+            1.5,
+            1.5,
+            1.5
+          ],
+          "price_multipliers": [
+            0.9,
+            0.95,
+            1.0,
+            1.05,
+            1.1
+          ],
+          "target_days": [
+            0,
+            3,
+            7
+          ],
+          "history_days": 28
+        },
+        "encoder": {
+          "version": 1,
+          "price_scale": 1.48,
+          "size": 40
+        },
+        "data": {
+          "source": "M5",
+          "item_id": "FOODS_3_090",
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "CA_3"
+          ],
+          "selection": "explicit",
+          "splits": {
+            "train": [
+              1,
+              1211
+            ],
+            "validation": [
+              1212,
+              1576
+            ],
+            "test": [
+              1577,
+              1941
+            ]
+          },
+          "audit_scope": "selected_sku_all_days",
+          "sha256": {
+            "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+            "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+            "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+          },
+          "historical_inventory_observed": false,
+          "reward": "simulated_operating_profit_proxy"
+        },
+        "train_end": 1211,
+        "validation_range": [
+          1212,
+          1576
+        ],
+        "code_sha256": {
+          "__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+          "analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+          "baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+          "checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+          "config.py": "35aa6a9a7c033626c1cc2e6c1582fb63f89e03b8210d1fbeb081270acc3d71a4",
+          "data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+          "deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+          "deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+          "doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+          "env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+          "evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+          "evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+          "features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+          "metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+          "preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+          "rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+          "shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+          "smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+          "suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+          "tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+          "train_deep.py": "604682ad8f4998e2849158799bfdd737a010e8d01e3d6dac95555df3f6290b97",
+          "train_tabular.py": "737136b04f9656cc8f456a365c64677ba9fa5777a762719de421794c495f4e50",
+          "world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922"
+        },
+        "device": "cuda",
+        "torch_version": "2.8.0+cu129",
+        "completed_episodes": 300,
+        "real_steps": 109500,
+        "synthetic_steps": 109245,
+        "test_evaluated": false,
+        "validation": {
+          "days": 365,
+          "base_return": 86910.2576,
+          "demand_units": 71343,
+          "sold_units": 68756,
+          "lost_units": 2587,
+          "eligible_store_days": 853,
+          "stockout_store_days": 60,
+          "stockout_rate": 0.07033997655334115,
+          "fill_rate": 0.9637385587934345
+        },
+        "training_seconds": 1906.9158815721748
+      },
+      "manifest_sha256": "38f5b2a69e77fd4cb408897eb039298997142af4743e3374fcf13658ecb28107",
+      "history_sha256": "85a6f210e1eb20ba81e7483cc2ece05fe1387bf183e269c8a32065a4f6f7b27e",
+      "checkpoint_sha256": "0aa7e7c77a0a2788b5204f8284a5bd1eae73454cf1dab875e2ccc375317b5f05"
+    },
+    {
+      "id": "V3",
+      "seed": 5,
+      "name": "V3_seed5",
+      "manifest": {
+        "schema_version": 1,
+        "settings": {
+          "algorithm": "ddqn",
+          "seed": 5,
+          "horizon": 365,
+          "hidden": 64,
+          "gamma": 0.99,
+          "learning_rate": 0.0003,
+          "reward_scale": 100.0,
+          "reward_mode": "regional",
+          "shaping": "pbrs",
+          "shaping_weight": 1.0,
+          "batch_size": 64,
+          "replay_capacity": 20000,
+          "warmup_steps": 128,
+          "target_interval": 100,
+          "epsilon_decay_steps": 50000,
+          "epsilon_final": 0.05,
+          "rollout_steps": 128,
+          "ppo_epochs": 4,
+          "gae_lambda": 0.95,
+          "clip_epsilon": 0.2,
+          "entropy_coefficient": 0.01,
+          "value_coefficient": 0.5,
+          "max_grad_norm": 0.5,
+          "dyna_steps": 1,
+          "model_warmup": 256
+        },
+        "retail_config": {
+          "store_capacity": 1050,
+          "regional_capacity": 1768,
+          "regional_supply": 253,
+          "initial_store_stock": 450,
+          "initial_regional_stock": 758,
+          "holding_cost": 0.0128,
+          "shortage_cost": 1.28,
+          "elasticities": [
+            1.5,
+            1.5,
+            1.5
+          ],
+          "price_multipliers": [
+            0.9,
+            0.95,
+            1.0,
+            1.05,
+            1.1
+          ],
+          "target_days": [
+            0,
+            3,
+            7
+          ],
+          "history_days": 28
+        },
+        "encoder": {
+          "version": 1,
+          "price_scale": 1.48,
+          "size": 40
+        },
+        "data": {
+          "source": "M5",
+          "item_id": "FOODS_3_090",
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "CA_3"
+          ],
+          "selection": "explicit",
+          "splits": {
+            "train": [
+              1,
+              1211
+            ],
+            "validation": [
+              1212,
+              1576
+            ],
+            "test": [
+              1577,
+              1941
+            ]
+          },
+          "audit_scope": "selected_sku_all_days",
+          "sha256": {
+            "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+            "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+            "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+          },
+          "historical_inventory_observed": false,
+          "reward": "simulated_operating_profit_proxy"
+        },
+        "train_end": 1211,
+        "validation_range": [
+          1212,
+          1576
+        ],
+        "code_sha256": {
+          "__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+          "analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+          "baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+          "checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+          "config.py": "35aa6a9a7c033626c1cc2e6c1582fb63f89e03b8210d1fbeb081270acc3d71a4",
+          "data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+          "deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+          "deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+          "doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+          "env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+          "evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+          "evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+          "features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+          "metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+          "preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+          "rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+          "shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+          "smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+          "suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+          "tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+          "train_deep.py": "604682ad8f4998e2849158799bfdd737a010e8d01e3d6dac95555df3f6290b97",
+          "train_tabular.py": "737136b04f9656cc8f456a365c64677ba9fa5777a762719de421794c495f4e50",
+          "world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922"
+        },
+        "device": "cuda",
+        "torch_version": "2.8.0+cu129",
+        "completed_episodes": 300,
+        "real_steps": 109500,
+        "synthetic_steps": 109245,
+        "test_evaluated": false,
+        "validation": {
+          "days": 365,
+          "base_return": 81612.9249,
+          "demand_units": 69439,
+          "sold_units": 65241,
+          "lost_units": 4198,
+          "eligible_store_days": 853,
+          "stockout_store_days": 62,
+          "stockout_rate": 0.07268464243845252,
+          "fill_rate": 0.9395440602543239
+        },
+        "training_seconds": 1940.2179000708275
+      },
+      "manifest_sha256": "3f7925e2c3caba6be2266f768487b4f15e1b525c3ef4047c0ac005e3659d2f65",
+      "history_sha256": "8fff49bb2a1a21e636734f6caa1f7df9177188b0af5d6042ae06836a795f121c",
+      "checkpoint_sha256": "7108ff294f25ed2210abbd5708e136294df5396f1031dff56de05a27ec854dcd"
+    },
+    {
+      "id": "N0",
+      "seed": 5,
+      "name": "N0_seed5",
+      "manifest": {
+        "schema_version": 1,
+        "settings": {
+          "algorithm": "ddqn",
+          "seed": 5,
+          "horizon": 365,
+          "hidden": 64,
+          "gamma": 0.99,
+          "learning_rate": 0.0003,
+          "reward_scale": 100.0,
+          "reward_mode": "regional",
+          "shaping": "naive",
+          "shaping_weight": 1.0,
+          "batch_size": 64,
+          "replay_capacity": 20000,
+          "warmup_steps": 128,
+          "target_interval": 100,
+          "epsilon_decay_steps": 50000,
+          "epsilon_final": 0.05,
+          "rollout_steps": 128,
+          "ppo_epochs": 4,
+          "gae_lambda": 0.95,
+          "clip_epsilon": 0.2,
+          "entropy_coefficient": 0.01,
+          "value_coefficient": 0.5,
+          "max_grad_norm": 0.5,
+          "dyna_steps": 0,
+          "model_warmup": 256
+        },
+        "retail_config": {
+          "store_capacity": 1050,
+          "regional_capacity": 1768,
+          "regional_supply": 253,
+          "initial_store_stock": 450,
+          "initial_regional_stock": 758,
+          "holding_cost": 0.0128,
+          "shortage_cost": 1.28,
+          "elasticities": [
+            1.5,
+            1.5,
+            1.5
+          ],
+          "price_multipliers": [
+            0.9,
+            0.95,
+            1.0,
+            1.05,
+            1.1
+          ],
+          "target_days": [
+            0,
+            3,
+            7
+          ],
+          "history_days": 28
+        },
+        "encoder": {
+          "version": 1,
+          "price_scale": 1.48,
+          "size": 40
+        },
+        "data": {
+          "source": "M5",
+          "item_id": "FOODS_3_090",
+          "stores": [
+            "CA_1",
+            "CA_2",
+            "CA_3"
+          ],
+          "selection": "explicit",
+          "splits": {
+            "train": [
+              1,
+              1211
+            ],
+            "validation": [
+              1212,
+              1576
+            ],
+            "test": [
+              1577,
+              1941
+            ]
+          },
+          "audit_scope": "selected_sku_all_days",
+          "sha256": {
+            "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+            "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+            "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+          },
+          "historical_inventory_observed": false,
+          "reward": "simulated_operating_profit_proxy"
+        },
+        "train_end": 1211,
+        "validation_range": [
+          1212,
+          1576
+        ],
+        "code_sha256": {
+          "__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+          "analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+          "baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+          "checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+          "config.py": "35aa6a9a7c033626c1cc2e6c1582fb63f89e03b8210d1fbeb081270acc3d71a4",
+          "data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+          "deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+          "deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+          "doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+          "env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+          "evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+          "evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+          "features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+          "metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+          "preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+          "rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+          "shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+          "smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+          "suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+          "tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+          "train_deep.py": "604682ad8f4998e2849158799bfdd737a010e8d01e3d6dac95555df3f6290b97",
+          "train_tabular.py": "737136b04f9656cc8f456a365c64677ba9fa5777a762719de421794c495f4e50",
+          "world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922"
+        },
+        "device": "cuda",
+        "torch_version": "2.8.0+cu129",
+        "completed_episodes": 300,
+        "real_steps": 109500,
+        "synthetic_steps": 0,
+        "test_evaluated": false,
+        "validation": {
+          "days": 365,
+          "base_return": 87202.6365,
+          "demand_units": 66950,
+          "sold_units": 65429,
+          "lost_units": 1521,
+          "eligible_store_days": 853,
+          "stockout_store_days": 36,
+          "stockout_rate": 0.04220398593200469,
+          "fill_rate": 0.9772815533980582
+        },
+        "training_seconds": 933.8670071423985
+      },
+      "manifest_sha256": "04f59b6843ccbc13d8b03c42b8fe081fbb9181f0c303a27d19c0909be1efd56d",
+      "history_sha256": "a6e40df8021698dbe241f5c9270ee65b02189af17481f68827eb2380f93251b6",
+      "checkpoint_sha256": "fe73844b216b3f946cd6d9e5bed23aa91303bc83250e4bbc3cf791be4534a2fd"
+    }
+  ]
+}

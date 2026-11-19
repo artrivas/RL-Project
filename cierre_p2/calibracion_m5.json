@@ -1,0 +1,347 @@
+{
+  "producto": "FOODS_3_090",
+  "hashes": {
+    "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+    "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+    "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+  },
+  "dias_ajuste": [
+    1,
+    1211
+  ],
+  "nivel_servicio_principal": 0.9,
+  "tiendas": {
+    "CA_1": {
+      "dias": 1211,
+      "semanas": 173,
+      "niveles_precio": 6,
+      "cambios_precio": 12,
+      "precio_min": 1.0,
+      "precio_max": 1.48,
+      "elasticidad_asociativa": 0.5091459317087028,
+      "validacion_temporal_interna": [
+        {
+          "fin_ajuste": 665,
+          "dias_evaluados": 182,
+          "elasticidad_asociativa": -5.104539542994088,
+          "mae_ventas": 63.55289665327616
+        },
+        {
+          "fin_ajuste": 847,
+          "dias_evaluados": 182,
+          "elasticidad_asociativa": -6.036033493993507,
+          "mae_ventas": 141.93327892144615
+        },
+        {
+          "fin_ajuste": 1029,
+          "dias_evaluados": 182,
+          "elasticidad_asociativa": 0.786864388978138,
+          "mae_ventas": 94.37161113862823
+        }
+      ],
+      "cobertura_empirica_dos_dias": {
+        "0": 0.24450084602368866,
+        "3": 0.8705583756345178,
+        "7": 0.9771573604060914
+      },
+      "objetivo_por_nivel_servicio": {
+        "0.8": 3,
+        "0.9": 7,
+        "0.95": 7
+      }
+    },
+    "CA_2": {
+      "dias": 1211,
+      "semanas": 173,
+      "niveles_precio": 5,
+      "cambios_precio": 11,
+      "precio_min": 1.0,
+      "precio_max": 1.44,
+      "elasticidad_asociativa": -1.7325117276671917,
+      "validacion_temporal_interna": [
+        {
+          "fin_ajuste": 665,
+          "dias_evaluados": 182,
+          "elasticidad_asociativa": -5.30918931722936,
+          "mae_ventas": 23.909773976077737
+        },
+        {
+          "fin_ajuste": 847,
+          "dias_evaluados": 182,
+          "elasticidad_asociativa": -6.570472543055374,
+          "mae_ventas": 36.56106766450952
+        },
+        {
+          "fin_ajuste": 1029,
+          "dias_evaluados": 182,
+          "elasticidad_asociativa": -1.3799878823394995,
+          "mae_ventas": 36.322309724004356
+        }
+      ],
+      "cobertura_empirica_dos_dias": {
+        "0": 0.2546531302876481,
+        "3": 0.8925549915397631,
+        "7": 0.9813874788494078
+      },
+      "objetivo_por_nivel_servicio": {
+        "0.8": 3,
+        "0.9": 7,
+        "0.95": 7
+      }
+    },
+    "CA_3": {
+      "dias": 1211,
+      "semanas": 173,
+      "niveles_precio": 5,
+      "cambios_precio": 14,
+      "precio_min": 1.0,
+      "precio_max": 1.44,
+      "elasticidad_asociativa": -1.4850735688899106,
+      "validacion_temporal_interna": [
+        {
+          "fin_ajuste": 665,
+          "dias_evaluados": 182,
+          "elasticidad_asociativa": -2.9597035841345174,
+          "mae_ventas": 240.3141257331036
+        },
+        {
+          "fin_ajuste": 847,
+          "dias_evaluados": 182,
+          "elasticidad_asociativa": -5.042677855350505,
+          "mae_ventas": 226.04864474795212
+        },
+        {
+          "fin_ajuste": 1029,
+          "dias_evaluados": 182,
+          "elasticidad_asociativa": -0.27599538289784004,
+          "mae_ventas": 187.71712739737032
+        }
+      ],
+      "cobertura_empirica_dos_dias": {
+        "0": 0.1988155668358714,
+        "3": 0.9094754653130288,
+        "7": 0.9796954314720813
+      },
+      "objetivo_por_nivel_servicio": {
+        "0.8": 3,
+        "0.9": 3,
+        "0.95": 7
+      }
+    }
+  },
+  "H0": {
+    "0.8": {
+      "dias_objetivo": [
+        3,
+        3,
+        3
+      ],
+      "validacion": {
+        "days": 365,
+        "base_return": 32622.831999999977,
+        "demand_units": 65738,
+        "sold_units": 43157,
+        "lost_units": 22581,
+        "eligible_store_days": 853,
+        "stockout_store_days": 391,
+        "stockout_rate": 0.45838218053927315,
+        "fill_rate": 0.6565000456357054,
+        "ingresos_m5_aproximados": 95808.33999999994,
+        "mae_ventas_por_tienda": {
+          "CA_1": 17.427397260273974,
+          "CA_2": 7.512328767123288,
+          "CA_3": 36.92602739726028
+        },
+        "sensibilidad_costes": [
+          {
+            "factor_almacenamiento": 0.5,
+            "factor_penalizacion": 0.5,
+            "retorno": 47641.45600000005
+          },
+          {
+            "factor_almacenamiento": 0.5,
+            "factor_penalizacion": 1.0,
+            "retorno": 33189.61600000005
+          },
+          {
+            "factor_almacenamiento": 0.5,
+            "factor_penalizacion": 2.0,
+            "retorno": 4285.936000000052
+          },
+          {
+            "factor_almacenamiento": 1.0,
+            "factor_penalizacion": 0.5,
+            "retorno": 47074.67200000005
+          },
+          {
+            "factor_almacenamiento": 1.0,
+            "factor_penalizacion": 1.0,
+            "retorno": 32622.832000000053
+          },
+          {
+            "factor_almacenamiento": 1.0,
+            "factor_penalizacion": 2.0,
+            "retorno": 3719.152000000053
+          },
+          {
+            "factor_almacenamiento": 2.0,
+            "factor_penalizacion": 0.5,
+            "retorno": 45941.10400000005
+          },
+          {
+            "factor_almacenamiento": 2.0,
+            "factor_penalizacion": 1.0,
+            "retorno": 31489.264000000054
+          },
+          {
+            "factor_almacenamiento": 2.0,
+            "factor_penalizacion": 2.0,
+            "retorno": 2585.5840000000535
+          }
+        ]
+      }
+    },
+    "0.9": {
+      "dias_objetivo": [
+        7,
+        7,
+        3
+      ],
+      "validacion": {
+        "days": 365,
+        "base_return": 54776.79759999995,
+        "demand_units": 65738,
+        "sold_units": 51885,
+        "lost_units": 13853,
+        "eligible_store_days": 853,
+        "stockout_store_days": 159,
+        "stockout_rate": 0.18640093786635403,
+        "fill_rate": 0.78926952447595,
+        "ingresos_m5_aproximados": 95808.33999999994,
+        "mae_ventas_por_tienda": {
+          "CA_1": 0.7945205479452054,
+          "CA_2": 0.2328767123287671,
+          "CA_3": 36.92602739726028
+        },
+        "sensibilidad_costes": [
+          {
+            "factor_almacenamiento": 0.5,
+            "factor_penalizacion": 0.5,
+            "retorno": 65130.28880000004
+          },
+          {
+            "factor_almacenamiento": 0.5,
+            "factor_penalizacion": 1.0,
+            "retorno": 56264.36880000004
+          },
+          {
+            "factor_almacenamiento": 0.5,
+            "factor_penalizacion": 2.0,
+            "retorno": 38532.52880000004
+          },
+          {
+            "factor_almacenamiento": 1.0,
+            "factor_penalizacion": 0.5,
+            "retorno": 63642.71760000005
+          },
+          {
+            "factor_almacenamiento": 1.0,
+            "factor_penalizacion": 1.0,
+            "retorno": 54776.79760000005
+          },
+          {
+            "factor_almacenamiento": 1.0,
+            "factor_penalizacion": 2.0,
+            "retorno": 37044.957600000045
+          },
+          {
+            "factor_almacenamiento": 2.0,
+            "factor_penalizacion": 0.5,
+            "retorno": 60667.57520000005
+          },
+          {
+            "factor_almacenamiento": 2.0,
+            "factor_penalizacion": 1.0,
+            "retorno": 51801.65520000005
+          },
+          {
+            "factor_almacenamiento": 2.0,
+            "factor_penalizacion": 2.0,
+            "retorno": 34069.81520000005
+          }
+        ]
+      }
+    },
+    "0.95": {
+      "dias_objetivo": [
+        7,
+        7,
+        7
+      ],
+      "validacion": {
+        "days": 365,
+        "base_return": 88129.71280000005,
+        "demand_units": 65738,
+        "sold_units": 64848,
+        "lost_units": 890,
+        "eligible_store_days": 853,
+        "stockout_store_days": 18,
+        "stockout_rate": 0.021101992966002344,
+        "fill_rate": 0.9864614074051538,
+        "ingresos_m5_aproximados": 95808.33999999994,
+        "mae_ventas_por_tienda": {
+          "CA_1": 0.7945205479452054,
+          "CA_2": 0.2328767123287671,
+          "CA_3": 1.4109589041095891
+        },
+        "sensibilidad_costes": [
+          {
+            "factor_almacenamiento": 0.5,
+            "factor_penalizacion": 0.5,
+            "retorno": 91322.34639999991
+          },
+          {
+            "factor_almacenamiento": 0.5,
+            "factor_penalizacion": 1.0,
+            "retorno": 90752.74639999992
+          },
+          {
+            "factor_almacenamiento": 0.5,
+            "factor_penalizacion": 2.0,
+            "retorno": 89613.54639999992
+          },
+          {
+            "factor_almacenamiento": 1.0,
+            "factor_penalizacion": 0.5,
+            "retorno": 88699.3127999999
+          },
+          {
+            "factor_almacenamiento": 1.0,
+            "factor_penalizacion": 1.0,
+            "retorno": 88129.7127999999
+          },
+          {
+            "factor_almacenamiento": 1.0,
+            "factor_penalizacion": 2.0,
+            "retorno": 86990.51279999991
+          },
+          {
+            "factor_almacenamiento": 2.0,
+            "factor_penalizacion": 0.5,
+            "retorno": 83453.24559999991
+          },
+          {
+            "factor_almacenamiento": 2.0,
+            "factor_penalizacion": 1.0,
+            "retorno": 82883.64559999992
+          },
+          {
+            "factor_almacenamiento": 2.0,
+            "factor_penalizacion": 2.0,
+            "retorno": 81744.44559999992
+          }
+        ]
+      }
+    }
+  }
+}

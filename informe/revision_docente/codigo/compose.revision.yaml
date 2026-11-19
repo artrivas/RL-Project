@@ -1,0 +1,10 @@
+services:
+  reproduccion:
+    build:
+      context: .
+      dockerfile: Dockerfile.revision
+    volumes:
+      - datos_m5:/datos
+      - ./salidas_docker:/salidas
+volumes:
+  datos_m5:

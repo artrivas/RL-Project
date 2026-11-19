@@ -1,0 +1,61 @@
+# Usage (from the repo root):  docker compose -f docker/docker-compose.yml up -d
+name: rl-project
+services:
+  # ============================================================================
+  # 1. RCSSSERVER — trainer-controlled configuration for bounded-task episodes
+  # ============================================================================
+  # coach=true + coach_w_referee=false: the offline coach (trainer, port 6001) is
+  # accepted and the internal referees are disabled, so there is no kick-off
+  # sequence, half time, time-over, or out-of-bounds play-mode change. The
+  # trainer owns play mode and episode resets. auto_mode=false: the match clock
+  # never starts or ends on its own. synch_mode=false: real-time 100 ms cycles.
+  rcssserver:
+    image: orangefoil/rcssserver:latest
+    container_name: robocup_server
+    command: >
+      rcssserver
+      server::port=6000
+      server::coach_port=6001
+      server::coach=true
+      server::coach_w_referee=false
+      server::auto_mode=false
+      server::synch_mode=false
+    ports:
+      - "6000:6000/udp"
+    # No automatic restart: a crash mid-experiment must surface as a failure,
+    # not as a silently fresh server under a running evaluation.
+    restart: "no"
+    networks:
+      - robocup_net
+
+  # ============================================================================
+  # 2. AGENT ENVIRONMENT (PYTHON 3.10 + PYTORCH + JUPYTER)
+  # ============================================================================
+  rl-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: robocup_rl_agent
+    # Run as the host user so files written to src/ and notebooks/ stay editable
+    # (override with UID/GID if your host user is not 1000).
+    user: "${UID:-1000}:${GID:-1000}"
+    environment:
+      - HOME=/tmp
+      - SERVER_HOST=rcssserver
+      - SERVER_PORT=6000
+      - TRAINER_PORT=6001
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ../src:/workspace/src
+      - ../notebooks:/workspace/notebooks
+    ports:
+      - "8888:8888"   # Jupyter Lab
+    depends_on:
+      - rcssserver
+    networks:
+      - robocup_net
+    restart: unless-stopped
+
+networks:
+  robocup_net:
+    driver: bridge

@@ -1,0 +1,40 @@
+{
+  "source_archive": "m5-final-01.zip",
+  "source_sha256": "91acae6b37d8ac365b3d4a7d2da6fe5f4a439821a28fe281021bc0814bfc0c25",
+  "original_files_hash_verified": 57,
+  "test_runs": 25,
+  "daily_transitions_verified": 9125,
+  "accounting_and_stock_conservation": "passed",
+  "summary_and_targets_recomputed": "passed",
+  "pdf_pages": 4,
+  "pdf_visual_review": "all four original pages inspected; no clipping",
+  "new_training_steps": 0,
+  "new_test_evaluations": 0,
+  "quantitative_target_met": false,
+  "elasticity_estimated": false,
+  "authors": "Leonardo Candio y Dimael Rivas, retained from supplied report",
+  "demo_added_after_test": "V0_seed3 for descriptive rationing illustration only",
+  "limitations": [
+    "Docker end-to-end reproduction not run in this review",
+    "Training checkpoints and raw M5 inputs remain on the Pod volume, not in the downloaded ZIP",
+    "Original report PDF is preserved; supplementary findings are in the handoff and slides"
+  ],
+  "notebook_execution": "Not completed: local Python lacks IPython; referenced files present",
+  "demo_validation": {
+    "rows": 3,
+    "ppoRationDisabled": true,
+    "ppoStockout": "2015-06-19 Â· DÃ­a 27 / 365",
+    "ddqnRation": "2015-07-25 Â· DÃ­a 63 / 365",
+    "errors": []
+  },
+  "source_code_url": "https://github.com/artrivas/RL-Project/tree/4644eb088135060cffba499490b75986f701d29d",
+  "presentation": {
+    "slides": 15,
+    "visually_reviewed": 15,
+    "package_integrity": "passed",
+    "native_chart_data": "passed",
+    "artifact_tool_reimport": "passed",
+    "powerpoint_application_opened": false,
+    "sha256": "b5c5e70801c97d89332dfb13a432ec908764da51dbba12232b85e38cb0715d4a"
+  }
+}

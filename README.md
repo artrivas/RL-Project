@@ -1,4 +1,57 @@
-# Proyecto RL — Tareas acotadas de RoboCup 2D con métodos tabulares
+# Proyecto RL — P1 RoboCup · P2 Walmart M5 (Vía B)
+
+## P2 · Walmart M5 (Vía B)
+
+El [informe final](informe/revision_docente/salidas_cierre/informe_final.pdf) y la [presentación final](informe/revision_docente/salidas_cierre/presentacion_final.pptx) reúnen el estudio de tres tiendas con inventario regional compartido.
+
+### Analizar los resultados guardados
+
+| Etapa | Archivos |
+| --- | --- |
+| Campaña original | [Resultados por método y semilla](informe/revision_docente/campana/results_table.csv), [trayectorias de prueba](informe/revision_docente/campana/test/), [trazas diarias por tienda](informe/revision_docente/campana/daily_store.csv) y [curvas de entrenamiento](informe/revision_docente/campana/training_curves.csv). |
+| Revisión de las referencias H0 | [Notebook de análisis](informe/revision_docente/analisis_revision.ipynb), [comparaciones en test](informe/revision_docente/evidencia/meta_por_corrida.csv), [sensibilidad en validación](informe/revision_docente/evidencia/sensibilidad_validacion.csv) y [retornos de los 900 episodios tabulares reproducidos](informe/revision_docente/evidencia/g0_tabular.csv). |
+| Campaña calibrada | [Métricas de validación y test](informe/revision_docente/salidas_cierre/metricas_calibradas.json), [comparaciones](informe/revision_docente/salidas_cierre/metas_calibradas.csv), [retornos de los 7200 episodios](informe/revision_docente/salidas_cierre/g0_calibrado.csv) y [protocolo](informe/revision_docente/salidas_cierre/protocolo_calibrado.json). |
+
+El notebook se ejecuta desde `informe/revision_docente/` con los CSV guardados. El análisis de esos archivos no requiere descargar M5 ni entrenar los agentes. La [demo de inferencia](informe/revision_docente/demo_en_vivo.html) se abre en un navegador después de descargar el HTML.
+
+La [guía de reproducción](informe/revision_docente/LEEME.md) explica cómo recalcular las comparaciones de la revisión y repetir el entrenamiento. El [código del entorno y los agentes](src/retail/) y las [instrucciones para obtener los datos originales](notebooks/data/m5/README.md) están en el repositorio.
+
+
+Sustentación P2 indicada en el enunciado: **20 de noviembre de 2026**, con entrega previa en Canvas.
+
+### Setup P2 (Ubuntu / WSL)
+
+Desde la raíz del repositorio:
+
+```bash
+bash docker/setup_p2.sh
+```
+
+El script comprueba Docker/Compose, reconstruye la imagen si fue eliminada, comprueba dependencias, ejecuta tests offline P1 y tests de setup P2, prueba PyTorch/DQN/PPO en CartPole y arranca Jupyter en **http://localhost:8889**. La prueba de CartPole sólo verifica la instalación; no implementa DDQN ni produce resultados retail. El servicio P2 no requiere `rcssserver`.
+
+Consultar el token de acceso:
+
+```bash
+docker compose -f docker/docker-compose.p2.yml logs retail
+```
+
+P2 usa Python 3.11 y PyTorch CPU; las dependencias directas están fijadas en `docker/requirements.p2.txt`. La primera ejecución necesita Internet para descargar imagen y paquetes. No instala paquetes en Conda ni elimina imágenes, contenedores o resultados existentes. Los paquetes transitivos y la imagen base no están completamente bloqueados: tras un setup exitoso se guardan `pip freeze` y el ID de la imagen en `notebooks/artifacts/p2_via_b/setup/`.
+
+Los tres CSV M5 se colocan en `notebooks/data/m5/raw/`; ver [datos requeridos](notebooks/data/m5/README.md). Se permite preparar el entorno sin datos, pero el diagnóstico los marca como ausentes. Para exigirlos:
+
+```bash
+bash docker/setup_p2.sh --require-data
+```
+
+El chequeo inicial sólo valida cabeceras y primera fila; no sustituye la auditoría completa del dataset.
+Para cambiar el puerto: `P2_JUPYTER_PORT=8890 bash docker/setup_p2.sh`.
+Para detener sólo P2: `docker compose -f docker/docker-compose.p2.yml down`.
+
+**Verificación de esta preparación (15/11/2026):** 9 tests del diagnóstico pasaron con Python local. Los CSV no están en el directorio previsto. Docker/Python/Conda existen en Ubuntu, pero esta sesión de Windows no puede ejecutar WSL (`E_ACCESSDENIED`); no se ha verificado la construcción, el estado de las imágenes antiguas, el smoke RL ni el arranque de Jupyter. El script realiza esas comprobaciones al ejecutarlo desde Ubuntu.
+
+---
+
+## P1 — Tareas acotadas de RoboCup 2D con métodos tabulares
 
 **Curso:** DS5345 · Aprendizaje por Refuerzo (UTEC, 2026-II) · **Docente:** Percy W. Lovon Ramos
 **Entrega:** P1, baseline tabular. **Tareas:** las cuatro del catálogo — persecución e intercepción (*Ball

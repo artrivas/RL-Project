@@ -1,0 +1,81 @@
+{
+  "modelo": "asociativo_por_tienda",
+  "entrenamiento": [
+    1,
+    1211
+  ],
+  "semillas": [
+    3,
+    4,
+    5
+  ],
+  "episodios": 300,
+  "regla_checkpoint": "\u00faltimo episodio",
+  "configuracion": {
+    "store_capacity": 1050,
+    "regional_capacity": 1768,
+    "regional_supply": 253,
+    "initial_store_stock": 450,
+    "initial_regional_stock": 758,
+    "holding_cost": 0.0128,
+    "shortage_cost": 1.28,
+    "elasticities": [
+      0.5091459317087028,
+      -1.7325117276671917,
+      -1.4850735688899106
+    ],
+    "price_multipliers": [
+      0.9,
+      0.95,
+      1,
+      1.05,
+      1.1
+    ],
+    "target_days": [
+      0,
+      3,
+      7
+    ],
+    "history_days": 28
+  },
+  "huellas_datos": {
+    "sales_train_evaluation.csv": "4b4a47c44c38380d2a9168216fea8c9ff2f31b1ddb772f8a0995952a038b8aa0",
+    "calendar.csv": "d12b5914ef03e66649adf5dd9e996e6602251c22b7a6af8f1f7e3aa12f8860f5",
+    "sell_prices.csv": "9da3ad1f8b8ccacdbdc70612191dd375ec24a4ac6625c24b75b3bc60b0bed2ef"
+  },
+  "prueba": "\u00faltimo a\u00f1o ya examinado",
+  "codigo": {
+    "src/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/agents.py": "1eb08561579a26b15b8972d8b6ee4d88a047157468da79cc367be587ec913ca4",
+    "src/retail/__init__.py": "a62cf52926c4e25a51cb60ad89ad9333edce58e11f487a512166e2189759859d",
+    "src/retail/analysis.py": "64c160b123ad4e080ee1c434524eb9e8505528be6c787616f3ab41361fa3860f",
+    "src/retail/baselines.py": "37db0a16e1f07d3dbc97f991b5a9f733bd1b0da443508fe5c2eede471b8b3552",
+    "src/retail/checkpoint.py": "ad19e5afa57382659a1ecf2f7d87bd8ddf28df2edef4eb28ca96915b47f7b347",
+    "src/retail/config.py": "621c043c2d08c3ddc62ed9b70f2dd5383878feed56e1c8bc11ac314b0da97953",
+    "src/retail/data.py": "0df3c8be608679a06b6fcc578e2be2faabacda5ce32a8b4a7a92b22452018ed8",
+    "src/retail/deep.py": "aeadbffdce62fa9b17fbc14278f16f9768497dff0b33652847e496800b76b568",
+    "src/retail/deep_config.py": "036172f9a6f30cd993b5a3d841823a8048945963f5531e029cbe431eb1c237d4",
+    "src/retail/doctor.py": "ab50027684132e7b5c9c9f02fbd6bbb3702ceb86aee51b657d157947dfb69f76",
+    "src/retail/env.py": "b6749cc93a9834ffcca478ff97e0f1a3d9e1418f6b91890db98c2ad6567895b1",
+    "src/retail/evaluate.py": "1c578c6f87d8ca7189223875a16d5e0b8b7fd3ff81f4d8e808c9699bba7a0268",
+    "src/retail/evaluate_tabular.py": "29e478533d1ddc9a94c0d89e201749ee5131c7b5789df439dfe4fee4e71737d1",
+    "src/retail/features.py": "51d886d7a44f057c8d89168ec1a7b42ca495176e6560fa2fc6b546bd03df513a",
+    "src/retail/metrics.py": "3be7a5025c0e83fc0cea5fccd0afb7a394792a26af7d6913f41be2c5f549a4e8",
+    "src/retail/preflight.py": "2564b8741bb4f0c9533b26aac7b18a430d79725b6f2c39a27be9d52af8b189a2",
+    "src/retail/rollout.py": "588d9da765d4a185b69a589d5f9542760d8a60283581f91094045136ca6e21e8",
+    "src/retail/shaping.py": "ca95fb202905adb64def79d2c5224a11fb7d63ca4e950639eb63519ec5ad5ff1",
+    "src/retail/smoke_deep.py": "5163cb01d6a0126d56b52d109577066141fa9f462bd68c3340081c7bd5630d5b",
+    "src/retail/suite.py": "5527098622c3c05233e4ea7f47e0930ed7a1126fc07ba1b149ec01d0c4108b0e",
+    "src/retail/tabular.py": "ca469310f3e78423535b3a0f6067ce59ec3758deb590b19b95cfeee4b18615fa",
+    "src/retail/tests/test_deep.py": "d6b977f3ea738a93ee32b8302a15ae4a840329d878ddbe84c892d9700182b734",
+    "src/retail/tests/test_doctor.py": "36f45da94f14d8ca8a23a0a47af1e762eaf900cb5dce6d71003bc07587fe992f",
+    "src/retail/tests/test_experiments.py": "6143131a85251439b9ef008c8af0379755a33e1befef270a11097b897c3e1bd5",
+    "src/retail/tests/test_retail.py": "a691a730d81b28c85632d831f30bafc7ddf566a77a336c382aa3efb28dd6494a",
+    "src/retail/tests/test_tabular.py": "b88cab52edd1f191711318a92f62b5ac02e4b0cef7f86455ca55c017304dcfe7",
+    "src/retail/train_deep.py": "30d5fd0ce74875475ad19524faa8d6fd7295ad9b0b6af973c4323c8b180b6e82",
+    "src/retail/train_tabular.py": "2e61338fa895447caab01fb3146c9753923e3d38fcfdd05cf53d6a78a3ad332c",
+    "src/retail/world_model.py": "e4e756f3521394f59b4445c32c72350ac7992157f481ad1916811c1e094ab922"
+  },
+  "ajustes": "365a5114848b234077f72847b3559d6f72faed87e75907ed672b5b876b3a9c16",
+  "pytorch": "2.8.0+cpu"
+}

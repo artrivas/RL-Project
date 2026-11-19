@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "status": "design_only_not_a_runnable_training_config",
+  "phase": "P2",
+  "route": "B",
+  "protocol": "informe/plan_p2_via_b.md",
+  "stores": ["CA_1", "CA_2", "CA_3"],
+  "data": {
+    "required_files": ["sales_train_evaluation.csv", "sell_prices.csv", "calendar.csv"],
+    "raw_directory": null,
+    "selected_item_ids": [],
+    "selection_scope": "same_sku_in_all_three_stores_selected_using_training_only",
+    "expected_last_sales_day": 1941,
+    "inclusive_day_ranges": {"train": [1, 1211], "validation": [1212, 1576], "test": [1577, 1941]},
+    "test_days": 365,
+    "manifest_frozen": false,
+    "historical_inventory_observed": false,
+    "historical_replenishment_observed": false,
+    "historical_net_profit_observed": false
+  },
+  "proposed_environment": {
+    "step": "day",
+    "simultaneous_actions": true,
+    "allocation": "proportional_with_deterministic_integer_remainders",
+    "store_lead_time_days": 1,
+    "price_multipliers": [0.9, 0.95, 1.0, 1.05, 1.1],
+    "order_target_days_of_supply": [0, 3, 7],
+    "local_action_count": 15,
+    "regional_storage_capacity_units": null,
+    "regional_external_supply_units_per_day": null,
+    "store_capacity_units": null,
+    "initial_inventory_units": null,
+    "holding_cost_per_unit_day": null,
+    "shortage_cost_per_unit": null,
+    "elasticities": null,
+    "gamma": null,
+    "training_episode_days": null,
+    "demand_reference": "historical_sales_times_price_multiplier_to_negative_elasticity",
+    "evaluation_model": "held_out_series_reference_simulator_not_learned_dyna_model",
+    "base_reward_label": "simulated_operating_profit_proxy"
+  },
+  "ppo": {"clip_epsilon": 0.2, "gae_lambda": null},
+  "pbrs": {
+    "potential": "negative_capped_days_of_supply_variance_and_buffer_shortfall",
+    "formula": "gamma * phi(next_state) - phi(state)",
+    "true_terminal_potential": 0,
+    "rollout_cut_is_terminal": false,
+    "weights": null,
+    "forecast_model_frozen_per_comparison": true
+  },
+  "acceleration": {
+    "method": "hybrid_world_model_dyna",
+    "agent": "ddqn",
+    "learned_component": "demand",
+    "exact_components": ["inventory", "rationing", "transit", "reward_accounting"],
+    "joint_store_rollouts": true,
+    "rollout_horizon_candidates": [1, 2, 3],
+    "synthetic_to_real_ratio": null,
+    "fit_model_on_synthetic_transitions": false
+  },
+  "experiments": [
+    {"id": "H0", "algorithm": "historical_price_base_stock_proxy", "learns": false, "reward": "none", "shaping": "none", "dyna": false},
+    {"id": "T0", "algorithm": "qlearning", "learns": true, "reward": "regional", "shaping": "none", "dyna": false},
+    {"id": "V0", "algorithm": "ddqn", "learns": true, "reward": "regional", "shaping": "none", "dyna": false},
+    {"id": "P0", "algorithm": "ppo_gae", "learns": true, "reward": "regional", "shaping": "none", "dyna": false},
+    {"id": "S0", "algorithm": "ddqn", "learns": true, "reward": "local", "shaping": "none", "dyna": false},
+    {"id": "V1", "algorithm": "ddqn", "learns": true, "reward": "regional", "shaping": "pbrs", "dyna": false},
+    {"id": "V2", "algorithm": "ddqn", "learns": true, "reward": "regional", "shaping": "none", "dyna": true},
+    {"id": "V3", "algorithm": "ddqn", "learns": true, "reward": "regional", "shaping": "pbrs", "dyna": true},
+    {"id": "N0", "algorithm": "ddqn", "learns": true, "reward": "regional", "shaping": "naive", "dyna": false}
+  ],
+  "evaluation": {
+    "report_seeds": [0, 1, 2],
+    "development_seeds": [3, 4, 5],
+    "dispersion": "sample_standard_deviation_ddof_1",
+    "real_simulator_step_budget": null,
+    "primary_stockout_metric": "fraction_of_eligible_store_days_with_positive_lost_demand",
+    "stockout_reduction_target": 0.3,
+    "stockout_comparators": ["H0", "S0"],
+    "profit_comparator": "H0",
+    "zero_baseline_stockouts": "percentage_reduction_undefined",
+    "score_base_reward_without_shaping": true,
+    "sample_efficiency_reference_return": null,
+    "artifact_root": "notebooks/artifacts/p2_via_b"
+  },
+  "instructor_clarifications": [
+    "historical_stockout_and_net_profit_proxy",
+    "p1_tabular_method_retrained_in_retail",
+    "number_of_skus_required",
+    "last_365_days_versus_calendar_year"
+  ]
+}

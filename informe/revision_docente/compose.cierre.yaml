@@ -1,0 +1,18 @@
+services:
+  cierre:
+    build:
+      context: ./codigo
+      dockerfile: Dockerfile.revision
+    working_dir: /opt/retail
+    entrypoint: ["bash", "/revision/codigo/campana_docente.sh"]
+    environment:
+      M5_WORKERS: ${M5_WORKERS:-3}
+      PYTHONPATH: /opt/retail:/opt/retail/scripts:/revision/codigo
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+    volumes:
+      - .:/revision:ro
+      - "${M5_RAW_DIR:-./salidas_cierre/datos}:/datos"
+      - ./salidas_cierre:/salidas
+

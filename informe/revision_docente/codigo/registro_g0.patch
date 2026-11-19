@@ -1,0 +1,64 @@
+--- a/src/retail/train_tabular.py
++++ b/src/retail/train_tabular.py
+@@ -58,15 +58,17 @@
+             env=RetailEnv(data,config,start,start+args.horizon-1)
+             obs=env.reset()
+             epsilon=1.0-0.95*episode/max(1,args.episodes-1)
++            discounted=0.0
+             total=0.0
+             while obs is not None:
+                 actions=agent.act(obs,epsilon)
+                 nxt,reward,terminal,_,_=env.step(actions)
+                 agent.observe(obs,actions,reward/args.reward_scale,nxt,terminal)
++                discounted += args.gamma**(steps % args.horizon)*reward
+                 total+=reward
+                 steps+=1
+                 obs=nxt
+-            record={"episode":episode+1,"start_day":start,"base_return":total,
++            record={"episode":episode+1,"start_day":start,"base_return":total,"discounted_base_return":discounted,
+                     "real_steps":steps,"epsilon":epsilon,"synthetic_steps":0,
+                     "training_seconds":time.perf_counter()-started}
+             if (episode+1)%args.eval_every==0 or episode+1==args.episodes:
+--- a/src/retail/train_deep.py
++++ b/src/retail/train_deep.py
+@@ -91,6 +91,7 @@
+         start=windows.randint(first,train_end-settings.horizon+1)
+         env=RetailEnv(data,retail_config,start,start+settings.horizon-1)
+         obs=env.reset()
++        discounted=0.0
+         base_total,shaped_total,losses=0.0,0.0,[]
+         model_losses,synthetic_losses=[],[]
+         while obs is not None:
+@@ -102,6 +103,7 @@
+             else:
+                 actions,logp,values=agent.act(features)
+             nxt,base,terminal,_,info=env.step(actions)
++            discounted += settings.gamma**(info["day"]-start)*base
+             rewards,bonus=shaped_rewards(base,info["local_rewards"],obs,nxt,terminal,
+                                         settings.gamma,settings.shaping,settings.shaping_weight,
+                                         settings.reward_mode,settings.reward_scale)
+@@ -126,7 +128,7 @@
+                         synthetic_losses.extend(model.plan(agent,data,retail_config))
+             obs=nxt
+         record={"episode":episode+1,"start_day":start,"real_steps":steps,
+-                "base_return":base_total,"shaped_regional_return":shaped_total,
++                "discounted_base_return":discounted,"base_return":base_total,"shaped_regional_return":shaped_total,
+                 "training_seconds":time.perf_counter()-started,"gradient_updates":agent.updates,
+                 "synthetic_steps":model.synthetic_steps if model else 0,
+                 "losses":{key:sum(row[key] for row in losses if key in row)/sum(key in row for row in losses)
+--- a/src/retail/config.py
++++ b/src/retail/config.py
+@@ -32,9 +32,11 @@
+             object.__setattr__(self, name, tuple(getattr(self, name)))
+         if len(self.elasticities) != 3 or not self.price_multipliers or not self.target_days:
+             raise ValueError("three elasticities and nonempty action grids required")
+-        for value in (*self.elasticities, *self.target_days, self.holding_cost, self.shortage_cost):
++        if not all(math.isfinite(e) for e in self.elasticities):
++            raise ValueError("price associations must be finite")
++        for value in (*self.target_days, self.holding_cost, self.shortage_cost):
+             if not math.isfinite(value) or value < 0:
+-                raise ValueError("costs, elasticities and targets must be finite and nonnegative")
++                raise ValueError("costs and targets must be finite and nonnegative")
+         if any(not math.isfinite(x) or x <= 0 for x in self.price_multipliers):
+             raise ValueError("price multipliers must be positive and finite")
+         if 1.0 not in self.price_multipliers:

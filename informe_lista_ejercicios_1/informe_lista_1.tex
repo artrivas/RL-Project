@@ -1,0 +1,689 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot,es-noquoting]{babel}
+\usepackage[margin=2.4cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs,array}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!45!black,urlcolor=blue!55!black,
+ pdftitle={Lista de ejercicios 1 - Aprendizaje por Refuerzo}}
+\urlstyle{same}
+\makeatletter
+\g@addto@macro\UrlBreaks{\do\a\do\b\do\c\do\d\do\e\do\f\do\g\do\h\do\i\do\j\do\k\do\l\do\m\do\n\do\o\do\p\do\q\do\r\do\s\do\t\do\u\do\v\do\w\do\x\do\y\do\z\do\A\do\B\do\C\do\D\do\E\do\F\do\G\do\H\do\I\do\J\do\K\do\L\do\M\do\N\do\O\do\P\do\Q\do\R\do\S\do\T\do\U\do\V\do\W\do\X\do\Y\do\Z\do\0\do\1\do\2\do\3\do\4\do\5\do\6\do\7\do\8\do\9}
+\makeatother
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
+\setlength{\emergencystretch}{3em}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\indic}{\mathbf{1}}
+\newcommand{\apartado}[1]{\subsection*{#1}}
+\newcommand{\fuente}[4]{\item\label{#1} #2. \textit{#3}.\par{\small\raggedright\url{#4}\par}}
+
+\begin{document}
+\begin{center}
+{\small UTEC \quad DS5345 \quad 2026-II}\\[0.6em]
+{\LARGE\bfseries Lista de ejercicios N.\textsuperscript{o} 1}\\[0.4em]
+{\large Aprendizaje por Refuerzo}\\[0.6em]
+Profesor: Percy W. Lovon Ramos
+\end{center}
+\hrule
+\vspace{0.5em}
+
+\section{Ejercicio 1. Fuentes de estudio}
+
+\subsection*{Policy Iteration, Value Iteration y fundamentos}
+\begin{enumerate}
+\renewcommand{\labelenumi}{[\arabic{enumi}]}
+\setlength{\itemsep}{0.7em}
+\fuente{f:sutton}{Sutton, R. S. y Barto, A. G. (2018)}{Reinforcement Learning: An Introduction. 2.\textsuperscript{a} edición. MIT Press}{https://mitpress.mit.edu/9780262039246/reinforcement-learning/}
+\fuente{f:szepesvari}{Szepesvári, C. (2010)}{Algorithms for Reinforcement Learning. Morgan \& Claypool}{https://sites.ualberta.ca/~szepesva/rlbook.html}
+\fuente{f:bertsekas}{Bertsekas, D. P. (2019)}{Reinforcement Learning and Optimal Control. Athena Scientific}{https://web.mit.edu/dimitrib/www/rlbook_athena.html}
+\fuente{f:silverdp}{Silver, D. (2015)}{Lecture 3: Planning by Dynamic Programming. UCL}{https://davidstarsilver.wordpress.com/wp-content/uploads/2025/04/lecture-3-planning-by-dynamic-programming-.pdf}
+\fuente{f:rollout}{Bertsekas, D. P. (2020)}{Rollout, Policy Iteration, and Distributed Reinforcement Learning. Athena Scientific}{https://web.mit.edu/dimitrib/www/Rollout_Complete\%20Book.pdf}
+\fuente{f:ndp}{Bertsekas, D. P. y Tsitsiklis, J. N. (1996)}{Neuro-Dynamic Programming. Athena Scientific}{https://web.mit.edu/dimitrib/www/NDP.pdf}
+\fuente{f:munosvi}{Munos, R. (2005)}{Error Bounds for Approximate Value Iteration. AAAI}{https://chercheurs.lille.inria.fr/~munos/papers/files/AAAI05-159.pdf}
+\fuente{f:scherrer}{Scherrer, B. (2014)}{Approximate Policy Iteration Schemes: A Comparison. ICML}{https://proceedings.mlr.press/v32/scherrer14.html}
+\fuente{f:munospi}{Munos, R. (2003)}{Error Bounds for Approximate Policy Iteration. ICML}{https://chercheurs.lille.inria.fr/munos/papers/files/API_icml03.pdf}
+\end{enumerate}
+
+\subsection*{Monte Carlo, evaluación y control sin modelo}
+\begin{enumerate}
+\setcounter{enumi}{9}
+\renewcommand{\labelenumi}{[\arabic{enumi}]}
+\setlength{\itemsep}{0.7em}
+\fuente{f:silvermc}{Silver, D. (2015)}{Lecture 4: Model-Free Prediction. UCL}{https://davidstarsilver.wordpress.com/wp-content/uploads/2025/04/lecture-4-model-free-prediction-.pdf}
+\fuente{f:silvercontrol}{Silver, D. (2015)}{Lecture 5: Model-Free Control. UCL}{https://davidstarsilver.wordpress.com/wp-content/uploads/2025/04/lecture-5-model-free-control-.pdf}
+\fuente{f:brunskill}{Brunskill, E. (2019)}{CS234, Lecture 3: Model-Free Policy Evaluation. Stanford Online. Video}{https://www.youtube.com/watch?v=dRIhrn8cc9w}
+\fuente{f:lazaric}{Lazaric, A. (2016)}{Reinforcement Learning Algorithms. Curso MVA. Diapositivas sobre Monte Carlo y TD}{https://chercheurs.lille.inria.fr/lazaric/Webpage/MVA-RL_Course16_files/slides-lecture-03.pdf}
+\fuente{f:tsitsiklisopi}{Tsitsiklis, J. N. (2002)}{On the Convergence of Optimistic Policy Iteration. Journal of Machine Learning Research, 3, 59--72}{https://www.jmlr.org/papers/v3/tsitsiklis02a.html}
+\fuente{f:singh}{Singh, S. P. y Sutton, R. S. (1996)}{Reinforcement Learning with Replacing Eligibility Traces. Machine Learning, 22, 123--158}{https://web.eecs.umich.edu/~baveja/Papers/Replace.pdf}
+\fuente{f:precup}{Precup, D., Sutton, R. S. y Singh, S. (2000)}{Eligibility Traces for Off-Policy Policy Evaluation. ICML}{https://web.eecs.umich.edu/~baveja/Papers/OffPolicy.pdf}
+\end{enumerate}
+
+\subsection*{Value Function Approximation}
+\begin{enumerate}
+\setcounter{enumi}{16}
+\renewcommand{\labelenumi}{[\arabic{enumi}]}
+\setlength{\itemsep}{0.7em}
+\fuente{f:silvervfa}{Silver, D. (2015)}{Lecture 6: Value Function Approximation. UCL}{https://davidstarsilver.wordpress.com/wp-content/uploads/2025/04/lecture-6-value-function-approximation-.pdf}
+\fuente{f:tsitsiklisvfa}{Tsitsiklis, J. N. y Van Roy, B. (1997)}{An Analysis of Temporal-Difference Learning with Function Approximation. IEEE Transactions on Automatic Control, 42(5), 674--690}{https://web.mit.edu/~jnt/www/Papers/J063-97-bvr-td.pdf}
+\fuente{f:baird}{Baird, L. (1995)}{Residual Algorithms: Reinforcement Learning with Function Approximation. ICML}{https://leemon.com/papers/1995b.pdf}
+\fuente{f:gtd2}{Sutton, R. S. y colaboradores (2009)}{Fast Gradient-Descent Methods for Temporal-Difference Learning with Linear Function Approximation. ICML}{https://ics.uci.edu/~dechter/courses/ics-295/winter-2018/papers/2009-sutton-Fast_gradient-descent.pdf}
+\fuente{f:gtd}{Sutton, R. S., Maei, H. R. y Szepesvári, C. (2008)}{A Convergent O(n) Temporal-difference Algorithm for Off-policy Learning with Linear Function Approximation. NeurIPS}{https://proceedings.neurips.cc/paper/2008/file/e0c641195b27425bb056ac56f8953d24-Paper.pdf}
+\fuente{f:lspi}{Lagoudakis, M. G. y Parr, R. (2003)}{Least-Squares Policy Iteration. Journal of Machine Learning Research, 4, 1107--1149}{https://www.jmlr.org/papers/v4/lagoudakis03a.html}
+\fuente{f:lstd}{Bradtke, S. J. y Barto, A. G. (1996)}{Linear Least-Squares Algorithms for Temporal Difference Learning. Machine Learning, 22, 33--57}{https://people.eecs.berkeley.edu/~pabbeel/cs287-fa09/readings/BradtkeBarto-lstd-1996}
+\fuente{f:boyan}{Boyan, J. A. (2002)}{Technical Update: Least-Squares Temporal Difference Learning. Machine Learning, 49, 233--246}{https://doi.org/10.1023/A:1017936530646}
+\fuente{f:nfq}{Riedmiller, M. (2005)}{Neural Fitted Q Iteration: First Experiences with a Data Efficient Neural Reinforcement Learning Method. ECML}{https://doi.org/10.1007/11564096_32}
+\fuente{f:tesauro}{Tesauro, G. (1995)}{Temporal Difference Learning and TD-Gammon. Communications of the ACM, 38(3), 58--68}{https://doi.org/10.1145/203330.203343}
+\end{enumerate}
+
+\subsection*{DQN, Double DQN y extensiones}
+\begin{enumerate}
+\setcounter{enumi}{26}
+\renewcommand{\labelenumi}{[\arabic{enumi}]}
+\setlength{\itemsep}{0.7em}
+\fuente{f:dqn13}{Mnih, V. y colaboradores (2013)}{Playing Atari with Deep Reinforcement Learning. arXiv}{https://arxiv.org/abs/1312.5602}
+\fuente{f:dqn15}{Mnih, V. y colaboradores (2015)}{Human-level control through deep reinforcement learning. Nature, 518, 529--533}{https://www.nature.com/articles/nature14236}
+\fuente{f:doubleq}{Van Hasselt, H. (2010)}{Double Q-learning. NeurIPS}{https://papers.nips.cc/paper/2010/hash/091d584fced301b442654dd8c23b3fc9-Abstract.html}
+\fuente{f:ddqn}{Van Hasselt, H., Guez, A. y Silver, D. (2016)}{Deep Reinforcement Learning with Double Q-learning. AAAI}{https://arxiv.org/abs/1509.06461}
+\fuente{f:per}{Schaul, T., Quan, J., Antonoglou, I. y Silver, D. (2016)}{Prioritized Experience Replay. ICLR}{https://arxiv.org/abs/1511.05952}
+\fuente{f:dueling}{Wang, Z. y colaboradores (2016)}{Dueling Network Architectures for Deep Reinforcement Learning. ICML}{https://arxiv.org/abs/1511.06581}
+\fuente{f:c51}{Bellemare, M. G., Dabney, W. y Munos, R. (2017)}{A Distributional Perspective on Reinforcement Learning. ICML}{https://arxiv.org/abs/1707.06887}
+\fuente{f:rainbow}{Hessel, M. y colaboradores (2018)}{Rainbow: Combining Improvements in Deep Reinforcement Learning. AAAI}{https://arxiv.org/abs/1710.02298}
+\fuente{f:noisy}{Fortunato, M. y colaboradores (2018)}{Noisy Networks for Exploration. ICLR}{https://arxiv.org/abs/1706.10295}
+\fuente{f:qr}{Dabney, W., Rowland, M., Bellemare, M. G. y Munos, R. (2018)}{Distributional Reinforcement Learning with Quantile Regression. AAAI}{https://arxiv.org/abs/1710.10044}
+\fuente{f:retrace}{Munos, R., Stepleton, T., Harutyunyan, A. y Bellemare, M. G. (2016)}{Safe and Efficient Off-Policy Reinforcement Learning. NeurIPS}{https://arxiv.org/abs/1606.02647}
+\fuente{f:bootdqn}{Osband, I., Blundell, C., Pritzel, A. y Van Roy, B. (2016)}{Deep Exploration via Bootstrapped DQN. NeurIPS}{https://arxiv.org/abs/1602.04621}
+\fuente{f:triad}{Van Hasselt, H., Doron, Y., Strub, F., Hessel, M., Sonnerat, N. y Modayil, J. (2018)}{Deep Reinforcement Learning and the Deadly Triad. arXiv}{https://arxiv.org/abs/1812.02648}
+\fuente{f:replay}{Fedus, W. y colaboradores (2020)}{Revisiting Fundamentals of Experience Replay. ICML}{https://proceedings.mlr.press/v119/fedus20a.html}
+\end{enumerate}
+
+\clearpage
+\section{Ejercicio 2. Procesos de Decisión de Markov}
+
+Un MDP finito es un modelo para tomar decisiones en pasos sucesivos. Lo escribimos como
+\[
+\mathcal{M}=(\mathcal{S},\mathcal{A},p,r,\gamma).
+\]
+Aquí $\mathcal{S}$ es un conjunto finito de estados y $\mathcal{A}(s)$ es el conjunto finito de acciones disponibles en el estado $s$. La dinámica conjunta es
+\[
+p(s',r\mid s,a)=\Pr(S_{t+1}=s',R_{t+1}=r\mid S_t=s,A_t=a).
+\]
+Para recompensas discretas, sus probabilidades suman uno:
+\[
+\sum_{s'\in\mathcal{S}}\sum_r p(s',r\mid s,a)=1.
+\]
+La recompensa media es $r(s,a)=\E[R_{t+1}\mid S_t=s,A_t=a]$. Se puede obtener de $p$, así que no es necesario especificarla por separado si ya conocemos la dinámica conjunta. Que el MDP sea finito se refiere a los estados y las acciones. Si las recompensas son continuas, usamos una distribución e integrales para ellas.
+
+El factor $\gamma\in[0,1]$ determina cuánto pesan las recompensas futuras. Para una tarea continua con recompensas acotadas, normalmente usamos $\gamma<1$. Con $\gamma=1$ necesitamos condiciones adicionales para que el retorno exista, por ejemplo episodios con duración esperada finita.
+
+\apartado{Propiedad de Markov}
+Sea $H_t=(S_0,A_0,R_1,\ldots,S_t)$ la historia observada. La propiedad de Markov establece que
+\[
+\Pr(S_{t+1}=s',R_{t+1}=r\mid H_t,A_t=a)
+=p(s',r\mid S_t,a).
+\]
+Esto significa que el estado actual contiene la información del pasado que necesitamos para predecir el siguiente estado y la recompensa, una vez elegida la acción. No significa que dos estados consecutivos sean independientes.
+
+Esta propiedad permite escribir las ecuaciones de Bellman usando solo el estado actual. Si nuestro estado omite información relevante, dos situaciones que parecen iguales pueden tener futuros distintos. Por ejemplo, para un robot en movimiento, conocer solo la posición puede ser insuficiente si su velocidad cambia la distancia de frenado. En ese caso, conviene agregar la velocidad al estado o representar la incertidumbre sobre ella.
+
+\textit{Referencia de estudio: fuente [\ref{f:sutton}], capítulos 3.1--3.3.}
+
+\section{Ejercicio 3. Derivación de la ecuación de Bellman}
+
+Consideremos una política estacionaria $\pi(a\mid s)$ y un retorno bien definido. Para justificar las operaciones con la suma infinita, podemos suponer recompensas acotadas y $0\leq\gamma<1$.
+
+\apartado{Paso 1. Separar la primera recompensa}
+Por definición,
+\begin{align*}
+G_t&=\sum_{k=0}^{\infty}\gamma^kR_{t+k+1}\\
+&=R_{t+1}+\gamma\sum_{j=0}^{\infty}\gamma^jR_{t+j+2}\\
+&=R_{t+1}+\gamma G_{t+1}.
+\end{align*}
+
+\apartado{Paso 2. Aplicar la definición de valor}
+La función de valor de estado es $v_\pi(s)=\E_\pi[G_t\mid S_t=s]$. Al reemplazar el retorno obtenemos
+\[
+v_\pi(s)=\E_\pi[R_{t+1}+\gamma G_{t+1}\mid S_t=s].
+\]
+
+\apartado{Paso 3. Condicionar por la acción, el siguiente estado y la recompensa}
+La ley de la esperanza total permite escribir
+\begin{align*}
+v_\pi(s)
+={}&\sum_a\pi(a\mid s)\sum_{s',r}p(s',r\mid s,a)\\
+&\quad\cdot\left[r+\gamma\E_\pi[G_{t+1}\mid S_t=s,A_t=a,S_{t+1}=s',R_{t+1}=r]\right].
+\end{align*}
+
+\apartado{Paso 4. Usar la propiedad de Markov}
+Conocido $S_{t+1}=s'$, la distribución del futuro bajo la política estacionaria ya no depende de los pasos anteriores. Entonces
+\[
+\E_\pi[G_{t+1}\mid S_t=s,A_t=a,S_{t+1}=s',R_{t+1}=r]=v_\pi(s').
+\]
+
+\apartado{Paso 5. Obtener Bellman}
+Así llegamos a
+\[
+\boxed{v_\pi(s)=\sum_a\pi(a\mid s)\sum_{s',r}p(s',r\mid s,a)
+\left[r+\gamma v_\pi(s')\right].}
+\]
+El valor de un estado es la recompensa inmediata esperada más el valor descontado de los estados a los que podemos llegar. En forma matricial, $v_\pi=r_\pi+\gamma P_\pi v_\pi$. Si $\gamma<1$, la solución es $v_\pi=(I-\gamma P_\pi)^{-1}r_\pi$.
+
+\textit{Referencia de estudio: fuente [\ref{f:sutton}], capítulo 3.5.}
+
+\section{Ejercicio 4. MDP de la figura}
+
+Leemos las letras minúsculas como acciones y las mayúsculas como estados. La figura define estas transiciones:
+\begin{center}
+\begin{tabular}{ccccc}
+\toprule
+Estado & Acción & Siguiente estado & Probabilidad & Recompensa\\
+\midrule
+$A$ & $b$ & $B$ & $1$ & $-2$\\
+$A$ & $c$ & $C$ & $1$ & $-2$\\
+$B$ & $a$ & $A$ & $0.5$ & $4$\\
+$B$ & $a$ & $B$ & $0.5$ & $-2$\\
+$B$ & $c$ & $C$ & $1$ & $1$\\
+$C$ & $a$ & $A$ & $1$ & $-1$\\
+$C$ & $b$ & $B$ & $1$ & $-2$\\
+\bottomrule
+\end{tabular}
+\end{center}
+Cada estado tiene dos acciones. En particular, los dos resultados de $a$ en $B$ pertenecen a una misma acción aleatoria.
+
+\apartado{a. Ecuaciones de Bellman}
+La ecuación general es la del ejercicio 3. Para este MDP, con $\gamma=1$, las ecuaciones formales son
+\begin{align*}
+V^\pi(A)&=\pi(b\mid A)[-2+V^\pi(B)]+\pi(c\mid A)[-2+V^\pi(C)],\\
+V^\pi(B)&=\pi(a\mid B)\left[\tfrac12(4+V^\pi(A))+\tfrac12(-2+V^\pi(B))\right]\\
+&\quad+\pi(c\mid B)[1+V^\pi(C)],\\
+V^\pi(C)&=\pi(a\mid C)[-1+V^\pi(A)]+\pi(b\mid C)[-2+V^\pi(B)].
+\end{align*}
+Estas expresiones definen también las actualizaciones de evaluación. Como veremos en el inciso e, sin descuento ni estado terminal no se puede asumir que representen valores totales finitos.
+
+\apartado{b. Una iteración con la política uniforme}
+Usamos $\pi_1(a\mid s)=1/2$ para cada una de las dos acciones disponibles y $V_0(s)=0$. La actualización es sincrónica, es decir, todos los estados se calculan con $V_0$:
+\begin{align*}
+V^{\pi_1}_1(A)&=\tfrac12(-2)+\tfrac12(-2)=-2,\\
+V^{\pi_1}_1(B)&=\tfrac12\left[\tfrac12(4)+\tfrac12(-2)\right]+\tfrac12(1)=1,\\
+V^{\pi_1}_1(C)&=\tfrac12(-1)+\tfrac12(-2)=-1.5.
+\end{align*}
+Por tanto, en el orden $(A,B,C)$,
+\[
+\boxed{V^{\pi_1}_1=(-2,1,-1.5)^\top.}
+\]
+Este vector es una aproximación después de una sola iteración. No es la evaluación completa de $\pi_1$.
+
+\apartado{c. Política voraz respecto a ese vector}
+Calculamos $Q_{V_1}(s,a)=\sum_{s',r}p(s',r\mid s,a)[r+V_1(s')]$:
+\begin{align*}
+Q_{V_1}(A,b)&=-2+1=-1,&
+Q_{V_1}(A,c)&=-2-1.5=-3.5,\\
+Q_{V_1}(B,a)&=\tfrac12(4-2)+\tfrac12(-2+1)=0.5,&
+Q_{V_1}(B,c)&=1-1.5=-0.5,\\
+Q_{V_1}(C,a)&=-1-2=-3,&
+Q_{V_1}(C,b)&=-2+1=-1.
+\end{align*}
+Elegimos la acción con mayor valor en cada estado:
+\[
+\boxed{\pi_2(A)=b,\qquad \pi_2(B)=a,\qquad \pi_2(C)=b.}
+\]
+
+\apartado{d. Ecuación de optimalidad de Bellman}
+Cuando el criterio de retorno está bien definido, la forma general es
+\[
+v_*(s)=\max_{a\in\mathcal A(s)}\sum_{s',r}p(s',r\mid s,a)
+[r+\gamma v_*(s')].
+\]
+Al sustituir $\gamma=1$ y la dinámica de la figura obtenemos formalmente
+\begin{align*}
+v_*(A)&=\max\{-2+v_*(B),-2+v_*(C)\},\\
+v_*(B)&=\max\left\{\tfrac12[4+v_*(A)]+\tfrac12[-2+v_*(B)],1+v_*(C)\right\},\\
+v_*(C)&=\max\{-1+v_*(A),-2+v_*(B)\}.
+\end{align*}
+
+\apartado{e. ¿Es óptima la política obtenida?}
+\textbf{La respuesta necesita precisar el criterio de optimalidad.} Ser voraz después de una sola iteración no demuestra, por sí solo, que una política sea óptima.
+
+Además, la figura no tiene estado terminal y fija $\gamma=1$. Todas las recompensas posibles tienen magnitud al menos uno, por lo que los términos de $\sum_{t=0}^\infty R_{t+1}$ no tienden a cero. Ese retorno no converge a un número real en ninguna trayectoria infinita. En consecuencia, no podemos afirmar que exista una función de valor total finita como en los ejercicios anteriores.
+
+Una interpretación adecuada para esta tarea continua es maximizar la \textbf{recompensa promedio por paso}:
+\[
+g^\pi(s)=\lim_{n\to\infty}\frac1n\E_\pi\left[\sum_{t=0}^{n-1}R_{t+1}\,\middle|\,S_0=s\right].
+\]
+\textbf{Bajo este criterio, $\pi_2$ sí es óptima.} Para demostrarlo, tomamos $g=0$ y una función de valor relativo $h(A)=-2$, $h(B)=0$, $h(C)=-2$. Verificamos la ecuación de optimalidad promedio:
+\[
+g+h(s)=\max_a\E[R_{t+1}+h(S_{t+1})\mid S_t=s,A_t=a].
+\]
+Los valores de las acciones en el lado derecho son
+\begin{center}
+\begin{tabular}{cccc}
+\toprule
+Estado & Primera acción & Segunda acción & Máximo\\
+\midrule
+$A$ & $b:\ -2$ & $c:\ -4$ & $-2=h(A)$\\
+$B$ & $a:\ 0$ & $c:\ -1$ & $0=h(B)$\\
+$C$ & $a:\ -3$ & $b:\ -2$ & $-2=h(C)$\\
+\bottomrule
+\end{tabular}
+\end{center}
+La política $\pi_2$ alcanza todos los máximos. Para cualquier política, la desigualdad anterior implica
+\[
+\E\left[\sum_{t=0}^{n-1}R_{t+1}\,\middle|\,S_0=s\right]
+\leq ng+h(s)-\E[h(S_n)].
+\]
+Como $h$ es acotada, al dividir entre $n$ y tomar el límite, ninguna política puede superar $g=0$. Con $\pi_2$ se cumple la igualdad y el promedio converge a cero desde cualquier estado. Esto demuestra su optimalidad promedio sin confundir $h$ con un retorno total.
+
+\textit{Referencias de estudio: fuentes [\ref{f:sutton}], [\ref{f:szepesvari}] y [\ref{f:silverdp}].}
+
+\section{Ejercicio 5. Teorema de mejora de política}
+
+Supongamos un MDP finito con recompensas acotadas, $0\leq\gamma<1$ y políticas estacionarias. Para simplificar, $\pi'$ es determinista, como en el enunciado. Se cumple que
+\[
+q_\pi(s,\pi'(s))\geq v_\pi(s)\qquad\text{para todo }s.
+\]
+El operador de Bellman de $\pi'$ es
+\[
+(T_{\pi'}v)(s)=\sum_{s',r}p(s',r\mid s,\pi'(s))[r+\gamma v(s')].
+\]
+La hipótesis equivale a $v_\pi\leq T_{\pi'}v_\pi$, componente a componente. Este operador es monótono: si $u\leq v$, entonces $T_{\pi'}u\leq T_{\pi'}v$, porque todas las probabilidades y $\gamma$ son no negativas. Por tanto,
+\[
+v_\pi\leq T_{\pi'}v_\pi\leq T_{\pi'}^2v_\pi\leq\cdots\leq T_{\pi'}^nv_\pi.
+\]
+La expresión del extremo derecho representa seguir $\pi'$ durante $n$ pasos y luego valorar el estado alcanzado con $v_\pi$:
+\[
+(T_{\pi'}^nv_\pi)(s)=\E_{\pi'}\left[
+\sum_{k=0}^{n-1}\gamma^kR_{t+k+1}+\gamma^nv_\pi(S_{t+n})
+\,\middle|\,S_t=s\right].
+\]
+Si $|R_{t+1}|\leq R_{\max}$, entonces $\|v_\pi\|_\infty\leq R_{\max}/(1-\gamma)$. De ahí,
+\[
+\left|\E_{\pi'}[\gamma^nv_\pi(S_{t+n})\mid S_t=s]\right|
+\leq\gamma^n\frac{R_{\max}}{1-\gamma}\longrightarrow0.
+\]
+Al tomar $n\to\infty$ en la desigualdad obtenemos
+\[
+\boxed{v_\pi(s)\leq v_{\pi'}(s)\qquad\text{para todo }s.}
+\]
+La idea es que elegir una acción que mejora el valor de un paso y repetir esa elección no empeora el retorno. La mejora puede ser una igualdad, así que el resultado no exige una ganancia estricta en todos los estados.
+
+Para $\gamma=1$ en tareas episódicas, el mismo argumento necesita que el término final desaparezca y que los retornos sean integrables. Por ejemplo, basta considerar políticas propias con tiempo esperado de terminación finito. La prueba no se puede aplicar sin condiciones a cualquier tarea continua sin descuento.
+
+\textit{Referencia de estudio: fuente [\ref{f:sutton}], capítulos 4.2--4.3.}
+
+\section{Ejercicio 6. First-Visit y Every-Visit Monte Carlo}
+
+Interpretamos cada recompensa como la que se recibe al salir del estado indicado:
+\[
+S_A\xrightarrow{+2}S_B\xrightarrow{+1}S_A\xrightarrow{-4}\text{Terminal}.
+\]
+Con $\gamma=1$, los retornos son
+\begin{align*}
+G_0&=2+1-4=-1,\\
+G_1&=1-4=-3,\\
+G_2&=-4.
+\end{align*}
+\textbf{First-Visit MC} usa solamente la primera visita a $S_A$ en el episodio. Como tenemos un solo episodio,
+\[
+\boxed{\widehat V_{\mathrm{FV}}(S_A)=G_0=-1.}
+\]
+\textbf{Every-Visit MC} usa las dos visitas a $S_A$ y promedia sus retornos:
+\[
+\boxed{\widehat V_{\mathrm{EV}}(S_A)=\frac{G_0+G_2}{2}=\frac{-1-4}{2}=-2.5.}
+\]
+Los resultados cambian porque Every-Visit también incluye la visita que ocurre justo antes de la recompensa $-4$. Estas son estimaciones empíricas con los datos disponibles, no valores verdaderos del MDP.
+
+\textit{Referencia de estudio: fuente [\ref{f:sutton}], capítulo 5.1.}
+
+\section{Ejercicio 7. Actualización TD(0)}
+
+La regla tabular de TD(0) es
+\[
+V(S_t)\leftarrow V(S_t)+\alpha\left[R_{t+1}+\gamma V(S_{t+1})-V(S_t)\right].
+\]
+En el primer paso tenemos $S_t=S_A$, $R_{t+1}=2$, $S_{t+1}=S_B$ y valores iniciales nulos. Por eso,
+\[
+\boxed{V(S_A)=0+0.5[2+1\cdot0-0]=1.}
+\]
+Solo se pidió la primera actualización. TD(0) todavía no ha usado las recompensas posteriores $+1$ y $-4$.
+
+\apartado{Sesgo y varianza frente a Monte Carlo}
+Monte Carlo usa el retorno completo $G_t$. Bajo una política fija y con retorno integrable, $\E_\pi[G_t\mid S_t=s]=v_\pi(s)$, así que ese objetivo es insesgado. Puede tener alta varianza porque incluye la aleatoriedad de todo el resto del episodio. Esto no implica que todo estimador MC tenga insesgamiento en muestras finitas. Por ejemplo, el promedio Every-Visit puede tener sesgo al combinar un número aleatorio de visitas.
+
+TD(0) usa el objetivo $Y_t=R_{t+1}+\gamma V(S_{t+1})$. Si tratamos $V$ como fija en esta actualización, su sesgo condicional es
+\[
+\E_\pi[Y_t\mid S_t=s]-v_\pi(s)
+=\gamma\sum_{s'}P_\pi(s,s')[V(s')-v_\pi(s')].
+\]
+Este sesgo aparece porque hacemos \textit{bootstrapping}, es decir, usamos otra estimación dentro del objetivo. A cambio, el objetivo de un paso suele tener menor varianza. Esa comparación de varianzas es una tendencia habitual, no una desigualdad universal para cualquier problema y cualquier estimación inicial.
+
+\textit{Referencias de estudio: fuentes [\ref{f:sutton}] y [\ref{f:brunskill}].}
+
+\section{Ejercicio 8. Q-Learning frente a SARSA}
+
+\apartado{Reglas de actualización}
+Para una transición no terminal, Q-Learning actualiza
+\[
+\boxed{Q(S_t,A_t)\leftarrow Q(S_t,A_t)+\alpha
+\left[R_{t+1}+\gamma\max_aQ(S_{t+1},a)-Q(S_t,A_t)\right].}
+\]
+SARSA utiliza la acción siguiente $A_{t+1}$ que realmente selecciona la política:
+\[
+\boxed{Q(S_t,A_t)\leftarrow Q(S_t,A_t)+\alpha
+\left[R_{t+1}+\gamma Q(S_{t+1},A_{t+1})-Q(S_t,A_t)\right].}
+\]
+Si $S_{t+1}$ es terminal, el término de valor futuro se reemplaza por cero en ambos métodos.
+
+\apartado{Por qué uno es off-policy y el otro on-policy}
+Sea $b(a\mid s)$ la política que genera las acciones, por ejemplo una política $\varepsilon$-greedy. En SARSA, $A_{t+1}\sim b(\cdot\mid S_{t+1})$, de modo que
+\[
+\E[Y_t^{\mathrm{SARSA}}\mid s,a]
+=\sum_{s',r}p(s',r\mid s,a)
+\left[r+\gamma\sum_{a'}b(a'\mid s')Q(s',a')\right].
+\]
+El objetivo evalúa la misma política que genera los datos. Por eso SARSA es \textit{on-policy}.
+
+En Q-Learning,
+\[
+\E[Y_t^{Q}\mid s,a]
+=\sum_{s',r}p(s',r\mid s,a)
+\left[r+\gamma\max_{a'}Q(s',a')\right].
+\]
+La política objetivo es voraz, aunque los datos provengan de una política exploratoria $b$. Esa separación lo hace \textit{off-policy}. La transición observada sigue siendo útil porque depende de $(s,a)$ y del ambiente, no de cómo elegiremos acciones futuras.
+
+\apartado{Comportamiento en Cliff Walking}
+Con exploración $\varepsilon$-greedy persistente, SARSA suele aprender una ruta más alejada del precipicio. Su objetivo incluye las acciones exploratorias que pueden provocar una caída. Por ejemplo, si una acción que cae tiene valor $-100$ y su probabilidad exploratoria es $\varepsilon/m$, esa acción aporta $-100\varepsilon/m$ a la esperanza del valor siguiente.
+
+Q-Learning evalúa el máximo y aprende el valor de seguir la ruta voraz. Puede preferir la ruta corta junto al precipicio, aunque al ejecutarla con exploración ocurran caídas. Esta diferencia depende de mantener exploración durante la ejecución. No significa que SARSA sea siempre más conservador en cualquier entorno.
+
+\textit{Referencia de estudio: fuente [\ref{f:sutton}], capítulos 6.4--6.5.}
+
+\section{Ejercicio 9. Aproximación lineal y semi-gradiente TD(0)}
+
+Usamos $\widehat v(s,\mathbf w)=\mathbf w^\top\mathbf x(s)$, donde $\mathbf x(s)\in\R^d$ contiene las características del estado. Para una política fija y una distribución de estados $\mu$, el error cuadrático medio de valor es
+\[
+\operatorname{MSVE}(\mathbf w)=\sum_s\mu(s)
+[v_\pi(s)-\mathbf w^\top\mathbf x(s)]^2.
+\]
+Su gradiente es
+\[
+\nabla_{\mathbf w}\operatorname{MSVE}(\mathbf w)
+=-2\sum_s\mu(s)[v_\pi(s)-\mathbf w^\top\mathbf x(s)]\mathbf x(s).
+\]
+Si conociéramos $v_\pi(S_t)$, una actualización SGD, absorbiendo el factor dos en $\alpha$, sería
+\[
+\mathbf w_{t+1}=\mathbf w_t+\alpha
+[v_\pi(S_t)-\mathbf w_t^\top\mathbf x(S_t)]\mathbf x(S_t).
+\]
+Pero ese valor verdadero es justamente lo que queremos aprender. TD(0) lo reemplaza por
+\[
+Y_t=R_{t+1}+\gamma\mathbf w_t^\top\mathbf x(S_{t+1}).
+\]
+En la pérdida de muestra $\ell_t(\mathbf w)=\tfrac12[Y_t-\mathbf w^\top\mathbf x(S_t)]^2$, el método trata $Y_t$ como una constante al derivar. Así,
+\[
+\widetilde\nabla\ell_t(\mathbf w_t)
+=-[Y_t-\mathbf w_t^\top\mathbf x(S_t)]\mathbf x(S_t).
+\]
+Definiendo el error TD,
+\[
+\delta_t=R_{t+1}+\gamma\mathbf w_t^\top\mathbf x(S_{t+1})
+-\mathbf w_t^\top\mathbf x(S_t),
+\]
+obtenemos la regla pedida:
+\[
+\boxed{\mathbf w_{t+1}=\mathbf w_t+\alpha\delta_t\mathbf x(S_t).}
+\]
+Si el siguiente estado es terminal, usamos valor futuro cero.
+
+Se llama \textbf{semi-gradiente} porque ignora la dependencia del objetivo $Y_t$ respecto a los pesos. Si deriváramos el error TD de muestra por completo, aparecería $\mathbf x(S_t)-\gamma\mathbf x(S_{t+1})$ en la actualización. Eso sería otro método.
+
+Hay una precisión importante: esta derivación parte del MSVE para motivar la regla, pero TD(0) de semi-gradiente \textbf{no es, en general, SGD exacto del MSVE}. Su objetivo de bootstrapping puede ser sesgado. En el caso lineal on-policy, bajo las condiciones habituales de convergencia, busca un punto fijo de la ecuación de Bellman proyectada, que no tiene por qué coincidir con el minimizador del MSVE.
+
+\textit{Referencias de estudio: fuentes [\ref{f:sutton}], capítulo 9.3, y [\ref{f:tsitsiklisvfa}].}
+
+\section{Ejercicio 10. La tríada mortal}
+
+Los tres elementos son:
+\begin{enumerate}
+\item \textbf{Aproximación de funciones.} Varios estados o pares estado-acción comparten parámetros. Cambiar un peso puede modificar muchas predicciones al mismo tiempo.
+\item \textbf{Bootstrapping.} El objetivo incluye otra estimación, como $R_{t+1}+\gamma\widehat v(S_{t+1},\mathbf w)$, en lugar de utilizar únicamente el retorno observado completo.
+\item \textbf{Aprendizaje off-policy.} Aprendemos sobre una política objetivo $\pi$ usando datos generados por otra política $b$.
+\end{enumerate}
+El problema aparece cuando una actualización aumenta una predicción equivocada y ese aumento se incorpora a los objetivos de futuras actualizaciones. La distribución de los datos puede dar poco peso a los estados necesarios para corregir el error.
+
+Una forma de verlo es con la actualización esperada de TD lineal para evaluar $\pi$ con una distribución de estados $d_b$. Incluso si corregimos las acciones mediante muestreo por importancia, la matriz de la actualización tiene la forma
+\[
+\E[\Delta\mathbf w]=\alpha(\mathbf b-A\mathbf w),\qquad
+A=\Phi^\top D_b(I-\gamma P_\pi)\Phi,
+\]
+donde $D_b=\operatorname{diag}(d_b)$, las filas de $\Phi$ son las características y $\mathbf b=\Phi^\top D_b r_\pi$. Aquí $\mathbf b$ es un vector, mientras que $b$ denota la política de comportamiento.
+
+La combinación de proyección y Bellman, $\Pi_{D_b}T_\pi$, no tiene por qué ser una contracción. Por tanto, la iteración de pesos puede amplificar el error en vez de reducirlo. Si $A$ tiene un autovalor con parte real negativa, el factor correspondiente de $I-\alpha A$ puede tener módulo mayor que uno y producir divergencia.
+
+Esto explica por qué las garantías del caso tabular o del caso lineal on-policy no se trasladan automáticamente a esta combinación. La tríada \textbf{puede} causar inestabilidad, pero no significa que todo algoritmo con esos tres elementos vaya a divergir. Los métodos de gradiente TD, por ejemplo, se diseñaron para recuperar garantías bajo supuestos específicos.
+
+\textit{Referencias de estudio: fuentes [\ref{f:baird}], [\ref{f:gtd}] y [\ref{f:triad}]. En Sutton y Barto, la tríada se desarrolla en el capítulo 11, especialmente la sección 11.3.}
+
+\section{Ejercicio 11. Robot futbolista}
+
+El estado es $s=(d_{\mathrm{ball}},d_{\mathrm{goal}})$ y las acciones son moverse y patear. Usamos $\gamma=0.8$.
+
+\apartado{a. SARSA aproximado con descuento}
+Para una transición no terminal, definimos
+\[
+\delta_t=R_{t+1}+0.8\widehat Q(S_{t+1},A_{t+1},\boldsymbol\theta_t)
+-\widehat Q(S_t,A_t,\boldsymbol\theta_t).
+\]
+La actualización de semi-gradiente es
+\[
+\boxed{\boldsymbol\theta_{t+1}=\boldsymbol\theta_t+
+\alpha\delta_t\nabla_{\boldsymbol\theta}\widehat Q(S_t,A_t,\boldsymbol\theta_t).}
+\]
+La acción $A_{t+1}$ se elige con la política que sigue el robot. Si el estado siguiente es terminal, se elimina el término de valor futuro.
+
+\apartado{b. Caso lineal}
+Con $\widehat Q(s,a,\boldsymbol\theta)=\boldsymbol\theta^\top\boldsymbol\phi(s,a)$,
+\[
+\nabla_{\boldsymbol\theta}\widehat Q(S_t,A_t,\boldsymbol\theta)
+=\boldsymbol\phi(S_t,A_t),\qquad
+\nabla_{\boldsymbol\theta}\widehat Q(S_{t+1},A_{t+1},\boldsymbol\theta)
+=\boldsymbol\phi(S_{t+1},A_{t+1}).
+\]
+El segundo gradiente existe, pero no se usa en SARSA de semi-gradiente porque el objetivo se mantiene fijo al derivar. Reemplazando todas las apariciones de $\widehat Q$,
+\[
+\boxed{\begin{aligned}
+\boldsymbol\theta_{t+1}=\boldsymbol\theta_t+\alpha
+\big[&R_{t+1}+0.8\boldsymbol\theta_t^\top\boldsymbol\phi(S_{t+1},A_{t+1})\\
+&-\boldsymbol\theta_t^\top\boldsymbol\phi(S_t,A_t)\big]\boldsymbol\phi(S_t,A_t).
+\end{aligned}}
+\]
+
+\apartado{c. Inicialización con valor uno}
+Las características son
+\[
+\boldsymbol\phi(s,a)=\begin{bmatrix}1&d_{\mathrm{ball}}(s)&d_{\mathrm{goal}}(s)&\indic\{a=\text{patear}\}\end{bmatrix}^{\top}.
+\]
+Para que el valor sea uno en todo par estado-acción, basta elegir
+\[
+\boxed{\boldsymbol\theta_0=\begin{bmatrix}1&0&0&0\end{bmatrix}^{\top}.}
+\]
+Así, el término constante vale uno y los demás no contribuyen. Esta es la inicialización denominada optimista en el enunciado. Que uno sea realmente mayor que todos los valores verdaderos depende de las recompensas del problema.
+
+\apartado{d. Una actualización numérica}
+Interpretamos $[0,5,1]^\top$ del enunciado como las dos coordenadas $[0.5,1]^\top$. El robot se mueve desde $s=(0.5,1)$ hasta $s'=(0,1)$, recibe $r=0$ y elige patear a continuación. Por tanto,
+\[
+\boldsymbol\phi(s,\text{moverse})=
+\begin{bmatrix}1\\0.5\\1\\0\end{bmatrix},\qquad
+\boldsymbol\phi(s',\text{patear})=
+\begin{bmatrix}1\\0\\1\\1\end{bmatrix}.
+\]
+Antes de actualizar, ambos valores son uno. Usando siempre $\boldsymbol\theta_0$ para formar el objetivo,
+\[
+\delta=0+0.8(1)-1=-0.2.
+\]
+Con $\alpha=0.5$,
+\[
+\boldsymbol\theta_1=
+\begin{bmatrix}1\\0\\0\\0\end{bmatrix}
++0.5(-0.2)\begin{bmatrix}1\\0.5\\1\\0\end{bmatrix}
+=\boxed{\begin{bmatrix}0.9\\-0.05\\-0.1\\0\end{bmatrix}.}
+\]
+El peso asociado a patear no cambia porque la acción actual fue moverse y su cuarta característica era cero.
+
+\apartado{e. Valor del siguiente par estado-acción}
+Con los nuevos parámetros,
+\begin{align*}
+\widehat Q(s',\text{patear},\boldsymbol\theta_1)
+&=0.9+(-0.05)(0)+(-0.1)(1)+0(1)\\
+&=\boxed{0.8}.
+\end{align*}
+Este valor cambia aunque la actualización se realizó sobre moverse, porque ambas acciones comparten los pesos de las distancias y del término constante.
+
+\apartado{f. Funciones que se pueden representar}
+El espacio representable es
+\[
+\mathcal F=\operatorname{span}\{1,d_{\mathrm{ball}},d_{\mathrm{goal}},\indic\{a=\text{patear}\}\}.
+\]
+En particular,
+\begin{align*}
+\widehat Q(s,\text{moverse})&=\theta_0+\theta_1d_{\mathrm{ball}}+\theta_2d_{\mathrm{goal}},\\
+\widehat Q(s,\text{patear})&=\theta_0+\theta_1d_{\mathrm{ball}}+\theta_2d_{\mathrm{goal}}+\theta_3.
+\end{align*}
+Son dos planos con las mismas pendientes. Su diferencia es siempre $\theta_3$, así que el modelo no puede representar que patear sea mejor cerca del balón y moverse sea mejor lejos de él.
+
+Para ampliar el espacio, podemos agregar interacciones como $d_{\mathrm{ball}}\indic\{a=\text{patear}\}$ y $d_{\mathrm{goal}}\indic\{a=\text{patear}\}$, o usar un vector de pesos distinto para cada acción. También podemos incluir cuadrados, productos entre distancias, funciones de base radial o una red neuronal. Las características no lineales permiten representar relaciones más complejas aunque el modelo siga siendo lineal en sus pesos.
+
+\textit{Referencia de estudio: fuente [\ref{f:sutton}], capítulos 9--10.}
+
+\section{Ejercicio 12. Experience Replay}
+
+\apartado{Por qué una trayectoria no es i.i.d.}
+Las redes neuronales pueden entrenarse con datos dependientes. La condición i.i.d. es una simplificación usada en muchos análisis de SGD, no un requisito de la arquitectura. En un MDP, incluso bajo una política fija $\pi$,
+\[
+\Pr(S_{t+1}=s'\mid S_t=s)=P_\pi(s,s')
+\]
+generalmente depende de $s$, por lo que no coincide con la probabilidad marginal $\Pr(S_{t+1}=s')$. Para una trayectoria de estados,
+\[
+\Pr(S_0=s_0,\ldots,S_n=s_n)
+=d_0(s_0)\prod_{t=0}^{n-1}P_\pi(s_t,s_{t+1}),
+\]
+que en general no es el producto de las distribuciones marginales. Además, las transiciones consecutivas $Z_t=(S_t,A_t,R_{t+1},S_{t+1})$ y $Z_{t+1}$ comparten $S_{t+1}$.
+
+Tampoco tienen necesariamente la misma distribución. La distribución inicial puede no ser estacionaria y, durante el aprendizaje, la política cambia. Por ello, cambia la distribución de estados y acciones visitados.
+
+Para ver el efecto sobre un lote de $m$ gradientes escalares $g_i$, su promedio tiene varianza
+\[
+\operatorname{Var}\left(\frac1m\sum_{i=1}^m g_i\right)
+=\frac1{m^2}\left[\sum_{i=1}^m\operatorname{Var}(g_i)
++2\sum_{i<j}\operatorname{Cov}(g_i,g_j)\right].
+\]
+Cuando existe correlación positiva entre muestras cercanas, el promedio puede ser más ruidoso que con muestras independientes de igual varianza.
+
+\apartado{Qué hace el replay buffer}
+DQN guarda transiciones anteriores en un conjunto $\mathcal D$ y extrae un minibatch aleatorio para cada actualización. Si el buffer contiene $N$ transiciones, su distribución empírica es
+\[
+\widehat\mu_{\mathcal D}=\frac1N\sum_{i=1}^N\delta_{Z_i},
+\]
+donde $\delta_{Z_i}$ representa una masa de probabilidad en la transición $Z_i$.
+
+Con el buffer fijo y muestreo uniforme con reemplazo, las extracciones son independientes e idénticamente distribuidas \textbf{condicionadas al buffer}. Para una pérdida $\ell(\theta,Z)$,
+\[
+\E[\widehat g\mid\mathcal D,\theta]
+=\frac1N\sum_{i=1}^N\nabla_\theta\ell(\theta,Z_i)
+=\nabla_\theta\left[\frac1N\sum_{i=1}^N\ell(\theta,Z_i)\right].
+\]
+Así, el minibatch estima el gradiente de la pérdida empírica y evita actualizar siempre con experiencias consecutivas. También permite reutilizar datos y mezclar experiencias de distintos momentos.
+
+El replay buffer \textbf{reduce} la dependencia temporal y suaviza los cambios de distribución. No convierte toda la interacción en datos i.i.d. perfectos. El contenido del buffer sigue proviniendo de trayectorias relacionadas y cambia con el tiempo. Si se muestrea sin reemplazo dentro de un lote, las extracciones tampoco son estrictamente independientes, aunque el promedio sigue siendo insesgado para la pérdida empírica uniforme.
+
+\textit{Referencias de estudio: fuentes [\ref{f:dqn13}], [\ref{f:dqn15}] y [\ref{f:replay}].}
+
+\section{Ejercicio 13. Target Networks}
+
+DQN usa una red principal $Q(s,a,\theta_i)$ y una red objetivo $Q(s,a,\theta^-)$. Para una transición $(s,a,r,s',d)$ del buffer, $d=1$ indica que el siguiente estado es terminal. El objetivo es
+\[
+y_i=r+\gamma(1-d)\max_{a'}Q(s',a',\theta^-).
+\]
+La pérdida cuadrática es
+\[
+\boxed{L_i(\theta_i)=\E_{(s,a,r,s',d)\sim\mathcal D}
+\left[\left(y_i-Q(s,a,\theta_i)\right)^2\right].}
+\]
+En una implementación se estima esta esperanza con un minibatch. Durante la actualización no se propagan gradientes a $y_i$. Así,
+\[
+\nabla_{\theta_i}L_i
+=-2\E_{\mathcal D}\left[(y_i-Q(s,a,\theta_i))
+\nabla_{\theta_i}Q(s,a,\theta_i)\right].
+\]
+Los pesos $\theta^-$ se mantienen fijos durante cierto número de actualizaciones y luego se copian desde la red principal.
+
+\apartado{El problema del blanco móvil}
+Sin red objetivo, la misma red produciría la predicción actual y el objetivo:
+\[
+y(\theta)=r+\gamma(1-d)\max_{a'}Q(s',a',\theta).
+\]
+Entonces, al cambiar $\theta$ para acercar $Q(s,a,\theta)$ al objetivo, también movemos el propio objetivo. Como los parámetros se comparten entre estados, un error puede modificar otras predicciones y volver a entrar en futuras actualizaciones.
+
+Congelar $\theta^-$ hace que, para una transición fija, el objetivo permanezca estable entre sincronizaciones. Eso permite que la red principal se aproxime durante varios pasos a una referencia más estable. La red objetivo mitiga la realimentación y la inestabilidad, pero no garantiza la convergencia de DQN en cualquier problema.
+
+El indicador $d$ debe corresponder a una terminación real. Un corte artificial por límite de tiempo no siempre justifica eliminar el valor futuro, si la tarea modelada continúa después de ese límite.
+
+\textit{Referencia de estudio: fuente [\ref{f:dqn15}].}
+
+\section{Ejercicio 14. Double DQN}
+
+\apartado{Sesgo producido por el máximo}
+Fijemos un estado siguiente $s'$ y supongamos estimaciones ruidosas
+\[
+\widehat Q_a=q_a+\varepsilon_a,\qquad \E[\varepsilon_a]=0,
+\]
+donde $q_a$ es el valor verdadero de la acción. Como el máximo es una función convexa, la desigualdad de Jensen da
+\[
+\E\left[\max_a\widehat Q_a\right]
+\geq\max_a\E[\widehat Q_a]=\max_a q_a.
+\]
+Por tanto,
+\[
+\boxed{\E[\max_a(q_a+\varepsilon_a)]-\max_a q_a\geq0.}
+\]
+Aunque cada estimación sea insesgada por separado, seleccionar la mayor favorece a las que tuvieron un error positivo. La desigualdad puede ser estricta, pero no tiene que serlo en todos los casos. Además, la conclusión parte de errores de media cero. Si las estimaciones ya tienen sesgo, el error total puede ser distinto.
+
+\apartado{Ejemplo con dos acciones}
+Sean $q_1=q_2=0$ y errores independientes que toman $+c$ o $-c$, cada uno con probabilidad $1/2$, donde $c>0$. El máximo es $+c$ en tres de las cuatro combinaciones y $-c$ en la restante. Por eso,
+\[
+\E[\max(\widehat Q_1,\widehat Q_2)]
+=\tfrac34c-\tfrac14c=\frac c2>0.
+\]
+El valor verdadero máximo era cero. La sobreestimación esperada es $c/2$, y su contribución al objetivo no terminal es $\gamma c/2$.
+
+\apartado{Objetivo de Double DQN}
+En DQN estándar, la red objetivo selecciona y evalúa la acción siguiente. Double DQN separa esas dos operaciones. Primero selecciona con la red principal:
+\[
+a^*=\arg\max_{a'}Q(s',a',\theta_i).
+\]
+Luego evalúa esa acción con la red objetivo:
+\[
+\boxed{y_i^{\mathrm{DDQN}}=r+\gamma(1-d)
+Q\left(s',\arg\max_{a'}Q(s',a',\theta_i),\theta^-\right).}
+\]
+La pérdida es
+\[
+L_i^{\mathrm{DDQN}}(\theta_i)
+=\E_{\mathcal D}\left[(y_i^{\mathrm{DDQN}}-Q(s,a,\theta_i))^2\right],
+\]
+y el objetivo se mantiene fijo al calcular el gradiente.
+
+\apartado{Por qué separar ayuda}
+Para entender la idea, imaginemos dos estimadores $Q^A_a=q_a+\varepsilon^A_a$ y $Q^B_a=q_a+\varepsilon^B_a$. Elegimos $a^*=\arg\max_aQ^A_a$. Si los errores de evaluación tienen media cero y son independientes de la selección, entonces
+\[
+\E[Q^B_{a^*}]=\sum_a\Pr(a^*=a)q_a\leq\max_a q_a.
+\]
+El ruido que hizo ganar a una acción en el primer estimador ya no aumenta automáticamente su valor en el segundo. Podemos incluso subestimar al elegir una acción subóptima, así que la separación no promete insesgamiento exacto.
+
+En Double DQN real, las redes no son independientes porque la red objetivo se copia de la principal. Aun así, la separación reduce el acoplamiento entre selección y evaluación y suele disminuir la sobreestimación. No asegura eliminarla por completo.
+
+\textit{Referencias de estudio: fuentes [\ref{f:doubleq}] y [\ref{f:ddqn}].}
+\end{document}
