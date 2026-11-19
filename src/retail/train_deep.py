@@ -92,6 +92,7 @@ def run(data,retail_config,settings,output,episodes,eval_every=10,device="cpu",r
         env=RetailEnv(data,retail_config,start,start+settings.horizon-1)
         obs=env.reset()
         base_total,shaped_total,losses=0.0,0.0,[]
+        base_G0,discount=0.0,1.0
         model_losses,synthetic_losses=[],[]
         while obs is not None:
             snapshot=env.snapshot() if model else None
@@ -108,6 +109,8 @@ def run(data,retail_config,settings,output,episodes,eval_every=10,device="cpu",r
             next_features=encoder.encode(nxt)
             steps+=1
             base_total+=base
+            base_G0+=discount*base
+            discount*=settings.gamma
             shaped_total+=base+bonus
             if settings.algorithm=="ddqn":
                 agent.remember(features,actions,rewards,next_features,terminal)
@@ -126,7 +129,7 @@ def run(data,retail_config,settings,output,episodes,eval_every=10,device="cpu",r
                         synthetic_losses.extend(model.plan(agent,data,retail_config))
             obs=nxt
         record={"episode":episode+1,"start_day":start,"real_steps":steps,
-                "base_return":base_total,"shaped_regional_return":shaped_total,
+                "base_return":base_total,"base_G0":base_G0,"shaped_regional_return":shaped_total,
                 "training_seconds":time.perf_counter()-started,"gradient_updates":agent.updates,
                 "synthetic_steps":model.synthetic_steps if model else 0,
                 "losses":{key:sum(row[key] for row in losses if key in row)/sum(key in row for row in losses)

@@ -17,3 +17,15 @@ def relative_stockout_reduction(candidate, baseline):
     if baseline is None or baseline == 0 or candidate is None:
         return None
     return 1-candidate/baseline
+
+
+def discounted_return(rewards, gamma):
+    rewards=list(rewards)
+    if not 0 <= gamma <= 1:
+        raise ValueError("gamma must be in [0,1]")
+    total=0.0
+    discount=1.0
+    for r in rewards:
+        total+=discount*float(r)
+        discount*=gamma
+    return float(total)

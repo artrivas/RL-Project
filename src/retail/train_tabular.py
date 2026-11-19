@@ -59,14 +59,22 @@ def main(argv=None):
             obs=env.reset()
             epsilon=1.0-0.95*episode/max(1,args.episodes-1)
             total=0.0
+            base_G0=0.0
+            discount=1.0
+            td_errors=[]
             while obs is not None:
                 actions=agent.act(obs,epsilon)
                 nxt,reward,terminal,_,_=env.step(actions)
-                agent.observe(obs,actions,reward/args.reward_scale,nxt,terminal)
+                errors=agent.observe(obs,actions,reward/args.reward_scale,nxt,terminal)
+                if errors:
+                    td_errors.extend(e for e in errors if e is not None)
                 total+=reward
+                base_G0+=discount*reward
+                discount*=args.gamma
                 steps+=1
                 obs=nxt
-            record={"episode":episode+1,"start_day":start,"base_return":total,
+            td_loss=sum(e*e for e in td_errors)/len(td_errors) if td_errors else None
+            record={"episode":episode+1,"start_day":start,"base_return":total,"base_G0":base_G0,"td_loss":td_loss,
                     "real_steps":steps,"epsilon":epsilon,"synthetic_steps":0,
                     "training_seconds":time.perf_counter()-started}
             if (episode+1)%args.eval_every==0 or episode+1==args.episodes:

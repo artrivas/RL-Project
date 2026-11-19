@@ -36,11 +36,14 @@ class CooperativeQLearning:
         return tuple(agent.act(s, epsilon) for agent,s in zip(self.agents,states))
 
     def observe(self, observations, actions, regional_reward, next_observations, terminated):
+        errors = []
         for i, agent in enumerate(self.agents):
             state = self.discretizer(observations[i])
             next_state = 0 if terminated else self.discretizer(next_observations[i])
-            agent.observe(state, actions[i], regional_reward, next_state, None,
-                          terminated=terminated, truncated=False)
+            err = agent.observe(state, actions[i], regional_reward, next_state, None,
+                                terminated=terminated, truncated=False)
+            errors.append(None if err is None else float(err))
+        return errors
 
     def save(self, path):
         np.savez_compressed(path, **{f"store_{i}":agent.Q for i,agent in enumerate(self.agents)})
