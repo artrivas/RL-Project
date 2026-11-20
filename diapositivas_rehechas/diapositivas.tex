@@ -1,0 +1,296 @@
+\documentclass[aspectratio=169,10pt]{beamer}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage{lmodern}
+\usepackage{helvet}
+\usepackage{amsmath,booktabs}
+\usetheme{P2}
+\input{resultados_restringidos}
+\title{\textquestiondown C\'omo repartir el inventario entre tres tiendas?}
+\subtitle{Precios e inventario con aprendizaje por refuerzo}
+\author{Leonardo Candio \and Dimael Rivas}
+\date{DS5345 \textperiodcentered\ Fase 2 \textperiodcentered\ V\'ia B}
+
+\begin{document}
+
+% ---------- 1. Portada ----------
+\begin{frame}[plain,noframenumbering]
+\vspace{0.5cm}
+\pill{DS5345 \textperiodcentered\ Fase 2 \textperiodcentered\ V\'ia B}
+\hspace{0.2cm}\pill[p2ambersoft]{365 d\'ias \textperiodcentered\ 3 tiendas}
+
+\vspace{0.3cm}
+{\fontsize{34}{36}\selectfont\bfseries \textquestiondown C\'omo repartir\\[-2pt] el inventario entre tres tiendas?\par}
+\vspace{0.15cm}
+{\large\color{p2muted} Precios e inventario con aprendizaje por refuerzo\par}
+
+\vspace{0.4cm}
+\pill{Tienda 1}\hspace{0.15cm}\pill{Tienda 2}\hspace{0.15cm}\pill{Tienda 3}
+\hspace{0.5cm}{\small\color{p2muted}reponen desde un almac\'en regional compartido}
+
+\vspace{0.45cm}
+{\small Leonardo Candio \quad\textcolor{p2line}{$|$}\quad Dimael Rivas}
+
+\vspace{0.15cm}
+{\scriptsize\color{p2teal} Simulaci\'on con datos de ventas y precios M5\par}
+\end{frame}
+
+\section{Tres tiendas, un almac\'en}
+
+% ---------- 2. Portadilla bloque 1 ----------
+\begin{frame}[plain]
+\vspace{1.1cm}
+{\fontsize{52}{52}\selectfont\bfseries\color{p2teal} I\par}
+\vspace{0.1cm}
+{\fontsize{24}{26}\selectfont\bfseries Tres tiendas, un almac\'en\par}
+\vspace{0.15cm}
+\pill[p2ambersoft]{Bloque 1 \textperiodcentered\ el problema}
+\hspace{0.3cm}{\small\color{p2muted}pedido diario \textperiodcentered\ tres formas de pedir \textperiodcentered\ m\'etodos}
+\end{frame}
+
+% ---------- 3. Tres formas de pedir ----------
+\begin{frame}
+\frametitle{Tres formas de pedir}
+\framesubtitle{Men\'u discreto: multiplicador de precio $\times$ cobertura de pedido}
+\begin{columns}[T,onlytextwidth]
+\column{0.31\textwidth}
+\begin{block}{Ingenua}
+\scriptsize Repite las ventas de hace una semana, aproximadas al men\'u. No aprende.
+\end{block}
+\column{0.31\textwidth}
+\begin{block}{Ego\'ista}
+\scriptsize Aprende a mejorar el resultado de su propia tienda.
+\end{block}
+\column{0.31\textwidth}
+\begin{block}{Cooperativa}
+\scriptsize Aprende usando el resultado de las tres y el estado del recurso compartido.
+\end{block}
+\end{columns}
+\vspace{0.3cm}
+\begin{center}
+{\scriptsize\color{p2muted} La ego\'ista y la cooperativa aprenden por refuerzo (Q-learning tabular y PPO): prueban pedidos y se quedan con lo que da mejor resultado.\par}
+\end{center}
+\end{frame}
+
+% ---------- 4. Secuencia diaria ----------
+\begin{frame}
+\frametitle{Cada d\'ia, las tiendas consultan el stock y hacen su pedido}
+\framesubtitle{Si piden de m\'as, el almac\'en raciona en proporci\'on}
+\begin{center}
+\begin{tikzpicture}[
+  box/.style={rounded corners=6pt,fill=white,draw=p2line,inner sep=8pt,align=center,font=\small},
+  arr/.style={-{Stealth[length=7pt]},thick,color=p2teal}]
+  \node[box] (v) {ventas\\pasadas};
+  \node[box,fill=p2tealsoft,right=1.2cm of v,minimum width=2.4cm] (p) {\textbf{pedido}\\precio $\times$ cobertura};
+  \node[box,fill=p2ambersoft,right=1.2cm of p,minimum width=2.4cm] (r) {\textbf{reparto}\\proporcional};
+  \node[box,right=1.2cm of r,minimum width=2.4cm] (l) {llega\\al d\'ia siguiente};
+  \draw[arr] (v) -- (p);
+  \draw[arr] (p) -- (r);
+  \draw[arr] (r) -- (l);
+\end{tikzpicture}
+\end{center}
+\vspace{0.2cm}
+\begin{center}
+{\scriptsize\color{p2muted} Esquema de ejemplo con pedidos ilustrativos.\par}
+\end{center}
+\end{frame}
+
+% ---------- 5. M5 vs simulado ----------
+\begin{frame}
+\frametitle{M5 real vs.\ simulado}
+\framesubtitle{Las tres pol\'iticas usan el mismo precio de cada d\'ia}
+\begin{columns}[T,onlytextwidth]
+\column{0.47\textwidth}
+\begin{center}\pill{M5 aporta}\end{center}
+\vspace{0.1cm}
+\begin{itemize}
+  \item Precios y calendario
+  \item Ventas $\approx$ demanda de referencia
+\end{itemize}
+\column{0.47\textwidth}
+\begin{center}\pill[p2ambersoft]{El simulador supone}\end{center}
+\vspace{0.1cm}
+\begin{itemize}
+  \item Pedidos, stock, faltantes
+  \item Costes y elasticidad con redondeo
+\end{itemize}
+\end{columns}
+\vspace{0.35cm}
+\begin{center}
+{\scriptsize\color{p2teal} Simulaci\'on con datos de ventas y precios M5\par}
+\end{center}
+\end{frame}
+
+% ---------- 6. Escalera ----------
+\begin{frame}
+\frametitle{M\'etodos de aprendizaje}
+\framesubtitle{Dos herramientas de entrenamiento}
+\begin{columns}[T,onlytextwidth]
+\column{0.40\textwidth}
+\begin{center}
+\begin{tikzpicture}[
+  paso/.style={rounded corners=6pt,fill=white,draw=p2teal,thick,inner sep=7pt,minimum width=3.6cm,align=center,font=\small\bfseries},
+  arr/.style={-{Stealth[length=6pt]},thick,color=p2teal}]
+  \node[paso] (t) {Tabular};
+  \node[paso,below=0.35cm of t] (d) {Double DQN};
+  \node[paso,below=0.35cm of d] (p) {PPO};
+  \draw[arr] (t) -- (d);
+  \draw[arr] (d) -- (p);
+\end{tikzpicture}
+\end{center}
+\column{0.56\textwidth}
+\begin{block}{PBRS \normalfont\scriptsize\color{p2muted} (ajuste de recompensa con un potencial)}
+\scriptsize $F_t = \gamma\Phi(s_{t+1}) - \Phi(s_t)$: conserva el orden de acciones. El potencial terminal es cero.
+\end{block}
+\vspace{0.15cm}
+\begin{block}{Dyna \normalfont\scriptsize\color{p2muted} (modelo que genera transiciones)}
+\scriptsize Usa un modelo del entorno para generar experiencias de entrenamiento.
+\end{block}
+\vspace{0.15cm}
+{\scriptsize\color{p2muted} Q-learning y Double DQN estiman el valor de las acciones. PPO ajusta la pol\'itica.\par}
+\end{columns}
+\end{frame}
+
+\section{Qu\'e cambi\'o en el simulador}
+
+% ---------- 7. Portadilla bloque 2 ----------
+\begin{frame}[plain]
+\vspace{0.9cm}
+{\fontsize{52}{52}\selectfont\bfseries\color{p2amber} II\par}
+\vspace{0.1cm}
+{\fontsize{24}{26}\selectfont\bfseries Qu\'e cambi\'o en el simulador\par}
+\vspace{0.15cm}
+\pill{Las tres pol\'iticas enfrentan la misma demanda}
+\vspace{0.25cm}
+{\small\color{p2muted} un producto \textperiodcentered\ 365 d\'ias \textperiodcentered\ 3 tiendas \textperiodcentered\ mismo precio del d\'ia \textperiodcentered\ tres entrenamientos\par}
+\vspace{0.15cm}
+{\small\color{p2ink} Un quiebre es un d\'ia en que una tienda no puede atender toda su demanda.\par}
+\end{frame}
+
+% ---------- 8. Incidencia ----------
+\begin{frame}
+\frametitle{El m\'etodo cooperativo tuvo menos d\'ias con quiebre}
+\framesubtitle{En las tres corridas: 88--91\% menos frente a la ingenua; 34--69\% menos frente a la ego\'ista}
+\begin{columns}[T,onlytextwidth]
+\column{0.46\textwidth}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=5.8cm,height=3.4cm,
+  ybar, bar width=9pt,
+  symbolic x coords={C1,C2,C3,E1,E2,E3,N},
+  xtick=data,
+  xticklabels={Coop-1,Coop-2,Coop-3,Ego-1,Ego-2,Ego-3,Ing},
+  x tick label style={font=\tiny},
+  ylabel={d\'ias-tienda con quiebre}, ylabel style={font=\scriptsize},
+  nodes near coords, nodes near coords style={font=\tiny\bfseries},
+  ymin=0, ymax=1120, enlarge x limits=0.12,
+  axis lines*=left, tick style={draw=none}, axis line style={color=p2line},
+]
+\addplot[fill=p2teal,draw=p2teal] coordinates {(C1,116) (C2,122) (C3,93)};
+\addplot[fill=p2amber,draw=p2amber] coordinates {(E1,376) (E2,185) (E3,183)};
+\addplot[fill=p2muted,draw=p2muted] coordinates {(N,1015)};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\column{0.50\textwidth}
+\begin{center}
+{\Large\bfseries 88--91\%} menos que la ingenua\quad {\Large\bfseries 34--69\%} menos que la ego\'ista
+\end{center}
+\vspace{0.15cm}
+\begin{itemize}
+  \item Tasa media de d\'ias con quiebre: ingenua 93\%, ego\'ista 23\%, cooperativa 10\%
+  \item 1\,092 d\'ias-tienda elegibles por brazo
+\end{itemize}
+\end{columns}
+\vspace{0.08cm}
+{\scriptsize\color{p2muted} Ingenua $=$ heur\'istica de ventas rezagadas; referencia principal. Ego\'ista $=$ emparejada por corrida.\par}
+\end{frame}
+
+% ---------- 9. Ventas ----------
+\begin{frame}
+\frametitle{Menos quiebres no siempre signific\'o m\'as ventas}
+\framesubtitle{Ventas con la misma demanda (57\,184 u) para las tres pol\'iticas}
+\begin{columns}[T,onlytextwidth]
+\column{0.46\textwidth}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=5.8cm,height=3.4cm,
+  ybar, bar width=11pt,
+  symbolic x coords={R1,R2,R3},
+  xtick=data,
+  xticklabels={Corrida 1,Corrida 2,Corrida 3},
+  x tick label style={font=\tiny},
+  ylabel={unidades vendidas}, ylabel style={font=\scriptsize},
+  nodes near coords, nodes near coords style={font=\tiny\bfseries},
+  ymin=40000, ymax=54500, enlarge x limits=0.25,
+  axis lines*=left, tick style={draw=none}, axis line style={color=p2line},
+]
+\addplot[fill=p2amber,draw=p2amber] coordinates {(R1,41747) (R2,52590) (R3,52360)};
+\addplot[fill=p2teal,draw=p2teal] coordinates {(R1,52133) (R2,52473) (R3,52008)};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\column{0.50\textwidth}
+\begin{itemize}
+  \item Corrida 3: ego\'ista 52\,360 vs.\ cooperativa 52\,008
+  \item Solo 1 de 3 supera a la ego\'ista en ventas y retorno
+  \item 3 de 3 supera a la ingenua en ambas
+\end{itemize}
+\vspace{0.1cm}
+\begin{center}
+\pill{Cooperativa}\hspace{0.1cm}\pill[p2ambersoft]{Ego\'ista}
+\end{center}
+\end{columns}
+\vspace{0.06cm}
+{\scriptsize\color{p2muted} Con la misma demanda, cada unidad faltante es una venta perdida.\par}
+\end{frame}
+
+% ---------- 10. Demo ----------
+\begin{frame}
+\frametitle{Un a\~no en 36 segundos}
+\framesubtitle{\texttt{video.mp4} en el mismo ZIP \textperiodcentered\ comparar Ingenua, Ego\'ista y Cooperativa}
+\begin{columns}[T,onlytextwidth]
+\column{0.52\textwidth}
+\begin{center}
+\begin{tikzpicture}[
+  cell/.style={rounded corners=3pt,minimum width=0.85cm,minimum height=0.62cm,inner sep=1pt,font=\tiny},
+  rowl/.style={font=\scriptsize\bfseries\color{p2ink},anchor=east}]
+  \foreach \r/\name/\col in {0/Cooperativa/p2tealsoft,1/Ego\'ista/p2ambersoft,2/Ingenua/p2paper} {
+    \node[rowl] at (-0.2,-\r*0.85) {\name};
+    \foreach \cc in {0,1,2} {
+      \node[cell,fill=\col,draw=p2line] at (\cc*1.0,-\r*0.85) {T\_\the\numexpr\cc+1\relax};
+    }
+  }
+  \node[font=\scriptsize\color{p2muted}] at (1.0,0.65) {d\'ia 1 $\rightarrow$ 365 sincronizado};
+\end{tikzpicture}
+\end{center}
+\column{0.44\textwidth}
+\begin{itemize}
+  \item 3 filas $\times$ 3 tiendas, mismo d\'ia
+  \item Color $=$ unidades perdidas, no solo si hubo quiebre
+  \item Quiebres, faltantes y retorno acumulados
+  \item Una corrida de la simulaci\'on
+\end{itemize}
+\end{columns}
+\end{frame}
+
+% ---------- 11. Cierre ----------
+\begin{frame}
+\frametitle{Para evaluar la reposici\'on, contamos los d\'ias de quiebre y las unidades perdidas}
+\begin{center}
+\vspace{0.5cm}
+\begin{tikzpicture}
+\node[rounded corners=8pt,fill=white,draw=p2teal,thick,inner sep=14pt,align=center] {%
+{\large\bfseries\color{p2ink} D\'ias con quiebre \textcolor{p2line}{$+$} unidades perdidas}\\[4pt]
+{\small\color{p2muted} las dos m\'etricas, en las tres corridas}};
+\end{tikzpicture}
+\vspace{0.5cm}
+
+{\small\color{p2muted} Gracias \textperiodcentered\ preguntas\par}
+\end{center}
+\end{frame}
+
+\end{document}

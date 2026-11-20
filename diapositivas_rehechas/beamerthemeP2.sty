@@ -1,0 +1,62 @@
+% Tema propio P2, Via B (DS5345). Claro, con aire, 16:9.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerthemeP2}
+\RequirePackage{tikz}
+\RequirePackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{positioning,shapes.geometric,arrows.meta,calc,fit,backgrounds}
+\definecolor{p2paper}{HTML}{F7F4EE}
+\definecolor{p2ink}{HTML}{16233A}
+\definecolor{p2teal}{HTML}{0E7C6B}
+\definecolor{p2tealsoft}{HTML}{DDEDE8}
+\definecolor{p2amber}{HTML}{C98A12}
+\definecolor{p2ambersoft}{HTML}{F6E8C6}
+\definecolor{p2muted}{HTML}{6B7280}
+\definecolor{p2line}{HTML}{D8D2C4}
+\definecolor{p2rose}{HTML}{B4433A}
+\definecolor{p2rosesoft}{HTML}{F3DAD6}
+\setbeamercolor{background canvas}{bg=p2paper}
+\setbeamercolor{normal text}{fg=p2ink,bg=p2paper}
+\setbeamercolor{frametitle}{fg=p2ink,bg=p2paper}
+\setbeamercolor{title}{fg=p2ink}
+\setbeamercolor{subtitle}{fg=p2muted}
+\setbeamercolor{author}{fg=p2muted}
+\setbeamercolor{structure}{fg=p2teal}
+\setbeamercolor{block title}{fg=p2ink,bg=p2tealsoft}
+\setbeamercolor{block body}{fg=p2ink,bg=white}
+\setbeamercolor{footline}{fg=p2muted}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{headline}{}
+\setbeamertemplate{blocks}[rounded][shadow=false]
+\setbeamertemplate{itemize item}{\color{p2teal}\rule{0.55em}{0.32em}}
+\setbeamertemplate{itemize subitem}{\color{p2amber}\rule{0.45em}{0.28em}}
+\setbeamersize{text margin left=1.1cm,text margin right=1.1cm}
+\setbeamertemplate{frametitle}{%
+  \vspace{0.32cm}%
+  {\usebeamerfont{frametitle}\insertframetitle}\par
+  \vspace{0.08cm}%
+  {\color{p2teal}\rule{\textwidth}{1.6pt}}\par
+  \vspace{0.08cm}%
+  \ifx\insertframesubtitle\@empty\else{\small\color{p2muted}\insertframesubtitle}\par\vspace{0.04cm}\fi
+}
+\setbeamertemplate{footline}{%
+  \leavevmode\hbox{%
+    \begin{beamercolorbox}[wd=0.82\paperwidth,ht=2.4ex,dp=1.2ex,leftskip=1.1cm]{footline}%
+      \scriptsize P2 \textbf{V\'ia B} \color{p2line}$|$\ \color{p2muted}\insertsection
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=0.18\paperwidth,ht=2.4ex,dp=1.2ex,rightskip=1.1cm]{footline}%
+      \hfill\scriptsize\insertframenumber
+    \end{beamercolorbox}}%
+}
+% Tarjeta con numero grande
+\newcommand{\bignum}[2]{%
+  \begin{tikzpicture}%
+    \node[rounded corners=6pt,fill=white,draw=p2line,inner sep=8pt,minimum width=2.9cm,align=center] {%
+      {\fontsize{22}{22}\selectfont\bfseries\color{p2ink}#1}\\[2pt]
+      {\scriptsize\color{p2muted}#2}};%
+  \end{tikzpicture}%
+}
+% Etiqueta redondeada: \pill{Texto} o \pill[color]{Texto}
+\newcommand{\pill}[2][p2tealsoft]{%
+  \tikz[baseline=(n.base)]\node[rounded corners=4pt,fill=#1,inner xsep=7pt,inner ysep=3pt,font=\scriptsize\bfseries] (n) {#2};%
+}
