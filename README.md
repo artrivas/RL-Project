@@ -1,5 +1,7 @@
 # P2 — Vía B: Walmart M5
 
+[Descargar entrega final](./entrega%20final.zip): informe, diapositivas y video comparativo.
+
 Implementación: Q-Learning tabular, DDQN/PPO, PBRS, Dyna y control egoísta,
 con tres tiendas e inventario regional compartido. El usuario ha confirmado
 53 tests en el Pod GPU y una matriz de desarrollo completa: H0 + 24 políticas,
@@ -32,11 +34,13 @@ Los [contratos del simulador](src/retail/README.md), el
 
 El resto de este README documenta P1 y se conserva desde la base de main.
 
+La [evidencia de revisión](informe/revision_docente/evidencia/) proviene de la
+[rama `dimael`](https://github.com/artrivas/RL-Project/tree/902390fe3429488ab4c045c0b700540a63017ef4/informe/revision_docente).
+Corresponde a una revisión anterior y no forma parte de la entrega final.
+
 ---
 
 # Proyecto RL — Persecución e Intercepción de Balón (RoboCup 2D)
-
-[Descargar entrega final](./entrega%20final.zip) — informe, diapositivas y video comparativo del Proyecto P2, Vía B.
 
 **Curso:** DS5345 · Aprendizaje por Refuerzo (UTEC, 2026-II) · **Docente:** Percy W. Lovon Ramos
 **Entrega:** P1, baseline tabular. **Tarea:** *Ball Pursuit*. **Algoritmo:** Q-Learning tabular, con ablación
