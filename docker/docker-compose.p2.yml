@@ -1,0 +1,24 @@
+name: rl-project-p2
+services:
+  retail:
+    image: rl-project-p2:local
+    build:
+      context: .
+      dockerfile: Dockerfile.p2
+    init: true
+    user: "${P2_UID:-1000}:${P2_GID:-1000}"
+    environment:
+      HOME: /tmp
+      M5_DATA_DIR: /workspace/notebooks/data/m5/raw
+    volumes:
+      - ../src:/workspace/src:ro
+      - ../notebooks:/workspace/notebooks
+    ports:
+      - "127.0.0.1:${P2_JUPYTER_PORT:-8889}:8888"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8888/login', timeout=3).close()"]
+      interval: 5s
+      timeout: 4s
+      retries: 12
+      start_period: 15s
+    restart: "no"

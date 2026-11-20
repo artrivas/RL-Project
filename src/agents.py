@@ -50,7 +50,9 @@ class QLearningAgent(TabularAgent):
 
     def observe(self, s, a, r, s_next, a_next, terminated, truncated):
         target = r if terminated else r + self.gamma * self.Q[s_next].max()
-        self.Q[s, a] += self.alpha * (target - self.Q[s, a])
+        td_error = target - self.Q[s, a]
+        self.Q[s, a] += self.alpha * td_error
+        return float(td_error)
 
 
 class SarsaAgent(TabularAgent):
@@ -60,7 +62,9 @@ class SarsaAgent(TabularAgent):
 
     def observe(self, s, a, r, s_next, a_next, terminated, truncated):
         target = r if terminated else r + self.gamma * self.Q[s_next, a_next]
-        self.Q[s, a] += self.alpha * (target - self.Q[s, a])
+        td_error = target - self.Q[s, a]
+        self.Q[s, a] += self.alpha * td_error
+        return float(td_error)
 
 
 class MonteCarloAgent(TabularAgent):
