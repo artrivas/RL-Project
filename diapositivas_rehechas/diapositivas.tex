@@ -6,6 +6,11 @@
 \usepackage{helvet}
 \usepackage{amsmath,booktabs}
 \usetheme{P2}
+\DeclareSymbolFont{p2greek}{OT1}{lmr}{m}{n}
+\DeclareMathSymbol{\pTwoPhi}{\mathord}{p2greek}{"08}
+\pgfplotsset{cuadro leyenda/.style={
+  legend image code/.code={\draw[##1] (0cm,-0.10cm) rectangle (0.20cm,0.10cm);}
+}}
 \input{resultados_restringidos}
 \title{\textquestiondown C\'omo repartir el inventario entre tres tiendas?}
 \subtitle{Precios e inventario con aprendizaje por refuerzo}
@@ -141,7 +146,7 @@
 \end{center}
 \column{0.56\textwidth}
 \begin{block}{PBRS \normalfont\scriptsize\color{p2muted} (ajuste de recompensa con un potencial)}
-\scriptsize $F_t = \gamma\Phi(s_{t+1}) - \Phi(s_t)$: conserva el orden de acciones. El potencial terminal es cero.
+\scriptsize $F_t = \gamma\pTwoPhi(s_{t+1}) - \pTwoPhi(s_t)$: conserva el orden de acciones. El potencial terminal es cero.
 \end{block}
 \vspace{0.15cm}
 \begin{block}{Dyna \normalfont\scriptsize\color{p2muted} (modelo que genera transiciones)}
@@ -161,7 +166,7 @@
 \vspace{0.1cm}
 {\fontsize{24}{26}\selectfont\bfseries Qu\'e cambi\'o en el simulador\par}
 \vspace{0.15cm}
-\pill{Las tres pol\'iticas enfrentan la misma demanda}
+\pill{Las tres pol\'iticas enfrentan la misma demanda}\par
 \vspace{0.25cm}
 {\small\color{p2muted} un producto \textperiodcentered\ 365 d\'ias \textperiodcentered\ 3 tiendas \textperiodcentered\ mismo precio del d\'ia \textperiodcentered\ tres entrenamientos\par}
 \vspace{0.15cm}
@@ -177,20 +182,30 @@
 \begin{center}
 \begin{tikzpicture}
 \begin{axis}[
-  width=5.8cm,height=3.4cm,
-  ybar, bar width=9pt,
-  symbolic x coords={C1,C2,C3,E1,E2,E3,N},
-  xtick=data,
-  xticklabels={Coop-1,Coop-2,Coop-3,Ego-1,Ego-2,Ego-3,Ing},
-  x tick label style={font=\tiny},
+  width=\linewidth,height=4.2cm,
+  ybar, bar width=11pt,
+  xtick={1,2,3,4},
+  xticklabels={Corrida 1,Corrida 2,Corrida 3,Referencia},
+  x tick label style={font=\scriptsize},
   ylabel={d\'ias-tienda con quiebre}, ylabel style={font=\scriptsize},
-  nodes near coords, nodes near coords style={font=\tiny\bfseries},
-  ymin=0, ymax=1120, enlarge x limits=0.12,
+  ytick={0,250,500,750,1000},
+  tick label style={font=\scriptsize},
+  /pgf/number format/1000 sep={\,},
+  /pgf/number format/min exponent for 1000 sep=3,
+  nodes near coords, nodes near coords style={font=\scriptsize\bfseries},
+  xmin=0.5, xmax=4.5, ymin=0, ymax=1150,
+  legend columns=-1,
+  legend style={at={(0.5,-0.21)},anchor=north,draw=none,fill=none,font=\scriptsize},
+  cuadro leyenda,
+  legend cell align=left,
   axis lines*=left, tick style={draw=none}, axis line style={color=p2line},
 ]
-\addplot[fill=p2teal,draw=p2teal] coordinates {(C1,116) (C2,122) (C3,93)};
-\addplot[fill=p2amber,draw=p2amber] coordinates {(E1,376) (E2,185) (E3,183)};
-\addplot[fill=p2muted,draw=p2muted] coordinates {(N,1015)};
+\addplot[bar shift=-8pt,fill=p2teal,draw=p2teal] coordinates {(1,116) (2,122) (3,93)};
+\addlegendentry{Cooperativa}
+\addplot[bar shift=8pt,fill=p2amber,draw=p2amber] coordinates {(1,376) (2,185) (3,183)};
+\addlegendentry{Ego\'ista}
+\addplot[bar shift=0pt,fill=p2muted,draw=p2muted] coordinates {(4,1015)};
+\addlegendentry{Ingenua}
 \end{axis}
 \end{tikzpicture}
 \end{center}
@@ -205,7 +220,7 @@
 \end{itemize}
 \end{columns}
 \vspace{0.08cm}
-{\scriptsize\color{p2muted} Ingenua $=$ heur\'istica de ventas rezagadas; referencia principal. Ego\'ista $=$ emparejada por corrida.\par}
+{\scriptsize\color{p2muted} Ingenua $=$ heur\'istica de ventas rezagadas; referencia determinista. Ego\'ista $=$ emparejada por corrida.\par}
 \end{frame}
 
 % ---------- 9. Ventas ----------
@@ -217,19 +232,20 @@
 \begin{center}
 \begin{tikzpicture}
 \begin{axis}[
-  width=5.8cm,height=3.4cm,
+  width=\linewidth,height=4.2cm,
   ybar, bar width=11pt,
-  symbolic x coords={R1,R2,R3},
-  xtick=data,
+  xtick={1,2,3},
   xticklabels={Corrida 1,Corrida 2,Corrida 3},
-  x tick label style={font=\tiny},
+  tick label style={font=\scriptsize},
   ylabel={unidades vendidas}, ylabel style={font=\scriptsize},
-  nodes near coords, nodes near coords style={font=\tiny\bfseries},
-  ymin=40000, ymax=54500, enlarge x limits=0.25,
+  ytick={0,20000,40000,60000}, scaled y ticks=false,
+  /pgf/number format/1000 sep={\,},
+  nodes near coords, nodes near coords style={font=\scriptsize\bfseries},
+  xmin=0.5, xmax=3.5, ymin=0, ymax=60000,
   axis lines*=left, tick style={draw=none}, axis line style={color=p2line},
 ]
-\addplot[fill=p2amber,draw=p2amber] coordinates {(R1,41747) (R2,52590) (R3,52360)};
-\addplot[fill=p2teal,draw=p2teal] coordinates {(R1,52133) (R2,52473) (R3,52008)};
+\addplot[bar shift=-11pt,fill=p2amber,draw=p2amber] coordinates {(1,41747) (2,52590) (3,52360)};
+\addplot[bar shift=11pt,fill=p2teal,draw=p2teal,every node near coord/.append style={yshift=6pt}] coordinates {(1,52133) (2,52473) (3,52008)};
 \end{axis}
 \end{tikzpicture}
 \end{center}
@@ -259,7 +275,7 @@
   cell/.style={rounded corners=3pt,minimum width=0.85cm,minimum height=0.62cm,inner sep=1pt,font=\tiny},
   rowl/.style={font=\scriptsize\bfseries\color{p2ink},anchor=east}]
   \foreach \r/\name/\col in {0/Cooperativa/p2tealsoft,1/Ego\'ista/p2ambersoft,2/Ingenua/p2paper} {
-    \node[rowl] at (-0.2,-\r*0.85) {\name};
+    \node[rowl] at (-0.55,-\r*0.85) {\name};
     \foreach \cc in {0,1,2} {
       \node[cell,fill=\col,draw=p2line] at (\cc*1.0,-\r*0.85) {T\_\the\numexpr\cc+1\relax};
     }
@@ -284,7 +300,7 @@
 \vspace{0.5cm}
 \begin{tikzpicture}
 \node[rounded corners=8pt,fill=white,draw=p2teal,thick,inner sep=14pt,align=center] {%
-{\large\bfseries\color{p2ink} D\'ias con quiebre \textcolor{p2line}{$+$} unidades perdidas}\\[4pt]
+{\large\bfseries\color{p2ink} D\'ias con quiebre \textcolor{p2teal}{$+$} unidades perdidas}\\[4pt]
 {\small\color{p2muted} las dos m\'etricas, en las tres corridas}};
 \end{tikzpicture}
 \vspace{0.5cm}
