@@ -1,5 +1,7 @@
 # Proyecto RL — Persecución e Intercepción de Balón (RoboCup 2D)
 
+[Descargar entrega final](./entrega%20final.zip) — informe, diapositivas y video comparativo del Proyecto P2, Vía B.
+
 **Curso:** DS5345 · Aprendizaje por Refuerzo (UTEC, 2026-II) · **Docente:** Percy W. Lovon Ramos
 **Entrega:** P1, baseline tabular. **Tarea:** *Ball Pursuit*. **Algoritmo:** Q-Learning tabular, con ablación
 ε constante vs. ε decreciente geométrico. **Entorno principal:** el del *starter kit* del curso
